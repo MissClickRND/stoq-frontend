@@ -1,62 +1,13 @@
-# Frontend Lyaguh Template
+# STOQ
 
-Шаблон моих проектов для быстрого создания
+React, TypeScript, Vite, Mantine, Redux Toolkit и React Router.
 
-Установленные библиотеки :
-- React + TS
-- RTK
-- MantineUI
-- ReactRouter
-- TablerIcons (Первая загрузка может быть долгим из-за этой библиотеки, если вы сталкиваетесь с проблемой производительности можете попробовать заменить ее на похожие, по типу ReactIcons)
+Запуск: `npm ci`, затем `npm run dev`.
+Проверка типов: `npm run typecheck`. Сборка: `npm run build`.
 
-Создана архитектура FSD, настроен роутинг
+Пустые страницы: /login, /dashboard, /supply, /dishes, /products, /menu-hints, /orders, /logs, /admin-panel.
+Корневой адрес перенаправляет на /dashboard. Неизвестные адреса показывают 404.
 
-Архитектура:
-
-Классический FSD:
-```text
-Lyaguh-Template
-├─ index.html
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.cjs
-├─ public
-│  ├─ favicon.svg
-│  ├─ icons
-│  └─ img
-├─ README.md
-├─ src
-│  ├─ app
-│  │  ├─ main.tsx
-│  │  ├─ providers
-│  │  │  ├─ store
-│  │  │  │  ├─ listeners
-│  │  │  │  ├─ listenersMiddleware.ts
-│  │  │  │  ├─ loadStates
-│  │  │  │  │  └─ loadSettingsState.ts
-│  │  │  │  └─ store.ts
-│  │  │  └─ styles
-│  │  │     └─ index.css
-│  │  ├─ theme.ts
-│  │  └─ vite-env.d.ts
-│  ├─ pages
-│  │  ├─ Errors
-│  │  │  └─ Error404
-│  │  │     ├─ Error404.page.tsx
-│  │  │     └─ index.ts
-│  │  └─ Main
-│  │     ├─ index.ts
-│  │     └─ Main.page.tsx
-│  ├─ shared
-│  │  └─ lib
-│  │     ├─ index.ts
-│  │     └─ store.ts
-│  └─ widgets
-│     └─ Read.txt
-├─ tsconfig.json
-├─ tsconfig.node.json
-├─ vite.config.ts
-
-
-```
-
+Страницы: src/pages. Маршруты: src/app/providers/routes/Router.tsx. Тема: src/app/theme.ts.
+Палитры primary (салатовая) и secondary (бирюзовая) содержат по 10 оттенков.
+Авторизация пока не подключена к приложению; API, хранилище и guards сохранены для дальнейшей разработки.

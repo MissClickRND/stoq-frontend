@@ -2,19 +2,35 @@ import { createTheme } from "@mantine/core";
 
 export const theme = createTheme({
   primaryColor: "primary",
+  primaryShade: { light: 8, dark: 5 },
+  autoContrast: true,
+  other: { secondaryColor: "secondary" },
 
   colors: {
     primary: [
-      "#fdf2f4",
-      "#f5d5da",
-      "#e8a8b2",
-      "#d97a89",
-      "#c94d61",
-      "#b32d44",
-      "#8b1a2f",
-      "#721527",
-      "#59101e",
-      "#400b16",
+      "#f2fee5",
+      "#e6f9d2",
+      "#cef0a8",
+      "#b4e87b",
+      "#99df4b",
+      "#90dc3b",
+      "#88da2c",
+      "#74c11d",
+      "#66ac14",
+      "#549403",
+    ],
+
+    secondary: [
+      "#ebfeff",
+      "#d7fafd",
+      "#aaf6fc",
+      "#7df2fb",
+      "#61effa",
+      "#55edfa",
+      "#4decfb",
+      "#40d2df",
+      "#2fbbc7",
+      "#002a2d",
     ],
   },
 

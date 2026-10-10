@@ -1,0 +1,1 @@
+export { MenuHintsPage } from './MenuHintsPage';

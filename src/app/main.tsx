@@ -9,16 +9,16 @@ import { Provider } from "react-redux";
 import { store } from "./providers/store/store";
 import { theme } from "./theme";
 import { Router } from "./providers/routes/Router";
-import { AuthGuard } from "./providers/guards/AuthGuard";
+
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <MantineProvider theme={theme}>
-        <AuthGuard>
-          <Notifications />
+
+        <Notifications />
           <Router />
-        </AuthGuard>
+
       </MantineProvider>
     </Provider>
   </React.StrictMode>,

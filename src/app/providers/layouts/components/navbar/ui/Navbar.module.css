@@ -1,0 +1,56 @@
+.navbar {
+  width: 280px;
+  min-width: 280px;
+  min-height: 100dvh;
+  padding: 28px 16px 18px;
+  color: var(--mantine-color-white);
+  background-color: var(--mantine-color-secondary-9);
+}
+.logo {
+  width: 200px;
+  height: auto;
+  margin: 0 auto 30px;
+}
+.navigation {
+  gap: 6px;
+  background: transparent;
+  border: 0;
+}
+.navigationLabel {
+  color: var(--mantine-color-secondary-1);
+  padding: 12px 14px;
+}
+.navigationLabel[data-active] {
+  color: var(--mantine-color-secondary-9);
+}
+.indicator {
+  background: var(--mantine-color-primary-5);
+  border-radius: var(--mantine-radius-md);
+  box-shadow: none;
+}
+.divider {
+  margin: 14px 0;
+  border-color: color-mix(in srgb, var(--mantine-color-white) 18%, transparent);
+}
+.profile {
+  padding: 0 8px;
+}
+.profileText {
+  min-width: 0;
+  flex: 1;
+}
+.actions :global(.mantine-Button-root) {
+  color: var(--mantine-color-secondary-1);
+}
+@media (max-width: 48em) {
+  .navbar {
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
+    padding: 16px;
+  }
+  .logo {
+    min-height: auto;
+    margin-bottom: 16px;
+  }
+}

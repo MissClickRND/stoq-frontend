@@ -1,11 +1,13 @@
 import { Outlet } from "react-router-dom";
-import Header from "./components/header/Header";
+import { Box, Flex } from "@mantine/core";
+import Navbar from "./components/navbar/ui/Navbar";
+
 
 export default function MainLayout() {
   return (
-    <>
-      <Header />
-      <Outlet />
-    </>
+    <Flex mih="100dvh" className="appLayout">
+      <Navbar />
+      <Box component="main" className="appContent"><Outlet /></Box>
+    </Flex>
   );
 }

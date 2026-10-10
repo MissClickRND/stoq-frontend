@@ -130,3 +130,6 @@ dist
 .pnp.*
 
 .DS_Store
+# Application logs page
+!src/pages/logs/
+!src/pages/logs/**
