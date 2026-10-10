@@ -1,0 +1,42 @@
+.scroll {
+  min-width: 0;
+  max-width: 100%;
+}
+.root {
+  width: max-content;
+  min-width: 100%;
+  background: var(--mantine-color-gray-0);
+  padding: 3px;
+}
+.indicator {
+  background: var(--mantine-color-primary-2);
+  box-shadow: none;
+}
+.control {
+  display: flex;
+  min-width: max-content;
+}
+.root .label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--mantine-color-gray-7);
+  font-size: 12px;
+  padding: 10px 8px;
+  white-space: nowrap;
+  line-height: 1.35;
+}
+.root .label[data-active] {
+  color: var(--mantine-color-secondary-9);
+  font-weight: 700;
+}
+.root .label:not([data-active]):hover {
+  color: var(--mantine-color-secondary-9);
+}
+@media (max-width: 30em) {
+  .root .label {
+    padding: 9px 4px;
+    font-size: 11px;
+  }
+}

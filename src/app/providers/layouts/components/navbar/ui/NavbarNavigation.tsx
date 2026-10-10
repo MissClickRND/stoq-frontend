@@ -7,11 +7,12 @@ import { navigationItems } from "../model/data";
 export function NavbarNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
-  const activePath = navigationItems.some(
-    (item) => item.path === location.pathname,
-  )
-    ? location.pathname
-    : navigationItems[0].path;
+  const activePath =
+    navigationItems.find(
+      (item) =>
+        item.path === location.pathname ||
+        location.pathname.startsWith(`${item.path}/`),
+    )?.path ?? navigationItems[0].path;
 
   return (
     <SegmentedControl<string>

@@ -30,6 +30,7 @@ export function DishesTopSection({
         />
       </ScrollArea>
       <Button
+        size="lg"
         className={classes.addButton}
         leftSection={<IconPlus size={17} />}
         onClick={onAdd}

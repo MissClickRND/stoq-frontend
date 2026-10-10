@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import { Error404 } from "@/pages/errors/Error404";
 import { LoginPage } from "@/pages/login";
+import { RegisterPage, RestaurantRegisterPage } from "@/pages/register";
 import { DashboardPage } from "@/pages/dashboard";
 import { SupplyPage } from "@/pages/supply";
 import {
@@ -18,6 +19,7 @@ import { OrdersPage } from "@/pages/orders";
 import { LogsPage } from "@/pages/logs";
 import { AdminPanelPage } from "@/pages/admin-panel";
 import MainLayout from "../layouts/MainLayout";
+import { AuthLayout } from "@/widgets/auth-layout";
 
 const router = createBrowserRouter([
   {
@@ -41,7 +43,18 @@ const router = createBrowserRouter([
       { path: "/admin-panel", element: <AdminPanelPage /> },
     ],
   },
-  { path: "/login", element: <LoginPage /> },
+  {
+    element: <AuthLayout />,
+    children: [
+      { path: "/login", element: <LoginPage /> },
+      {
+        path: "/register",
+        element: <Navigate to="/register/employee" replace />,
+      },
+      { path: "/register/employee", element: <RegisterPage /> },
+      { path: "/register/restaurant", element: <RestaurantRegisterPage /> },
+    ],
+  },
   { path: "*", element: <Error404 /> },
 ]);
 

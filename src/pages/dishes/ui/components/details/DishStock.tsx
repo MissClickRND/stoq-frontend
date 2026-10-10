@@ -27,7 +27,7 @@ export function DishStock({ dish }: { dish: Dish }) {
               ? "red"
               : portions < 5
                 ? "orange"
-                : "green";
+                : "var(--mantine-primary-color-5)";
           return (
             <Stack key={item.id} gap={4}>
               <Group justify="space-between">

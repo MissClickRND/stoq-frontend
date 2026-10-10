@@ -1,0 +1,19 @@
+:where([data-mantine-color-scheme="dark"]) .surface:not([data-auth-card]) {
+  background-color: var(--mantine-color-background);
+  border-color: var(--mantine-color-default-border);
+}
+
+:where([data-mantine-color-scheme="dark"]) .table {
+  --table-border-color: var(--mantine-color-default-border);
+  --table-hover-color: var(--mantine-color-default-hover);
+  --table-striped-color: var(--mantine-color-dark-8);
+}
+
+:where([data-mantine-color-scheme="dark"]) .input {
+  --input-bd: var(--mantine-color-default-border);
+  --input-bg: var(--mantine-color-dark-8);
+}
+
+:where([data-mantine-color-scheme="dark"]) .status {
+  color: var(--mantine-color-white);
+}

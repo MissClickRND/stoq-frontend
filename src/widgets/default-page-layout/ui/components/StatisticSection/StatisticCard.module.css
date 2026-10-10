@@ -2,8 +2,7 @@
   height: 100%;
   min-height: 104px;
   background-color: var(--mantine-color-background);
-  border: 1px solid
-    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-default-border));
   box-shadow: 0 4px 20px
     color-mix(in srgb, var(--mantine-color-black) 4%, transparent);
 }

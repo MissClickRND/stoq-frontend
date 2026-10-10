@@ -16,7 +16,7 @@ export function TableLayout<T>({
       <ScrollArea h="100%" type="auto" offsetScrollbars>
         <Table
           miw={minWidth}
-          horizontalSpacing="xl"
+          horizontalSpacing="md"
           stickyHeader
           stickyHeaderOffset={0}
           highlightOnHover
@@ -26,7 +26,11 @@ export function TableLayout<T>({
           <Table.Thead className={classes.header}>
             <Table.Tr>
               {columns.map((title) => (
-                <Table.Th key={title}><Text size="inherit" fw="inherit">{title}</Text></Table.Th>
+                <Table.Th key={title}>
+                  <Text size="inherit" fw="inherit">
+                    {title}
+                  </Text>
+                </Table.Th>
               ))}
             </Table.Tr>
           </Table.Thead>

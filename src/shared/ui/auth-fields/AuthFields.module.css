@@ -1,0 +1,46 @@
+.input {
+  background: var(--mantine-color-white);
+  color: var(--mantine-color-secondary-9);
+  border-color: var(--mantine-color-gray-3);
+}
+.input::placeholder {
+  color: var(--mantine-color-gray-6);
+}
+.innerInput {
+  color: var(--mantine-color-secondary-9);
+}
+.innerInput::placeholder {
+  color: var(--mantine-color-gray-6);
+}
+.section {
+  color: var(--mantine-color-secondary-9);
+}
+.submit {
+  background: var(--mantine-color-primary-5);
+  color: var(--mantine-color-secondary-9);
+  font-weight: 700;
+}
+.submit:hover {
+  background: var(--mantine-color-primary-6);
+  color: var(--mantine-color-secondary-9);
+}
+.footer {
+  color: var(--mantine-color-gray-6);
+}
+.link {
+  color: var(--mantine-color-secondary-9);
+  font-weight: 600;
+  text-decoration: underline;
+}
+.option {
+  color: var(--mantine-color-secondary-9);
+}
+.option[data-combobox-selected] {
+  background-color: var(--mantine-color-primary-1);
+  color: var(--mantine-color-secondary-9);
+}
+.option[data-combobox-active],
+.option:hover {
+  background-color: var(--mantine-color-gray-0);
+  color: var(--mantine-color-secondary-9);
+}
