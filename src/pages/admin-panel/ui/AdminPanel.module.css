@@ -1,0 +1,70 @@
+.tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--mantine-spacing-sm);
+  min-width: 0;
+  flex-shrink: 0;
+}
+.tabControl {
+  grid-column: 2;
+  min-width: 0;
+  max-width: 100%;
+  justify-self: center;
+}
+.tabLabel {
+  padding: 12px 24px;
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 600;
+}
+.addEmployee {
+  grid-column: 3;
+  justify-self: end;
+}
+.timelineBullet[data-active] {
+  color: var(--mantine-color-secondary-9);
+}
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.invitations,
+.employees {
+  flex: 1;
+  min-height: 0;
+}
+.formSection {
+  flex-shrink: 0;
+}
+.fieldset {
+  max-width: 1000px;
+  padding: var(--mantine-spacing-lg);
+  background: var(--mantine-color-background);
+}
+@media (max-width: 80em) {
+  .tabs {
+    grid-template-columns: 1fr;
+  }
+  .tabControl,
+  .addEmployee {
+    grid-column: 1;
+  }
+}
+@media (max-width: 48em) {
+  .tabLabel {
+    padding: 10px 16px;
+    font-size: var(--mantine-font-size-md);
+  }
+  .content {
+    flex: none;
+    overflow: visible;
+  }
+  .fieldset {
+    padding: var(--mantine-spacing-md);
+  }
+  .invitations,
+  .employees {
+    flex: none;
+  }
+}

@@ -9,12 +9,14 @@ import {
   IconPackage,
 } from "@tabler/icons-react";
 import type { Dish, DishIngredient, DishMode, DishPriority } from "./type";
+import type { TablerIcon } from "@tabler/icons-react";
 
-export const dishModes: { value: DishMode; label: string }[] = [
-  { value: "all", label: "Все блюда" },
-  { value: "stop", label: "Стоп-лист" },
-  { value: "recommended", label: "Горячие предложения" },
-];
+export const dishModes: { value: DishMode; label: string; icon: TablerIcon }[] =
+  [
+    { value: "all", label: "Все блюда", icon: IconSoup },
+    { value: "stop", label: "Стоп-лист", icon: IconPlayerPauseFilled },
+    { value: "recommended", label: "Горячие предложения", icon: IconCrown },
+  ];
 
 export const dishColumns = {
   all: ["Название и описание", "Цена", "Статус", "Ингредиентов", "Действия"],

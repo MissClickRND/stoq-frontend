@@ -1,4 +1,4 @@
-export type UserRole = "ADMIN" | "CUSTOMER" | "COOK" | "WAITER";
+export type UserRole = "OWNER" | "ADMIN" | "WAITER" | "STOREKEEPER";
 
 export interface Allergen {
   id: number;

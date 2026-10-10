@@ -8,16 +8,32 @@ export interface IStatisticCardData {
   color: string;
 }
 
-export interface IDefaultPageLayoutProps {
+type DefaultPageLayoutBaseProps = {
   title: string;
   subtitle: string;
 
-  searchTitle: string;
-  searchValue: string;
-  setSearchValue: (value: string) => void;
-
-  statisticData: IStatisticCardData[];
-
   children?: ReactNode;
   topSection?: ReactNode;
-}
+};
+
+type SearchProps =
+  | {
+      disableSearch?: boolean;
+      searchTitle: string;
+      searchValue: string;
+      setSearchValue: (value: string) => void;
+    }
+  | {
+      disableSearch: true;
+      searchTitle?: string;
+      searchValue?: string;
+      setSearchValue?: (value: string) => void;
+    };
+
+type StatisticsProps =
+  | { disableStatistics?: boolean; statisticData: IStatisticCardData[] }
+  | { disableStatistics: true; statisticData?: IStatisticCardData[] };
+
+export type IDefaultPageLayoutProps = DefaultPageLayoutBaseProps &
+  SearchProps &
+  StatisticsProps;

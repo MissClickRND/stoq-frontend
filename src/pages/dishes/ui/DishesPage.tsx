@@ -55,8 +55,8 @@ export function DishesPage() {
     <>
       <DefaultPageLayout
         title="Блюда"
-        subtitle="Управление меню, составами и себестоимостью блюд"
-        searchTitle="Поиск блюд, ингредиентов или причин"
+        subtitle="Управление меню, составами и стоимостью блюд"
+        searchTitle="Поиск блюд по названию или ингридиентам"
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         statisticData={statistics}

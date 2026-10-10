@@ -10,6 +10,11 @@ const restaurants = [...mockRestaurants];
 export const getMockRestaurants = () =>
   restaurants.map((restaurant) => ({ ...restaurant }));
 
+export function updateMockRestaurant(restaurant: MockRestaurant) {
+  const index = restaurants.findIndex((item) => item.id === restaurant.id);
+  if (index >= 0) restaurants[index] = { ...restaurant };
+}
+
 export async function submitMockLogin(request: LoginRequest) {
   console.info("[mock] Вход в аккаунт", { ...request, password: "[скрыто]" });
   return { email: request.email };

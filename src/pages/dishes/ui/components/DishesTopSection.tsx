@@ -1,4 +1,11 @@
-import { Box, Button, SegmentedControl, ScrollArea } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Group,
+  SegmentedControl,
+  ScrollArea,
+  Text,
+} from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { dishModes } from "../../model/data";
 import type { DishMode } from "../../model/type";
@@ -20,7 +27,17 @@ export function DishesTopSection({
           size="lg"
           value={mode}
           onChange={onModeChange}
-          data={dishModes}
+          data={dishModes.map((item) => ({
+            value: item.value,
+            label: (
+              <Group gap={8} wrap="nowrap" justify="center">
+                <item.icon size={20} aria-hidden />
+                <Text size="inherit" fw="inherit">
+                  {item.label}
+                </Text>
+              </Group>
+            ),
+          }))}
           withItemsBorders={false}
           classNames={{
             root: classes.control,
@@ -28,6 +45,7 @@ export function DishesTopSection({
             label: classes.label,
           }}
           color="primary"
+          autoContrast
         />
       </ScrollArea>
       <Button

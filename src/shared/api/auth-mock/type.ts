@@ -9,5 +9,6 @@ export type EmployeeRegistrationRequest = {
   name: string;
   email: string;
   restaurantId: string;
+  invitationId?: string;
 };
 export type MockRestaurant = { id: string; name: string; city: string };

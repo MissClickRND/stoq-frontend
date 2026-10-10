@@ -1,20 +1,12 @@
 import { Box, Group, Stack } from "@mantine/core";
 import TitleSection from "./components/TitleSection";
-import { IDefaultPageLayoutProps } from "./model/type";
+import type { IDefaultPageLayoutProps } from "./model/type";
 import SearchSection from "./components/SearchSection/SearchSection";
 import StatisticSection from "./components/StatisticSection/StatisticSection";
 import classes from "./DefaultPageLayout.module.css";
 
-export default function DefaultPageLayout({
-  title,
-  subtitle,
-  searchTitle,
-  searchValue,
-  setSearchValue,
-  statisticData,
-  children,
-  topSection,
-}: IDefaultPageLayoutProps) {
+export default function DefaultPageLayout(props: IDefaultPageLayoutProps) {
+  const { title, subtitle, children, topSection } = props;
   return (
     <Stack className={classes.page}>
       <Group
@@ -24,16 +16,20 @@ export default function DefaultPageLayout({
         gap="lg"
       >
         <TitleSection title={title} subtitle={subtitle} />
-        <SearchSection
-          searchTitle={searchTitle}
-          searchValue={searchValue}
-          setSearchValue={setSearchValue}
-        />
+        {!props.disableSearch && (
+          <SearchSection
+            searchTitle={props.searchTitle}
+            searchValue={props.searchValue}
+            setSearchValue={props.setSearchValue}
+          />
+        )}
       </Group>
       {topSection}
-      <Box style={{ flexShrink: 0 }}>
-        <StatisticSection statisticData={statisticData} />
-      </Box>
+      {!props.disableStatistics && (
+        <Box style={{ flexShrink: 0 }}>
+          <StatisticSection statisticData={props.statisticData} />
+        </Box>
+      )}
 
       {children}
     </Stack>

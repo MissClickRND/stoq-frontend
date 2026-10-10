@@ -6,7 +6,7 @@ const initialState: IUserState = {
   name: undefined,
   email: undefined,
   phone: undefined,
-  role: "CUSTOMER",
+  role: undefined,
   createdAt: undefined,
   updatedAt: undefined,
   userAllergens: [],
@@ -32,7 +32,7 @@ export const userSlice = createSlice({
       state.name = undefined;
       state.email = undefined;
       state.phone = undefined;
-      state.role = "CUSTOMER";
+      state.role = undefined;
       state.createdAt = undefined;
       state.updatedAt = undefined;
       state.userAllergens = [];

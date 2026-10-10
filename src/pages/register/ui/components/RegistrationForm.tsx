@@ -1,6 +1,7 @@
 import { Alert, Button, Select, Stack, Text, TextInput } from "@mantine/core";
 import { IconBuildingStore, IconMail, IconUser } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   getMockRestaurants,
   submitMockEmployeeRegistration,
@@ -16,7 +17,15 @@ export function RegistrationForm({
   onSubmit: (restaurant: MockRestaurant) => void;
 }) {
   const [restaurants] = useState(getMockRestaurants);
-  const [values, setValues] = useState(employeeInitialValues);
+  const [params] = useSearchParams();
+  const [values, setValues] = useState(() => ({
+    ...employeeInitialValues,
+    restaurantId: restaurants.some(
+      (restaurant) => restaurant.id === params.get("restaurantId"),
+    )
+      ? params.get("restaurantId")!
+      : "",
+  }));
   const [errors, setErrors] = useState<
     Partial<Record<keyof typeof values, string>>
   >({});
@@ -52,6 +61,7 @@ export function RegistrationForm({
         ...values,
         name: values.name.trim(),
         email: values.email.trim(),
+        invitationId: params.get("invitation") ?? undefined,
       });
       onSubmit(result.restaurant);
     } catch {

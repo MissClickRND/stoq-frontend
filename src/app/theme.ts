@@ -1,5 +1,6 @@
 import {
   Badge,
+  Button,
   Combobox,
   Input,
   Menu,
@@ -18,6 +19,7 @@ export const theme = createTheme({
   primaryColor: "primary",
   primaryShade: { light: 8, dark: 5 },
   defaultRadius: "lg",
+
   variantColorResolver: (input) => {
     const colors = defaultVariantColorsResolver(input);
     return input.variant === "filled" &&
