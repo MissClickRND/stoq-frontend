@@ -1,36 +1,8 @@
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconAlertTriangle, IconBox, IconClock } from "@tabler/icons-react";
 import { useState } from "react";
-
-const MockStatisticData = [
-  {
-    title: "Всего продуктов",
-    value: 120,
-    description: "На складе",
-    icon: <IconBox />,
-    color: "green",
-  },
-  {
-    title: "Заканчиваются",
-    value: 12,
-    description: "Требуется пополнение",
-    icon: <IconAlertTriangle />,
-    color: "orange",
-  },
-  {
-    title: "Скоро испортятся",
-    value: 8,
-    icon: <IconClock />,
-    color: "red",
-  },
-  {
-    title: "Скоро испортятся",
-    value: 8,
-    icon: <IconClock />,
-    color: "red",
-  },
-];
+import StoreTableSection from "./components/StoreTableSection";
+import { storeStatisticData } from "../model/data";
 
 export default function StorePage() {
   const [searchValue, setSearchValue] = useState("");
@@ -43,9 +15,9 @@ export default function StorePage() {
       searchTitle="Поиск продуктов по названию"
       searchValue={searchValue}
       setSearchValue={setSearchValue}
-      statisticData={MockStatisticData}
+      statisticData={storeStatisticData}
     >
-      <div>Содержимое страницы</div>
+      <StoreTableSection searchValue={debouncedSearchValue} />
     </DefaultPageLayout>
   );
 }

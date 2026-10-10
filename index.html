@@ -3,10 +3,16 @@
   <head>
     <script>
       try {
-        var colorScheme = localStorage.getItem('stoq-color-scheme') || 'light';
-        document.documentElement.setAttribute('data-mantine-color-scheme', colorScheme === 'dark' ? 'dark' : 'light');
+        var colorScheme = localStorage.getItem("stoq-color-scheme") || "light";
+        document.documentElement.setAttribute(
+          "data-mantine-color-scheme",
+          colorScheme === "dark" ? "dark" : "light",
+        );
       } catch (error) {
-        document.documentElement.setAttribute('data-mantine-color-scheme', 'light');
+        document.documentElement.setAttribute(
+          "data-mantine-color-scheme",
+          "light",
+        );
       }
     </script>
     <meta charset="UTF-8" />
@@ -16,7 +22,7 @@
       content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
     />
     <link href="/src/app/providers/styles/index.css" rel="stylesheet" />
-    <title>Lyaguh template</title>
+    <title>STOQ - умное управление рестораном</title>
   </head>
   <body>
     <div id="root"></div>

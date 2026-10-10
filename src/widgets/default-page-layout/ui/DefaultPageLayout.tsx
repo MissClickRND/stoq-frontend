@@ -1,4 +1,4 @@
-import { Group, Stack } from "@mantine/core";
+import { Box, Group, Stack } from "@mantine/core";
 import TitleSection from "./components/TitleSection";
 import { IDefaultPageLayoutProps } from "./model/type";
 import SearchSection from "./components/SearchSection/SearchSection";
@@ -14,8 +14,8 @@ export default function DefaultPageLayout({
   children,
 }: IDefaultPageLayoutProps) {
   return (
-    <Stack px="lg" py="xl" h="100svh">
-      <Group justify="space-between" align="center" gap="lg">
+    <Stack px="lg" py="xl" h="100%" style={{ minHeight: 0 }}>
+      <Group justify="space-between" align="center" gap="lg" style={{ flexShrink: 0 }}>
         <TitleSection title={title} subtitle={subtitle} />
         <SearchSection
           searchTitle={searchTitle}
@@ -23,7 +23,7 @@ export default function DefaultPageLayout({
           setSearchValue={setSearchValue}
         />
       </Group>
-      <StatisticSection statisticData={statisticData} />
+      <Box style={{ flexShrink: 0 }}><StatisticSection statisticData={statisticData} /></Box>
 
       {children}
     </Stack>

@@ -11,8 +11,6 @@ export default function SearchSection({
   setSearchValue: (value: string) => void;
 }) {
   return (
-    //  const [debounced] = useDebouncedValue(value, 200);
-
     <Input
       size="lg"
       variant="filled"
