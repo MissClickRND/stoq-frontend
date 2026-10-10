@@ -22,6 +22,11 @@
   padding: 12px 24px;
   font-size: var(--mantine-font-size-lg);
   font-weight: 600;
+  color: light-dark(black, white);
+}
+
+.label[data-active] {
+  color: light-dark(white, black);
 }
 .addButton {
   grid-column: 3;

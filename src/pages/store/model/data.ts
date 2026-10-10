@@ -1,7 +1,7 @@
 import { createElement } from "react";
 import {
   IconAlertTriangle,
-  IconBox,
+  IconPackage,
   IconClock,
   IconX,
 } from "@tabler/icons-react";
@@ -11,29 +11,29 @@ export const storeStatisticData = [
     title: "Всего продуктов",
     value: 120,
     description: "На складе",
-    icon: createElement(IconBox),
-    color: "green",
+    icon: createElement(IconPackage),
+    color: "#0d5e24",
   },
   {
     title: "Заканчиваются",
     value: 12,
     description: "Требуется пополнение",
     icon: createElement(IconAlertTriangle),
-    color: "yellow",
+    color: "#bcbf0d",
   },
   {
     title: "Скоро испортятся",
     value: 8,
     description: "Скоро истекут сроки годности",
     icon: createElement(IconClock),
-    color: "orange",
+    color: "#a15d10",
   },
   {
     title: "Испорченные",
     value: 8,
     description: "Требуется утилизация",
     icon: createElement(IconX),
-    color: "red",
+    color: "#730a17",
   },
 ];
 

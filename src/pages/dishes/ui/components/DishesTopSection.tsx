@@ -27,6 +27,7 @@ export function DishesTopSection({
             indicator: classes.indicator,
             label: classes.label,
           }}
+          color="primary"
         />
       </ScrollArea>
       <Button

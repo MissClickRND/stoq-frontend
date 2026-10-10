@@ -11,10 +11,15 @@ export function StatisticCard({
 }: IStatisticCardData) {
   return (
     <Paper className={classes.card} radius="lg" p={{ base: "xs", sm: "md" }}>
-      <Group className={classes.cardGroup} gap="md" wrap="nowrap" align="center">
+      <Group
+        className={classes.cardGroup}
+        gap="md"
+        wrap="nowrap"
+        align="center"
+      >
         <ThemeIcon
           className={classes.icon}
-          variant="light"
+          variant="filled"
           size={64}
           radius="xl"
           color={color}

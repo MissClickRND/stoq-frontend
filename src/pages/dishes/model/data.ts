@@ -1,7 +1,7 @@
 import {
   IconSoup,
   IconCheck,
-  IconPlayerPause,
+  IconPlayerPauseFilled,
   IconPackageOff,
   IconShoppingCart,
   IconChartBar,
@@ -42,28 +42,29 @@ export const dishStatisticItems = [
     title: "Всего блюд",
     description: "Находятся в меню",
     icon: IconSoup,
-    color: "primary",
+    color: "#0d5e24",
   },
   {
     key: "active",
     title: "Активные блюда",
     description: "Готовы к продаже",
     icon: IconCheck,
-    color: "green",
+    color: "#13a118",
   },
-  {
-    key: "stopped",
-    title: "В стоп-листе",
-    description: "Временно недоступны",
-    icon: IconPlayerPause,
-    color: "red",
-  },
+
   {
     key: "missing",
     title: "Не хватает ингредиентов",
     description: "Нуждаются в пополнении",
     icon: IconPackageOff,
-    color: "orange",
+    color: "#a15d10",
+  },
+  {
+    key: "stopped",
+    title: "В стоп-листе",
+    description: "Временно недоступны",
+    icon: IconPlayerPauseFilled,
+    color: "#730a17",
   },
 ] as const;
 
