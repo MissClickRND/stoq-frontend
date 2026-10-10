@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      try {
+        var colorScheme = localStorage.getItem('stoq-color-scheme') || 'light';
+        document.documentElement.setAttribute('data-mantine-color-scheme', colorScheme === 'dark' ? 'dark' : 'light');
+      } catch (error) {
+        document.documentElement.setAttribute('data-mantine-color-scheme', 'light');
+      }
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta

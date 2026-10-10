@@ -20,7 +20,7 @@ export function NavbarAccount({ user }: NavbarAccountProps) {
 
   return (
     <Group className={classes.profile} wrap="nowrap">
-      <Avatar color="primary.8" radius="xl" size={48}>
+      <Avatar variant="filled" color="primary" radius="xl" size={48}>
         {user.initials}
       </Avatar>
       <Box className={classes.profileText}>

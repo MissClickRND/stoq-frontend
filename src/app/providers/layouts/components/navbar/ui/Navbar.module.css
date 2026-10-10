@@ -16,11 +16,16 @@
   background: transparent;
   border: 0;
 }
-.navigationLabel {
-  color: var(--mantine-color-secondary-1);
+.navigation .navigationLabel {
+  color: var(--mantine-color-white);
   padding: 12px 14px;
+  transition: color 150ms ease, background-color 150ms ease;
 }
-.navigationLabel[data-active] {
+.navigation .navigationLabel:not([data-active], [data-disabled]):hover {
+  color: var(--mantine-color-gray-2);
+  background-color: color-mix(in srgb, var(--mantine-color-white) 8%, transparent);
+}
+.navigation .navigationLabel[data-active] {
   color: var(--mantine-color-secondary-9);
 }
 .indicator {
@@ -39,8 +44,14 @@
   min-width: 0;
   flex: 1;
 }
-.actions :global(.mantine-Button-root) {
-  color: var(--mantine-color-secondary-1);
+.actions .actionButton {
+  color: var(--mantine-color-white);
+  background-color: transparent;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+.actions .actionButton:not(:disabled, [data-disabled]):hover {
+  color: var(--mantine-color-gray-2);
+  background-color: color-mix(in srgb, var(--mantine-color-white) 8%, transparent);
 }
 @media (max-width: 48em) {
   .navbar {

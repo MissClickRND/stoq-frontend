@@ -1,15 +1,17 @@
 import {
   IconChartBar,
   IconChefHat,
+  IconMoon,
   IconFileText,
   IconLogout,
   IconPackage,
   IconSettings,
   IconShieldCog,
+  IconSun,
   IconShoppingCart,
   IconTruckDelivery,
 } from "@tabler/icons-react";
-import { NavbarAction, NavbarUser, NavigationItem } from "./type";
+import { ColorSchemeOption, NavbarAction, NavbarUser, NavigationItem } from "./type";
 
 export const navigationItems: NavigationItem[] = [
   { label: "Дашборд", path: "/dashboard", icon: IconChartBar },
@@ -28,8 +30,18 @@ export const navbarUser: NavbarUser | null = {
 };
 
 export const navbarActions: NavbarAction[] = [
-  { label: "Настройки", icon: IconSettings },
   { label: "Выйти", icon: IconLogout },
+];
+
+export const navbarSettings = {
+  label: "Настройки",
+  colorSchemeLabel: "Цветовая схема",
+  icon: IconSettings,
+};
+
+export const colorSchemeOptions: ColorSchemeOption[] = [
+  { label: "Светлая", value: "light", icon: IconSun },
+  { label: "Тёмная", value: "dark", icon: IconMoon },
 ];
 
 export const navbarLogo = {

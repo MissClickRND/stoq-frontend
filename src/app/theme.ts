@@ -1,10 +1,9 @@
-import { createTheme } from "@mantine/core";
+import { createTheme, type CSSVariablesResolver } from "@mantine/core";
 
 export const theme = createTheme({
   primaryColor: "primary",
   primaryShade: { light: 8, dark: 5 },
-  autoContrast: true,
-  other: { secondaryColor: "secondary" },
+  defaultRadius: "lg",
 
   colors: {
     primary: [
@@ -41,5 +40,19 @@ export const theme = createTheme({
     lg: "74em",
     xl: "90em",
     xxl: "120em",
+  },
+});
+
+export const cssVariablesResolver: CSSVariablesResolver = () => ({
+  variables: {},
+  light: {
+    "--mantine-color-body": "var(--mantine-color-white)",
+    "--mantine-color-text": "var(--mantine-color-black)",
+    "--mantine-color-background": "var(--mantine-color-white)",
+  },
+  dark: {
+    "--mantine-color-body": "#10171D",
+    "--mantine-color-text": "var(--mantine-color-white)",
+    "--mantine-color-background": "#161D23",
   },
 });

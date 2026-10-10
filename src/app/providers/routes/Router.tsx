@@ -8,7 +8,7 @@ import { LoginPage } from "@/pages/login";
 import { DashboardPage } from "@/pages/dashboard";
 import { SupplyPage } from "@/pages/supply";
 import { DishesPage } from "@/pages/dishes";
-import { ProductsPage } from "@/pages/products";
+import { ProductsPage } from "@/pages/store";
 import { MenuHintsPage } from "@/pages/menu-hints";
 import { OrdersPage } from "@/pages/orders";
 import { LogsPage } from "@/pages/logs";

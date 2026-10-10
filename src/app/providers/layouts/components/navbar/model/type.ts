@@ -1,4 +1,5 @@
 import type { TablerIcon } from "@tabler/icons-react";
+import type { MantineColorScheme } from "@mantine/core";
 export type NavbarUser = {
   initials: string;
   name: string;
@@ -13,5 +14,11 @@ export type NavigationItem = {
 
 export type NavbarAction = {
   label: string;
+  icon: TablerIcon;
+};
+
+export type ColorSchemeOption = {
+  label: string;
+  value: Extract<MantineColorScheme, "light" | "dark">;
   icon: TablerIcon;
 };

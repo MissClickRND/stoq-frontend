@@ -1,0 +1,43 @@
+.card {
+  height: 100%;
+  min-height: 104px;
+  background-color: var(--mantine-color-background);
+  border: 1px solid
+    light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  box-shadow: 0 4px 20px
+    color-mix(in srgb, var(--mantine-color-black) 4%, transparent);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.icon svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.8;
+}
+
+.content {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.value {
+  color: var(--mantine-color-text);
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.description {
+  line-height: 1.4;
+  margin-top: 3px;
+}

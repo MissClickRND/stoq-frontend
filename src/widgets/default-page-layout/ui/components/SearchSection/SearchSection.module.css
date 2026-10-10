@@ -1,0 +1,5 @@
+.input {
+  background-color: var(--mantine-color-background);
+  border: 1px solid
+    light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+}

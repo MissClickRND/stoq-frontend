@@ -4,6 +4,21 @@
   font-family: "Inter", sans-serif;
 }
 
-html, body, #root { min-width: 320px; min-height: 100%; margin: 0; }
-.appContent { min-width: 0; flex: 1; background: var(--mantine-color-gray-0); }
-@media (max-width: 48em) { .appLayout { flex-direction: column; } }
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+.appContent {
+  min-width: 0;
+  flex: 1;
+  background: var(--mantine-color-body);
+  color: var(--mantine-color-text);
+}
+@media (max-width: 48em) {
+  .appLayout {
+    flex-direction: column;
+  }
+}
