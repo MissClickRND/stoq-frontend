@@ -1,10 +1,11 @@
 import { createElement, useState } from "react";
+import { Button } from "@mantine/core";
+import { IconUserPlus } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { useAdminPanel } from "../model/useAdminPanel";
-import { adminStatistics, roleLabels } from "../model/data";
-import { AdminTabs } from "./components/AdminTabs";
+import { adminTabs, adminStatistics, roleLabels } from "../model/data";
 import { EstablishmentSection } from "./components/establishment/EstablishmentSection";
 import { EmployeesSection } from "./components/employees/EmployeesSection";
 import { InvitationsSection } from "./components/invitations/InvitationsSection";
@@ -49,13 +50,22 @@ export function AdminPanelPage() {
       setSearchValue={setSearchValue}
       disableStatistics={tab !== "employees"}
       statisticData={statisticData}
-      topSection={
-        <AdminTabs
-          tab={tab}
-          onChange={(value) => setParams({ tab: value })}
-          onAddEmployee={() => setParams({ tab: "invitations" })}
-        />
-      }
+      topSection={{
+        items: adminTabs,
+        value: tab,
+        onChange: (value) => setParams({ tab: value }),
+        ariaLabel: "Раздел админ-панели",
+        rightSection:
+          tab === "employees" ? (
+            <Button
+              size="lg"
+              leftSection={<IconUserPlus size={20} />}
+              onClick={() => setParams({ tab: "invitations" })}
+            >
+              Добавить сотрудника
+            </Button>
+          ) : undefined,
+      }}
     >
       {tab === "establishment" ? (
         <EstablishmentSection

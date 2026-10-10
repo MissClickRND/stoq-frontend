@@ -1,15 +1,16 @@
 import { createElement, useState } from "react";
+import { Button } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { useDishes } from "../model/DishesProvider";
-import { dishStatisticItems, priorityLabels } from "../model/data";
+import { dishModes, dishStatisticItems, priorityLabels } from "../model/data";
 import {
   dishIsStopped,
   matchesDish,
   missingIngredients,
 } from "../model/calculations";
-import { DishesTopSection } from "./components/DishesTopSection";
 import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
 import { Recomendtation } from "./components/Recomendtation/Recomendtation";
@@ -60,13 +61,21 @@ export function DishesPage() {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         statisticData={statistics}
-        topSection={
-          <DishesTopSection
-            mode={mode}
-            onModeChange={(value) => setParams({ mode: value })}
-            onAdd={() => setAdding(true)}
-          />
-        }
+        topSection={{
+          items: dishModes,
+          value: mode,
+          onChange: (value) => setParams({ mode: value }),
+          ariaLabel: "Режим отображения блюд",
+          rightSection: (
+            <Button
+              size="lg"
+              leftSection={<IconPlus size={17} />}
+              onClick={() => setAdding(true)}
+            >
+              Добавить блюдо
+            </Button>
+          ),
+        }}
       >
         {mode === "all" ? (
           <AllDishes dishes={matching} />

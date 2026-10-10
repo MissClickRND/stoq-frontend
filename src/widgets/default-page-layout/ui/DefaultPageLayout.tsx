@@ -4,8 +4,11 @@ import type { IDefaultPageLayoutProps } from "./model/type";
 import SearchSection from "./components/SearchSection/SearchSection";
 import StatisticSection from "./components/StatisticSection/StatisticSection";
 import classes from "./DefaultPageLayout.module.css";
+import { TopSection } from "./components/TopSection/TopSection";
 
-export default function DefaultPageLayout(props: IDefaultPageLayoutProps) {
+export default function DefaultPageLayout<T extends string = string>(
+  props: IDefaultPageLayoutProps<T>,
+) {
   const { title, subtitle, children, topSection } = props;
   return (
     <Stack className={classes.page}>
@@ -24,7 +27,7 @@ export default function DefaultPageLayout(props: IDefaultPageLayoutProps) {
           />
         )}
       </Group>
-      {topSection}
+      {topSection && <TopSection {...topSection} />}
       {!props.disableStatistics && (
         <Box style={{ flexShrink: 0 }}>
           <StatisticSection statisticData={props.statisticData} />

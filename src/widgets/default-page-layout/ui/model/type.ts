@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import type { TopSectionProps } from "../components/TopSection/type";
 
 export interface IStatisticCardData {
   title: string;
@@ -8,12 +9,12 @@ export interface IStatisticCardData {
   color: string;
 }
 
-type DefaultPageLayoutBaseProps = {
+type DefaultPageLayoutBaseProps<T extends string> = {
   title: string;
   subtitle: string;
 
   children?: ReactNode;
-  topSection?: ReactNode;
+  topSection?: TopSectionProps<T>;
 };
 
 type SearchProps =
@@ -34,6 +35,5 @@ type StatisticsProps =
   | { disableStatistics?: boolean; statisticData: IStatisticCardData[] }
   | { disableStatistics: true; statisticData?: IStatisticCardData[] };
 
-export type IDefaultPageLayoutProps = DefaultPageLayoutBaseProps &
-  SearchProps &
-  StatisticsProps;
+export type IDefaultPageLayoutProps<T extends string = string> =
+  DefaultPageLayoutBaseProps<T> & SearchProps & StatisticsProps;

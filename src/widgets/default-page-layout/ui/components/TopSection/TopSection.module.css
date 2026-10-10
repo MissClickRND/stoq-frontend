@@ -3,9 +3,10 @@
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: var(--mantine-spacing-sm);
+  min-width: 0;
   flex-shrink: 0;
 }
-.modes {
+.navigation {
   grid-column: 2;
   min-width: 0;
   max-width: 100%;
@@ -22,13 +23,12 @@
   padding: 12px 24px;
   font-size: var(--mantine-font-size-lg);
   font-weight: 600;
-  color: light-dark(black, white);
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
 }
-
 .label[data-active] {
-  color: light-dark(white, black);
+  color: light-dark(var(--mantine-color-white), var(--mantine-color-black));
 }
-.addButton {
+.rightSection {
   grid-column: 3;
   justify-self: end;
 }
@@ -36,8 +36,8 @@
   .section {
     grid-template-columns: 1fr;
   }
-  .modes,
-  .addButton {
+  .navigation,
+  .rightSection {
     grid-column: 1;
   }
 }
