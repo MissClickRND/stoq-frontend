@@ -3,6 +3,7 @@ import TitleSection from "./components/TitleSection";
 import { IDefaultPageLayoutProps } from "./model/type";
 import SearchSection from "./components/SearchSection/SearchSection";
 import StatisticSection from "./components/StatisticSection/StatisticSection";
+import classes from "./DefaultPageLayout.module.css";
 
 export default function DefaultPageLayout({
   title,
@@ -14,8 +15,13 @@ export default function DefaultPageLayout({
   children,
 }: IDefaultPageLayoutProps) {
   return (
-    <Stack px="lg" py="xl" h="100%" style={{ minHeight: 0 }}>
-      <Group justify="space-between" align="center" gap="lg" style={{ flexShrink: 0 }}>
+    <Stack className={classes.page}>
+      <Group
+        className={classes.header}
+        justify="space-between"
+        align="center"
+        gap="lg"
+      >
         <TitleSection title={title} subtitle={subtitle} />
         <SearchSection
           searchTitle={searchTitle}
@@ -23,7 +29,9 @@ export default function DefaultPageLayout({
           setSearchValue={setSearchValue}
         />
       </Group>
-      <Box style={{ flexShrink: 0 }}><StatisticSection statisticData={statisticData} /></Box>
+      <Box style={{ flexShrink: 0 }}>
+        <StatisticSection statisticData={statisticData} />
+      </Box>
 
       {children}
     </Stack>

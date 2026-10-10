@@ -10,10 +10,12 @@ import { navbarUser } from "../model/data";
 export default function Navbar() {
   return (
     <Box component="aside" className={classes.navbar}>
-      <Stack h="100%" gap={0}>
-        <NavbarBrand />
-        <NavbarNavigation />
-        <Box mt="auto">
+      <Stack className={classes.content} gap={0} justify="space-between">
+        <Box style={{ flexShrink: 0 }}>
+          <NavbarBrand />
+          <NavbarNavigation />
+        </Box>
+        <Box mt="auto" style={{ flexShrink: 0 }}>
           <Divider className={classes.divider} />
           <NavbarAccount user={navbarUser} />
           <Divider className={classes.divider} />

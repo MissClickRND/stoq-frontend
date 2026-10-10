@@ -1,10 +1,16 @@
 .navbar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: 280px;
   min-width: 280px;
   min-height: 100dvh;
   padding: 28px 16px 18px;
   color: var(--mantine-color-white);
   background-color: var(--mantine-color-secondary-9);
+}
+.content {
+  flex: 1;
 }
 .logo {
   width: 200px;
@@ -57,7 +63,9 @@
   .navbar {
     width: 100%;
     min-width: 0;
-    min-height: auto;
+    height: auto;
+    min-height: min-content;
+    flex: 1;
     padding: 16px;
   }
   .logo {

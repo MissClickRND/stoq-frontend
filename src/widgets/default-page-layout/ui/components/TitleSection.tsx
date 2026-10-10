@@ -1,4 +1,5 @@
-import { Stack, Text } from "@mantine/core";
+import { Stack, Text, Title } from "@mantine/core";
+import classes from "./TitleSection.module.css";
 
 export default function TitleSection({
   title,
@@ -9,10 +10,10 @@ export default function TitleSection({
 }) {
   return (
     <Stack gap={4}>
-      <Text c="var(--mantine-color-text)" fz={64} fw={700} lh="0.9">
+      <Title order={1} className={classes.title}>
         {title}
-      </Text>
-      <Text color="dimmed" fz="h4">
+      </Title>
+      <Text c="dimmed" className={classes.subtitle}>
         {subtitle}
       </Text>
     </Stack>

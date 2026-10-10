@@ -41,3 +41,17 @@
   line-height: 1.4;
   margin-top: 3px;
 }
+
+@media (max-width: 48em) {
+  .cardGroup { gap: var(--mantine-spacing-xs); }
+  .icon { width: 36px; height: 36px; min-width: 36px; min-height: 36px; }
+  .icon svg { width: 22px; height: 22px; }
+  .value { font-size: 24px; }
+  .title { font-size: 11px; }
+  .description { font-size: 10px; overflow-wrap: anywhere; }
+}
+
+@media (max-width: 25em) {
+  .cardGroup { flex-direction: column; align-items: flex-start; }
+  .content { width: 100%; }
+}

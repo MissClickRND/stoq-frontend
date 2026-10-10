@@ -10,8 +10,8 @@ export function StatisticCard({
   color,
 }: IStatisticCardData) {
   return (
-    <Paper className={classes.card} radius="lg" p="md">
-      <Group gap="md" wrap="nowrap" align="center">
+    <Paper className={classes.card} radius="lg" p={{ base: "xs", sm: "md" }}>
+      <Group className={classes.cardGroup} gap="md" wrap="nowrap" align="center">
         <ThemeIcon
           className={classes.icon}
           variant="light"

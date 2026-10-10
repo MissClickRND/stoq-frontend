@@ -15,6 +15,7 @@ export default function SearchSection({
       size="lg"
       variant="filled"
       placeholder={searchTitle}
+      aria-label={searchTitle}
       leftSection={<IconSearch />}
       flex={1}
       maw={1000}
@@ -24,7 +25,7 @@ export default function SearchSection({
       rightSection={
         searchValue ? (
           <Input.ClearButton
-            aria-label="Clear input"
+            aria-label="Очистить поиск"
             onClick={() => setSearchValue("")}
           />
         ) : null

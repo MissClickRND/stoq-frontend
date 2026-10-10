@@ -10,7 +10,12 @@ export function NavbarSettings() {
   return (
     <Menu position="right-end" shadow="md" width={190} withinPortal>
       <Menu.Target>
-        <Button className={classes.actionButton} variant="subtle" justify="start" leftSection={<navbarSettings.icon size={20} />}>
+        <Button
+          className={classes.actionButton}
+          variant="subtle"
+          justify="start"
+          leftSection={<navbarSettings.icon size={20} />}
+        >
           {navbarSettings.label}
         </Button>
       </Menu.Target>
@@ -20,7 +25,9 @@ export function NavbarSettings() {
           <Menu.Item
             key={option.value}
             leftSection={<option.icon size={17} />}
-            rightSection={colorScheme === option.value ? <IconCheck size={16} /> : null}
+            rightSection={
+              colorScheme === option.value ? <IconCheck size={16} /> : null
+            }
             onClick={() => setColorScheme(option.value)}
           >
             {option.label}
