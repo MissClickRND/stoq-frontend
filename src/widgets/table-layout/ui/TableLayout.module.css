@@ -7,13 +7,13 @@
 
 .table th {
   white-space: nowrap;
-  font-size: var(--mantine-font-size-xs);
+  font-size: var(--mantine-font-size-sm);
   color: var(--mantine-color-dimmed);
   font-weight: 600;
 }
 
 .table td {
-  font-size: var(--mantine-font-size-sm);
+  font-size: var(--mantine-font-size-md);
 }
 
 .header {

@@ -7,7 +7,11 @@ import { Error404 } from "@/pages/errors/Error404";
 import { LoginPage } from "@/pages/login";
 import { DashboardPage } from "@/pages/dashboard";
 import { SupplyPage } from "@/pages/supply";
-import { DishesPage } from "@/pages/dishes";
+import {
+  DishesPage,
+  DishDetailsPage,
+  DishesRoutesLayout,
+} from "@/pages/dishes";
 import { ProductsPage } from "@/pages/store";
 import { MenuHintsPage } from "@/pages/menu-hints";
 import { OrdersPage } from "@/pages/orders";
@@ -22,7 +26,14 @@ const router = createBrowserRouter([
       { path: "/", element: <Navigate to="/dashboard" replace /> },
       { path: "/dashboard", element: <DashboardPage /> },
       { path: "/supply", element: <SupplyPage /> },
-      { path: "/dishes", element: <DishesPage /> },
+      {
+        path: "/dishes",
+        element: <DishesRoutesLayout />,
+        children: [
+          { index: true, element: <DishesPage /> },
+          { path: ":dishId", element: <DishDetailsPage /> },
+        ],
+      },
       { path: "/store", element: <ProductsPage /> },
       { path: "/menu-hints", element: <MenuHintsPage /> },
       { path: "/orders", element: <OrdersPage /> },

@@ -19,4 +19,5 @@ export interface IDefaultPageLayoutProps {
   statisticData: IStatisticCardData[];
 
   children?: ReactNode;
+  topSection?: ReactNode;
 }

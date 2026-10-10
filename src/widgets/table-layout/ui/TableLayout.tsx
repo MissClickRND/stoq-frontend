@@ -26,7 +26,7 @@ export function TableLayout<T>({
           <Table.Thead className={classes.header}>
             <Table.Tr>
               {columns.map((title) => (
-                <Table.Th key={title}>{title}</Table.Th>
+                <Table.Th key={title}><Text size="inherit" fw="inherit">{title}</Text></Table.Th>
               ))}
             </Table.Tr>
           </Table.Thead>

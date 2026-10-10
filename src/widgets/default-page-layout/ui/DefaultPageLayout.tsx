@@ -13,6 +13,7 @@ export default function DefaultPageLayout({
   setSearchValue,
   statisticData,
   children,
+  topSection,
 }: IDefaultPageLayoutProps) {
   return (
     <Stack className={classes.page}>
@@ -29,6 +30,7 @@ export default function DefaultPageLayout({
           setSearchValue={setSearchValue}
         />
       </Group>
+      {topSection}
       <Box style={{ flexShrink: 0 }}>
         <StatisticSection statisticData={statisticData} />
       </Box>
