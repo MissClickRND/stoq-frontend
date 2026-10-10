@@ -5,10 +5,6 @@
   background: var(--mantine-color-body);
 }
 
-.table {
-  min-width: 1080px;
-}
-
 .table th {
   white-space: nowrap;
   font-size: var(--mantine-font-size-xs);

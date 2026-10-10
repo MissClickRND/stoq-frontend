@@ -1,5 +1,5 @@
-import { Paper, ScrollArea, Table, Text } from "@mantine/core";
 import { useState } from "react";
+import TableLayout from "@/widgets/table-layout";
 import { ConfirmationModal } from "@/shared/ui/confirmation-modal";
 import {
   initialStoreProducts,
@@ -9,7 +9,6 @@ import {
 import type { StoreProduct } from "../../model/type";
 import { StoreTableRow } from "./StoreTableRow";
 import { StoreProductModal } from "./StoreProductModal";
-import classes from "./StoreTableSection.module.css";
 
 export default function StoreTableSection({
   searchValue = "",
@@ -44,45 +43,20 @@ export default function StoreTableSection({
 
   return (
     <>
-      <Paper className={classes.section} withBorder radius="lg">
-        <ScrollArea h="100%" type="auto" offsetScrollbars>
-          <Table
-            horizontalSpacing="xl"
-            stickyHeader
-            stickyHeaderOffset={0}
-            highlightOnHover
-            verticalSpacing="md"
-            className={classes.table}
-          >
-            <Table.Thead className={classes.header}>
-              <Table.Tr>
-                {tableColumns.map((title) => (
-                  <Table.Th key={title}>{title}</Table.Th>
-                ))}
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {filteredProducts.map((product) => (
-                <StoreTableRow
-                  key={product.id}
-                  product={product}
-                  onDetails={setSelectedProduct}
-                  onWriteOff={setWriteOffProduct}
-                />
-              ))}
-              {filteredProducts.length === 0 && (
-                <Table.Tr>
-                  <Table.Td colSpan={tableColumns.length}>
-                    <Text ta="center" c="dimmed" py="xl">
-                      Продукты не найдены
-                    </Text>
-                  </Table.Td>
-                </Table.Tr>
-              )}
-            </Table.Tbody>
-          </Table>
-        </ScrollArea>
-      </Paper>
+      <TableLayout
+        columns={tableColumns}
+        data={filteredProducts}
+        getRowKey={(product) => product.id}
+        minWidth={1080}
+        emptyText="Продукты не найдены"
+        renderRow={(product) => (
+          <StoreTableRow
+            product={product}
+            onDetails={setSelectedProduct}
+            onWriteOff={setWriteOffProduct}
+          />
+        )}
+      />
       <StoreProductModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
