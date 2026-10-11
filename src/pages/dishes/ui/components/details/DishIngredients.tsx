@@ -1,6 +1,5 @@
 import { Badge, Paper, ScrollArea, Table, Text, Title } from "@mantine/core";
-import type { Dish } from "../../../model/type";
-import { formatMoney, isIngredientExpired } from "../../../model/calculations";
+import { type Dish, formatMoney, isIngredientExpired } from "@/entities/dish";
 
 export function DishIngredients({ dish }: { dish: Dish }) {
   return (

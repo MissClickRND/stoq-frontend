@@ -1,13 +1,14 @@
 import { Group, Table, Text } from "@mantine/core";
 import { IconClock, IconPackageOff } from "@tabler/icons-react";
-import type { Dish } from "../../../model/type";
 import {
+  type Dish,
   missingIngredients,
   isIngredientExpired,
   unavailableReason,
-} from "../../../model/calculations";
-import { DishIdentity } from "../common/DishIdentity";
-import { DishStatus } from "../common/DishStatus";
+  DishIdentity,
+  DishStatus,
+} from "@/entities/dish";
+
 import { DishDetailsButton } from "../common/DishDetailsButton";
 
 export function StopListRow({ dish }: { dish: Dish }) {

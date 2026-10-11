@@ -1,23 +1,19 @@
 import { Button, Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import dayjs from "dayjs";
-import type { RootState } from "@/app/providers/store/store";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
-import { useInventory } from "../../model/InventoryProvider";
+import { useInventory, InventorySteps } from "@/features/inventory";
 import { getInventoryConfirmationStatistics } from "../../model/inventory-statistics";
-import { inventoryChange } from "../../model/inventory";
-import { InventorySteps } from "./InventorySteps";
-import { InventoryChangesTable } from "./InventoryChangesTable";
-import classes from "./Inventory.module.css";
+import { inventoryChange, InventoryChangesTable } from "@/entities/inventory";
+
+import classes from "../../classes/Inventory.module.css";
 
 export function InventoryConfirmationPage() {
-  const { entries, ready, date, report, save } = useInventory();
+  const { entries, ready, date, save } = useInventory();
   const name = useSelector((state: RootState) => state.user.name);
-  const navigate = useNavigate();
-  if (report) return <Navigate to="/store/inventory/report" replace />;
   if (!ready || !date) return <Navigate to="/store/inventory" replace />;
   const sorted = [...entries].sort(
     (a, b) =>
@@ -51,7 +47,7 @@ export function InventoryConfirmationPage() {
         leftSection={<IconCheck size={20} />}
         onClick={() => {
           save(name || "Пользователь");
-          navigate("/store/inventory/report", { replace: true });
+          //! Открыть итоговый отчёт по ID, полученному после сохранения на сервере.
         }}
       >
         Сохранить

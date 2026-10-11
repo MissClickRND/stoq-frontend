@@ -1,0 +1,9 @@
+.employees {
+  flex: 1;
+  min-height: 0;
+}
+@media (max-width: 48em) {
+  .employees {
+    flex: none;
+  }
+}

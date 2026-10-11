@@ -1,0 +1,10 @@
+.actions {
+  margin-left: auto;
+}
+
+@media (max-width: 48em) {
+  .actions {
+    width: 100%;
+    margin-left: 0;
+  }
+}

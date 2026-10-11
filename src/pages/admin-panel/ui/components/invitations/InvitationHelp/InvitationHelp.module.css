@@ -1,0 +1,3 @@
+.timelineBullet[data-active] {
+  color: var(--mantine-color-secondary-9);
+}

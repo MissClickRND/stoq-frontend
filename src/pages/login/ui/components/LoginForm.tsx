@@ -1,5 +1,4 @@
 import {
-  Alert,
   Button,
   Divider,
   PasswordInput,
@@ -9,17 +8,13 @@ import {
 } from "@mantine/core";
 import { IconLock, IconMail } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
 import { isValidEmail, isValidPassword } from "@/shared/lib/auth-validation";
-import { loginCopy, loginInitialValues } from "../../model/data";
-import { submitMockLogin } from "@/shared/api/auth-mock";
-import classes from "@/shared/ui/auth-fields/AuthFields.module.css";
+import { loginCopy, loginInitialValues } from "../../model/config";
+import { submitLogin } from "@/entities/auth";
+import classes from "@/shared/ui/auth-fields/classes/AuthFields.module.css";
 
 export function LoginForm() {
-  const navigate = useNavigate();
   const [values, setValues] = useState(loginInitialValues);
-  const [submitting, setSubmitting] = useState(false);
-  const [requestError, setRequestError] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {},
   );
@@ -27,9 +22,8 @@ export function LoginForm() {
     setValues((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
-  const submit = async (event: FormEvent) => {
+  const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (submitting) return;
     const nextErrors = {
       email: isValidEmail(values.email) ? undefined : loginCopy.emailError,
       password: isValidPassword(values.password)
@@ -38,25 +32,16 @@ export function LoginForm() {
     };
     setErrors(nextErrors);
     if (nextErrors.email || nextErrors.password) return;
-    setSubmitting(true);
-    setRequestError(null);
-    try {
-      await submitMockLogin({
-        email: values.email.trim(),
-        password: values.password,
-      });
-      navigate("/dashboard", { replace: true });
-    } catch {
-      setRequestError(loginCopy.requestError);
-    } finally {
-      setSubmitting(false);
-    }
+    submitLogin({
+      email: values.email.trim(),
+      password: values.password,
+    });
+    //! Обработать ошибки и показать результат только после ответа сервера.
   };
 
   return (
     <form onSubmit={submit} noValidate>
       <Stack gap="md">
-        {requestError && <Alert color="red">{requestError}</Alert>}
         <TextInput
           size="lg"
           placeholder={loginCopy.email}
@@ -96,7 +81,6 @@ export function LoginForm() {
           size="lg"
           fullWidth
           mt="sm"
-          loading={submitting}
         >
           {loginCopy.submit}
         </Button>

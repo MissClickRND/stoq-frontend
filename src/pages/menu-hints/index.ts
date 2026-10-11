@@ -1,1 +1,1 @@
-export { MenuHintsPage } from './MenuHintsPage';
+export { MenuHintsPage } from "./MenuHintsPage";

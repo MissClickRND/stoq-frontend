@@ -10,8 +10,8 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import type { StoreProduct } from "../../model/type";
-import { formatPrice } from "../../model/format";
+import { type StoreProduct, formatPrice } from "@/entities/stock";
+
 import { StoreProductStatus } from "./StoreProductStatus";
 import { IconExternalLink } from "@tabler/icons-react";
 
@@ -30,7 +30,7 @@ export function StoreProductModal({
 
   const handleNavigateToSupply = (supplyId: string) => {
     onClose();
-    navigate(`/store/supplies/${supplyId}`);
+    navigate(`/supply/${encodeURIComponent(supplyId)}`);
   };
   return (
     <Modal

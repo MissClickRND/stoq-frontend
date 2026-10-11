@@ -11,13 +11,13 @@ import {
 } from "@mantine/core";
 import { IconCheck, IconLock, IconLockOpen } from "@tabler/icons-react";
 import type { UserRole } from "@/entities/user";
-import type { Employee } from "../../../model/type";
+import type { Employee } from "@/entities/employee";
 import {
   employeeStatusLabels,
   roleLabels,
   roleOptions,
-} from "../../../model/data";
-import { formatDate, initials } from "../../../model/helpers";
+} from "../../../model/config";
+import { formatDate, initials } from "@/shared/lib/format";
 
 type Props = {
   employee: Employee;

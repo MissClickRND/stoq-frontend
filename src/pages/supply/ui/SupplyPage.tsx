@@ -10,12 +10,16 @@ import {
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
-import TableLayout from "@/widgets/table-layout";
+import TableLayout from "@/shared/ui/table-layout";
 import dayjs from "dayjs";
-import { getMonthStatistics, supplyTotal } from "../model/calculations";
-import { supplyColumns } from "../model/data";
-import { formatMoney } from "../model/format";
-import { useSupplies } from "../model/SuppliesProvider";
+import {
+  getMonthStatistics,
+  supplyTotal,
+  formatMoney,
+  useSupplies,
+} from "@/entities/supply";
+import { supplyColumns } from "../model/config";
+
 import { TableSummary } from "@/shared/ui/table-summary";
 
 export function SupplyPage() {

@@ -1,0 +1,9 @@
+.date {
+  width: 260px;
+}
+
+@media (max-width: 48em) {
+  .date {
+    width: 100%;
+  }
+}

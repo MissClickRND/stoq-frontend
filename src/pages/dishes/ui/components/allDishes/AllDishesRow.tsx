@@ -1,9 +1,12 @@
 import { Group, Table, Text } from "@mantine/core";
 import { IconPackage } from "@tabler/icons-react";
-import type { Dish } from "../../../model/type";
-import { formatMoney } from "../../../model/calculations";
-import { DishIdentity } from "../common/DishIdentity";
-import { DishStatus } from "../common/DishStatus";
+import {
+  type Dish,
+  formatMoney,
+  DishIdentity,
+  DishStatus,
+} from "@/entities/dish";
+
 import { DishDetailsButton } from "../common/DishDetailsButton";
 
 export function AllDishesRow({ dish }: { dish: Dish }) {

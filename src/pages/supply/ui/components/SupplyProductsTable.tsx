@@ -1,7 +1,6 @@
 import { Table, Text } from "@mantine/core";
-import TableLayout from "@/widgets/table-layout";
-import { formatMoney, formatDateTime } from "../../model/format";
-import { SupplyItem } from "../../model/type";
+import TableLayout from "@/shared/ui/table-layout";
+import { formatMoney, formatDateTime, SupplyItem } from "@/entities/supply";
 
 const columns = [
   "Артикул",

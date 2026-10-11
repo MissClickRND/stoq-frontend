@@ -11,33 +11,21 @@ import {
   SupplyPage,
   CreateSupplyPage,
   SupplyDetailsPage,
-  SuppliesRoutesLayout,
 } from "@/pages/supply";
-import {
-  DishesPage,
-  DishDetailsPage,
-  DishesRoutesLayout,
-} from "@/pages/dishes";
+import { DishesPage, DishDetailsPage } from "@/pages/dishes";
 import {
   ProductsPage,
-  StoreRoutesLayout,
-  InventoryRoutesLayout,
   InventoryCheckPage,
   InventoryConfirmationPage,
   InventoryReportPage,
 } from "@/pages/store";
 import { MenuHintsPage } from "@/pages/menu-hints";
-import {
-  OrdersPage,
-  CreateOrderPage,
-  OrdersRoutesLayout,
-} from "@/pages/orders";
+import { OrdersPage, CreateOrderPage } from "@/pages/orders";
 import { LogsPage } from "@/pages/logs";
 import { AdminPanelPage } from "@/pages/admin-panel";
 import MainLayout from "../layouts/MainLayout";
 import { AuthLayout } from "@/widgets/auth-layout";
 import {
-  GuestRoutesLayout,
   GuestMenuPage,
   GuestDishPage,
   GuestCartPage,
@@ -62,7 +50,6 @@ const router = createBrowserRouter([
       { path: "/dashboard", element: <DashboardPage /> },
       {
         path: "/supply",
-        element: <SuppliesRoutesLayout />,
         children: [
           { index: true, element: <SupplyPage /> },
           { path: "new", element: <CreateSupplyPage /> },
@@ -71,7 +58,6 @@ const router = createBrowserRouter([
       },
       {
         path: "/dishes",
-        element: <DishesRoutesLayout />,
         children: [
           { index: true, element: <DishesPage /> },
           { path: ":dishId", element: <DishDetailsPage /> },
@@ -79,12 +65,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/store",
-        element: <StoreRoutesLayout />,
         children: [
           { index: true, element: <ProductsPage /> },
           {
             path: "inventory",
-            element: <InventoryRoutesLayout />,
             children: [
               { index: true, element: <InventoryCheckPage /> },
               { path: "confirm", element: <InventoryConfirmationPage /> },
@@ -96,7 +80,6 @@ const router = createBrowserRouter([
       { path: "/menu-hints", element: <MenuHintsPage /> },
       {
         path: "/orders",
-        element: <OrdersRoutesLayout />,
         children: [
           { index: true, element: <OrdersPage /> },
           { path: "new", element: <CreateOrderPage /> },
@@ -124,3 +107,5 @@ const router = createBrowserRouter([
 export function Router() {
   return <RouterProvider router={router} />;
 }
+
+import { GuestRoutesLayout } from "@/widgets/guest-layout";

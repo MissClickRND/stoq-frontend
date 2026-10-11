@@ -1,0 +1,7 @@
+.profile {
+  padding: 0 8px;
+}
+.profileText {
+  min-width: 0;
+  flex: 1;
+}

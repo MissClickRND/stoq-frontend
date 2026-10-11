@@ -1,0 +1,15 @@
+.actions .actionButton {
+  color: var(--mantine-color-white);
+  background-color: transparent;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+.actions .actionButton:not(:disabled, [data-disabled]):hover {
+  color: var(--mantine-color-gray-2);
+  background-color: color-mix(
+    in srgb,
+    var(--mantine-color-white) 8%,
+    transparent
+  );
+}

@@ -1,6 +1,6 @@
 import { Badge } from "@mantine/core";
-import type { DishPriority } from "../../../model/type";
-import { priorityLabels } from "../../../model/data";
+import type { DishPriority } from "@/entities/dish";
+import { priorityLabels } from "../../../model/config";
 
 export function RecommendationPriority({
   priority,

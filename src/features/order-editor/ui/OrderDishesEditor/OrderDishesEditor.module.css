@@ -1,0 +1,81 @@
+.dishSection {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--mantine-spacing-md);
+}
+.fixed {
+  flex-shrink: 0;
+}
+.dishScroll {
+  flex: 1;
+  min-height: 0;
+}
+.dishViewport {
+  height: 100%;
+}
+.dishList {
+  min-width: 920px;
+}
+.dishColumns,
+.dishRow {
+  display: grid;
+  grid-template-columns: minmax(270px, 1fr) 150px 180px 190px 40px;
+  gap: var(--mantine-spacing-md);
+  align-items: center;
+  padding: 12px;
+}
+.dishRow {
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-8)
+  );
+}
+.empty {
+  flex: 1;
+  min-height: 160px;
+}
+.quantityLabel {
+  display: none;
+}
+@media (max-width: 48em) {
+  .dishSection {
+    flex: none;
+  }
+  .dishScroll {
+    flex: none;
+  }
+  .dishViewport {
+    height: auto;
+  }
+  .dishList {
+    min-width: 0;
+  }
+  .dishColumns {
+    display: none;
+  }
+  .dishRow {
+    grid-template-columns: minmax(0, 1fr) 40px;
+  }
+  .dishRow > :first-child {
+    grid-column: 1 / -1;
+  }
+  .dishRow > :nth-child(2),
+  .dishRow > :nth-child(3),
+  .dishRow > :nth-child(4) {
+    grid-column: 1 / -1;
+  }
+  .quantityLabel {
+    display: block;
+  }
+  .dishRow > :last-child {
+    grid-column: 2;
+    justify-self: end;
+  }
+  .empty {
+    flex: none;
+  }
+}

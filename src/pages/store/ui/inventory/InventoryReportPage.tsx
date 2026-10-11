@@ -1,20 +1,22 @@
 import { Alert, Group } from "@mantine/core";
 import { IconCircleCheck } from "@tabler/icons-react";
-import { Navigate } from "react-router-dom";
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
-import { useInventory } from "../../model/InventoryProvider";
+import {
+  useInventoryReport,
+  inventoryChange,
+  InventoryChangesTable,
+} from "@/entities/inventory";
 import { getInventoryReportStatistics } from "../../model/inventory-statistics";
-import { inventoryChange } from "../../model/inventory";
-import { InventorySteps } from "./InventorySteps";
-import { InventoryChangesTable } from "./InventoryChangesTable";
-import { InventoryReportButton } from "./InventoryReportButton";
-import classes from "./Inventory.module.css";
+
+import { InventorySteps } from "@/features/inventory";
+
+import { InventoryReportButton } from "@/features/export-report";
+import classes from "../../classes/Inventory.module.css";
 
 export function InventoryReportPage() {
-  const { report } = useInventory();
-  if (!report) return <Navigate to="/store/inventory" replace />;
+  const { report } = useInventoryReport();
   const sorted = [...report.entries].sort(
     (a, b) =>
       Number(inventoryChange(a) === "unchanged") -

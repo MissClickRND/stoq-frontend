@@ -1,8 +1,8 @@
 import { createElement } from "react";
 import { StatisticSection } from "@/widgets/default-page-layout";
-import type { Dish } from "../../../model/type";
-import { dishIsStopped, dishPortions } from "../../../model/calculations";
-import { detailStatisticItems } from "../../../model/data";
+import { type Dish, dishIsStopped, dishPortions } from "@/entities/dish";
+
+import { detailStatisticItems } from "../../../model/config";
 
 export function DishDetailsStatistics({
   dish,

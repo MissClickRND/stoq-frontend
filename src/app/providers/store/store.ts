@@ -1,3 +1,4 @@
+import { inventoryDraftReducer } from "@/features/inventory";
 import { configureStore } from "@reduxjs/toolkit";
 import { listenerMiddleware, registerListeners } from "./listenersMiddleware";
 import { userReducer } from "@/entities/user";
@@ -7,6 +8,7 @@ export const store = configureStore({
   //? Подключение слайсов
   reducer: {
     user: userReducer,
+    inventoryDraft: inventoryDraftReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
 

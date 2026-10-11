@@ -1,2 +1,2 @@
-export { AuthLayout } from "./ui/AuthLayout";
-export { AuthContent } from "./ui/AuthContent";
+export { AuthLayout } from "./ui/AuthLayout/AuthLayout";
+export { AuthContent } from "./ui/AuthContent/AuthContent";

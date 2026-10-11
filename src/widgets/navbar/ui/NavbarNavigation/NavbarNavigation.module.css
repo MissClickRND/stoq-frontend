@@ -1,0 +1,28 @@
+.navigation {
+  gap: 6px;
+  background: transparent;
+  border: 0;
+}
+.navigation .navigationLabel {
+  color: var(--mantine-color-white);
+  padding: 12px 14px;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+.navigation .navigationLabel:not([data-active], [data-disabled]):hover {
+  color: var(--mantine-color-gray-2);
+  background-color: color-mix(
+    in srgb,
+    var(--mantine-color-white) 8%,
+    transparent
+  );
+}
+.navigation .navigationLabel[data-active] {
+  color: var(--mantine-color-secondary-9);
+}
+.indicator {
+  background: var(--mantine-color-primary-5);
+  border-radius: var(--mantine-radius-md);
+  box-shadow: none;
+}

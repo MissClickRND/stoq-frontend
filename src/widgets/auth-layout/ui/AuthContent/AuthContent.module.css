@@ -1,0 +1,9 @@
+.title {
+  color: var(--mantine-color-secondary-9);
+  font-size: clamp(24px, 3vw, 30px);
+  line-height: 1.2;
+}
+.description {
+  color: var(--mantine-color-gray-6);
+  font-size: var(--mantine-font-size-md);
+}

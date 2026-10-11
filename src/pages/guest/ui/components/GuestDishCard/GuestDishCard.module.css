@@ -1,0 +1,29 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: var(--mantine-color-background);
+  border: 1px solid var(--mantine-color-default-border);
+  box-shadow: 0 5px 20px light-dark(rgb(0 42 45 / 4%), rgb(0 0 0 / 12%));
+}
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  padding: 12px 4px 4px;
+}
+.cardActions {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+.cardName {
+  min-height: 56px;
+}
+@media (max-width: 48em) {
+  .cardName {
+    min-height: 0;
+  }
+}

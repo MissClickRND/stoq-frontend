@@ -7,8 +7,11 @@ import {
   IconCheck,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import { inventoryCounts } from "./inventory";
-import type { InventoryEntry, InventoryReport } from "./inventory-type";
+import {
+  inventoryCounts,
+  type InventoryEntry,
+  type InventoryReport,
+} from "@/entities/inventory";
 
 export function getInventoryConfirmationStatistics(entries: InventoryEntry[]) {
   const counts = inventoryCounts(entries);

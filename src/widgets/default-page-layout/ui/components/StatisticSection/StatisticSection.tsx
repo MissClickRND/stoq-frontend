@@ -1,6 +1,6 @@
 import { SimpleGrid } from "@mantine/core";
-import type { IStatisticCardData } from "../../model/type";
-import { StatisticCard } from "./StatisticCard";
+import type { IStatisticCardData } from "../../../model/type";
+import { StatisticCard } from "./StatisticCard/StatisticCard";
 
 export default function StatisticSection({
   statisticData,

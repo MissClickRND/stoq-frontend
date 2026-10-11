@@ -14,24 +14,27 @@ import {
   initialInvitationForm,
   invitationDurationOptions,
   invitationRoleOptions,
-} from "../../../model/data";
-import { invitationStatus, invitationUrl } from "../../../model/helpers";
-import type { Invitation, InvitationRole } from "../../../model/type";
+} from "../../../model/config";
+import {
+  invitationStatus,
+  invitationUrl,
+  type Invitation,
+  type InvitationRole,
+} from "@/entities/invitation";
+
 import { CopyInvitationButton } from "./CopyInvitationButton";
 
 type Props = {
   restaurantId: string;
   latest: Invitation | null;
   now: number;
-  onCreate: (role: InvitationRole, hours: number) => Invitation | null;
-  onCreated: (id: string) => void;
+  onCreate: (role: InvitationRole, hours: number) => void;
 };
 export function InvitationCreator({
   restaurantId,
   latest,
   now,
   onCreate,
-  onCreated,
 }: Props) {
   const [values, setValues] = useState<{ role: InvitationRole; hours: string }>(
     initialInvitationForm,
@@ -39,8 +42,8 @@ export function InvitationCreator({
   const url = latest ? invitationUrl(latest.id, restaurantId) : "";
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    const invitation = onCreate(values.role, Number(values.hours));
-    if (invitation) onCreated(invitation.id);
+    onCreate(values.role, Number(values.hours));
+    //! Показать созданную ссылку после успешного ответа сервера.
   };
   return (
     <Paper withBorder p="md">

@@ -12,7 +12,7 @@ import {
   defaultVariantColorsResolver,
   type CSSVariablesResolver,
 } from "@mantine/core";
-import classes from "./providers/styles/Theme.module.css";
+import classes from "@/app/classes/Theme.module.css";
 
 export const theme = createTheme({
   primaryColor: "primary",

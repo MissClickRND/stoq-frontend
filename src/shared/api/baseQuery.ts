@@ -4,10 +4,10 @@ import type {
   FetchArgs,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
-import { userLogout } from "@/entities/user/model/userSlice";
+import { sessionExpired } from "@/shared/lib/session-events";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3000",
+  baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
   credentials: "include",
 });
 
@@ -21,12 +21,12 @@ export const baseQueryWithReauth: BaseQueryFn<
   if (result.error && result.error.status === 401) {
     // если это refresh → не пытаемся обновлять токен
     if (typeof args === "string" && args.includes("/auth/refresh")) {
-      api.dispatch(userLogout());
+      api.dispatch(sessionExpired());
       return result;
     }
 
     if (typeof args !== "string" && args.url.includes("/auth/refresh")) {
-      api.dispatch(userLogout());
+      api.dispatch(sessionExpired());
       return result;
     }
 
@@ -44,7 +44,7 @@ export const baseQueryWithReauth: BaseQueryFn<
       // повторяем исходный запрос
       result = await baseQuery(args, api, extraOptions);
     } else {
-      api.dispatch(userLogout());
+      api.dispatch(sessionExpired());
     }
   }
 

@@ -1,6 +1,5 @@
 import { Badge } from "@mantine/core";
-import { orderStatuses } from "../../model/data";
-import type { OrderStatus } from "../../model/type";
+import { orderStatuses, type OrderStatus } from "@/entities/order";
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
   const item = orderStatuses[status];

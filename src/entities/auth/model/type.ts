@@ -1,4 +1,4 @@
-import { UserRole } from "@/entities/user/model/type";
+import type { UserRole } from "../../user/@x/auth.ts";
 
 export interface IRegisterRequest {
   email: string;

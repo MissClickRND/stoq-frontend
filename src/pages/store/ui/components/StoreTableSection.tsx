@@ -1,12 +1,14 @@
 import { useState } from "react";
-import TableLayout from "@/widgets/table-layout";
+import TableLayout from "@/shared/ui/table-layout";
 import { ConfirmationModal } from "@/shared/ui/confirmation-modal";
 import { tableColumns, writeOffText } from "../../model/table-data";
-import type { StoreProduct } from "../../model/type";
+import {
+  type StoreProduct,
+  useStoreProducts,
+  matchesStoreProduct,
+} from "@/entities/stock";
 import { StoreTableRow } from "./StoreTableRow";
 import { StoreProductModal } from "./StoreProductModal";
-import { useStoreProducts } from "../../model/StoreProvider";
-import { matchesStoreProduct } from "../../model/search";
 
 export default function StoreTableSection({
   searchValue = "",
@@ -27,10 +29,7 @@ export default function StoreTableSection({
   const confirmWriteOff = () => {
     if (!writeOffProduct) return;
     removeProduct(writeOffProduct.id);
-    setSelectedProduct((current) =>
-      current?.id === writeOffProduct.id ? null : current,
-    );
-    setWriteOffProduct(null);
+    //! Закрыть подтверждение и обновить остатки после ответа сервера.
   };
 
   return (

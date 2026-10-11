@@ -5,9 +5,10 @@ import {
   IUsersListQuery,
   IUsersListResponse,
   IUserState,
-} from "../model/type";
+} from "../model/type.ts";
 
 export const userApi = baseApi.injectEndpoints({
+  //! Здесь определяются реальные запросы; подключать экранные адаптеры после согласования контрактов.
   endpoints: (build) => ({
     getProfile: build.query<IUserState, void>({
       query: () => "/users/profile",

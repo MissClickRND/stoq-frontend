@@ -1,0 +1,36 @@
+.header {
+  display: none;
+}
+.drawerContent {
+  display: flex;
+  flex-direction: column;
+  background: var(--mantine-color-secondary-9);
+  color: var(--mantine-color-white);
+}
+.drawerHeader {
+  background: var(--mantine-color-secondary-9);
+  color: var(--mantine-color-white);
+}
+.drawerBody {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  overflow-y: auto;
+}
+.close {
+  color: var(--mantine-color-white);
+}
+.close:hover {
+  background: color-mix(in srgb, var(--mantine-color-white) 10%, transparent);
+}
+
+@media (max-width: 48em) {
+  .header {
+    display: flex;
+    flex-shrink: 0;
+    padding: 12px 16px;
+    background: var(--mantine-color-secondary-9);
+  }
+}

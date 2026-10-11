@@ -5,10 +5,10 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { useAdminPanel } from "../model/useAdminPanel";
-import { adminTabs, adminStatistics, roleLabels } from "../model/data";
-import { EstablishmentSection } from "./components/establishment/EstablishmentSection";
-import { EmployeesSection } from "./components/employees/EmployeesSection";
-import { InvitationsSection } from "./components/invitations/InvitationsSection";
+import { adminTabs, adminStatistics, roleLabels } from "../model/config";
+import { EstablishmentSection } from "./components/establishment/EstablishmentSection/EstablishmentSection";
+import { EmployeesSection } from "./components/employees/EmployeesSection/EmployeesSection";
+import { InvitationsSection } from "./components/invitations/InvitationsSection/InvitationsSection";
 
 export function AdminPanelPage() {
   const admin = useAdminPanel();

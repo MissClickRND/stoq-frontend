@@ -1,0 +1,12 @@
+.invitations {
+  flex: 1;
+  min-height: 0;
+}
+.formSection {
+  flex-shrink: 0;
+}
+@media (max-width: 48em) {
+  .invitations {
+    flex: none;
+  }
+}

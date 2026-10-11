@@ -1,0 +1,19 @@
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.fieldset {
+  max-width: 1000px;
+  padding: var(--mantine-spacing-lg);
+  background: var(--mantine-color-background);
+}
+@media (max-width: 48em) {
+  .content {
+    flex: none;
+    overflow: visible;
+  }
+  .fieldset {
+    padding: var(--mantine-spacing-md);
+  }
+}

@@ -1,6 +1,5 @@
 import { Box, Paper, SimpleGrid, Text, Title } from "@mantine/core";
-import type { Dish } from "../../../model/type";
-import { dishCost, dishProfit, formatMoney } from "../../../model/calculations";
+import { type Dish, dishCost, dishProfit, formatMoney } from "@/entities/dish";
 
 export function DishFinancialSummary({ dish }: { dish: Dish }) {
   const sold = dish.sales.reduce((sum, sale) => sum + sale.quantity, 0);

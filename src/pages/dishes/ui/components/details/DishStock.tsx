@@ -7,11 +7,11 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import type { Dish } from "../../../model/type";
 import {
+  type Dish,
   ingredientPortions,
   isIngredientExpired,
-} from "../../../model/calculations";
+} from "@/entities/dish";
 
 export function DishStock({ dish }: { dish: Dish }) {
   return (

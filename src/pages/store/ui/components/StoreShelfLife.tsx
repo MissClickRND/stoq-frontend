@@ -1,6 +1,9 @@
 import { Stack, Text } from "@mantine/core";
-import { formatShelfLifeDays, getShelfLifeDays } from "../../model/shelf-life";
-import { soonExpiredDays } from "../../model/table-data";
+import {
+  formatShelfLifeDays,
+  getShelfLifeDays,
+  soonExpiredDays,
+} from "@/entities/stock";
 
 export function StoreShelfLife({ shelfLife }: { shelfLife: string }) {
   const days = getShelfLifeDays(shelfLife);

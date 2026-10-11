@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Box, Flex } from "@mantine/core";
-import Navbar from "./components/navbar/ui/Navbar";
-import { MobileNavigation } from "./components/MobileNavigation";
+import { Navbar, MobileNavigation } from "@/widgets/navbar";
 
 export default function MainLayout() {
   return (

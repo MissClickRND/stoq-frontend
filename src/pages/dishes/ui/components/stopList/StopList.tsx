@@ -1,6 +1,6 @@
-import TableLayout from "@/widgets/table-layout";
-import type { Dish } from "../../../model/type";
-import { dishColumns } from "../../../model/data";
+import TableLayout from "@/shared/ui/table-layout";
+import type { Dish } from "@/entities/dish";
+import { dishColumns } from "../../../model/config";
 import { StopListRow } from "./StopListRow";
 
 export function StopList({ dishes }: { dishes: Dish[] }) {

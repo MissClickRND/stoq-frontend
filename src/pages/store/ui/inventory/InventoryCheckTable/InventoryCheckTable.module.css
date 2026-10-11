@@ -1,0 +1,6 @@
+.deleted {
+  background: light-dark(
+    var(--mantine-color-red-0),
+    var(--mantine-color-dark-8)
+  );
+}

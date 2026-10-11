@@ -8,13 +8,14 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconBan, IconTrash } from "@tabler/icons-react";
-import { invitationStatusLabels, roleLabels } from "../../../model/data";
+import { invitationStatusLabels, roleLabels } from "../../../model/config";
+import { formatDate } from "@/shared/lib/format";
 import {
-  formatDate,
   invitationStatus,
   invitationUrl,
-} from "../../../model/helpers";
-import type { Invitation } from "../../../model/type";
+  type Invitation,
+} from "@/entities/invitation";
+
 import { CopyInvitationButton } from "./CopyInvitationButton";
 
 type Props = {

@@ -8,10 +8,12 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test:supply": "node --test src/pages/supply/model/calculations.test.mjs src/pages/supply/model/report.test.mjs",
-    "test:inventory": "node --test src/pages/store/model/inventory.test.mjs",
-    "test:orders": "node --test src/pages/orders/model/calculations.test.mjs",
-    "test:guest": "node --test src/pages/guest/model/guest-order.test.mjs"
+    "test:supply": "node --test src/entities/supply/lib/calculations.test.mjs src/entities/supply/lib/report.test.mjs",
+    "test:inventory": "node --test src/entities/inventory/lib/inventory.test.mjs",
+    "test:orders": "node --test src/entities/order/lib/calculations.test.mjs",
+    "test:guest": "node --test src/entities/order/lib/guest-order.test.mjs",
+    "test:architecture": "node --test scripts/architecture.test.mjs scripts/backend-boundaries.test.mjs",
+    "test": "node --test scripts/*.test.mjs src/entities/*/lib/*.test.mjs"
   },
   "dependencies": {
     "@gfazioli/mantine-qr-code": "^2.0.13",

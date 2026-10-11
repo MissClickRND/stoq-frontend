@@ -2,13 +2,12 @@ import { Fragment, useState } from "react";
 import { Button, Table, Text } from "@mantine/core";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import TableLayout from "@/widgets/table-layout";
-import { orderColumns } from "../../model/data";
-import { orderTotal } from "../../model/calculations";
-import { formatOrderMoney } from "../../model/format";
-import type { Order } from "../../model/type";
+import TableLayout from "@/shared/ui/table-layout";
+import { orderColumns } from "../../model/config";
+import { orderTotal, formatOrderMoney, type Order } from "@/entities/order";
+
 import { OrderStatusBadge } from "./OrderStatusBadge";
-import { OrderExpandedDetails } from "./OrderExpandedDetails";
+import { OrderExpandedDetails } from "./OrderExpandedDetails/OrderExpandedDetails";
 
 export function OrdersTable({
   orders,

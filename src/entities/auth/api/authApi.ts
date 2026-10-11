@@ -3,10 +3,11 @@ import {
   ILoginRequest,
   IRegisterRequest,
   IStatusResponse,
-} from "../model/type";
-import { IUserState } from "@/entities/user";
+} from "../model/type.ts";
+import { IUserState } from "../../user/@x/auth.ts";
 
 export const authApi = baseApi.injectEndpoints({
+  //! Здесь определяются реальные запросы; подключать экранные адаптеры после согласования контрактов.
   endpoints: (build) => ({
     register: build.mutation<IUserState, IRegisterRequest>({
       query: (data) => ({

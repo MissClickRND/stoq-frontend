@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Button,
-  PasswordInput,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Button, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import {
   IconBuildingStore,
   IconLock,
@@ -13,33 +6,25 @@ import {
   IconMapPin,
 } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
-import { submitMockRestaurantRegistration } from "@/shared/api/auth-mock";
-import type { MockRestaurant } from "@/shared/api/auth-mock/type";
+import { submitRestaurantRegistration } from "@/entities/auth";
 import { isValidEmail, isValidPassword } from "@/shared/lib/auth-validation";
 import {
   restaurantInitialValues,
   restaurantRegistrationCopy as copy,
-} from "../../model/data";
-import classes from "@/shared/ui/auth-fields/AuthFields.module.css";
+} from "../../model/config";
+import classes from "@/shared/ui/auth-fields/classes/AuthFields.module.css";
 
-export function RestaurantRegistrationForm({
-  onSubmit,
-}: {
-  onSubmit: (restaurant: MockRestaurant) => void;
-}) {
+export function RestaurantRegistrationForm() {
   const [values, setValues] = useState(restaurantInitialValues);
   const [errors, setErrors] = useState<
     Partial<Record<keyof typeof values, string>>
   >({});
-  const [submitting, setSubmitting] = useState(false);
-  const [requestError, setRequestError] = useState<string | null>(null);
   const updateValue = (field: keyof typeof values, value: string) => {
     setValues((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
-  const submit = async (event: FormEvent) => {
+  const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (submitting) return;
     const nextErrors = {
       name: values.name.trim() ? undefined : copy.nameError,
       city: values.city.trim() ? undefined : copy.cityError,
@@ -50,26 +35,17 @@ export function RestaurantRegistrationForm({
     };
     setErrors(nextErrors);
     if (Object.values(nextErrors).some(Boolean)) return;
-    setSubmitting(true);
-    setRequestError(null);
-    try {
-      const result = await submitMockRestaurantRegistration({
-        ...values,
-        name: values.name.trim(),
-        city: values.city.trim(),
-        email: values.email.trim(),
-      });
-      onSubmit(result.restaurant);
-    } catch {
-      setRequestError(copy.requestError);
-    } finally {
-      setSubmitting(false);
-    }
+    submitRestaurantRegistration({
+      ...values,
+      name: values.name.trim(),
+      city: values.city.trim(),
+      email: values.email.trim(),
+    });
+    //! Обработать ошибки и показать результат только после ответа сервера.
   };
   return (
     <form onSubmit={submit} noValidate>
       <Stack gap="md">
-        {requestError && <Alert color="red">{requestError}</Alert>}
         <TextInput
           size="lg"
           placeholder={copy.name}
@@ -131,7 +107,6 @@ export function RestaurantRegistrationForm({
           size="lg"
           fullWidth
           mt="sm"
-          loading={submitting}
         >
           {copy.submit}
         </Button>

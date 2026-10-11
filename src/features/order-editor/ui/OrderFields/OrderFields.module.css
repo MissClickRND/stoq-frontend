@@ -1,0 +1,19 @@
+.metadata {
+  display: grid;
+  grid-template-columns:
+    minmax(270px, 1.8fr) minmax(180px, 1fr) minmax(160px, 1fr)
+    minmax(160px, 0.8fr);
+  gap: var(--mantine-spacing-md);
+  flex-shrink: 0;
+}
+
+@media (max-width: 74em) {
+  .metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 48em) {
+  .metadata {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

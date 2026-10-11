@@ -1,0 +1,43 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-background);
+}
+.headerInner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+}
+.brand {
+  color: var(--mantine-color-text);
+  text-decoration: none;
+}
+.brandText {
+  font-size: 30px;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+}
+.restaurant {
+  min-width: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--mantine-color-default-border);
+}
+@media (max-width: 48em) {
+  .headerInner {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  .brandText {
+    display: none;
+  }
+  .restaurant {
+    padding-left: 0;
+    border: none;
+  }
+}

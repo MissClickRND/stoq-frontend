@@ -8,8 +8,8 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconExternalLink, IconTrash } from "@tabler/icons-react";
-import type { StoreProduct } from "../../model/type";
-import { formatPrice } from "../../model/format";
+import { type StoreProduct, formatPrice } from "@/entities/stock";
+
 import { StoreProductStatus } from "./StoreProductStatus";
 import { StoreShelfLife } from "./StoreShelfLife";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ export function StoreTableRow({
 }: StoreTableRowProps) {
   const navigate = useNavigate();
   const handleNavigateToSupply = (supplyId: string) => {
-    navigate(`/store/supplies/${supplyId}`);
+    navigate(`/supply/${encodeURIComponent(supplyId)}`);
   };
 
   return (

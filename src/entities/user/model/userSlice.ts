@@ -1,5 +1,6 @@
+import { sessionExpired } from "@/shared/lib/session-events";
 import { createSlice } from "@reduxjs/toolkit";
-import { IUserState } from "./type";
+import { IUserState } from "./type.ts";
 
 const initialState: IUserState = {
   id: undefined,
@@ -14,6 +15,9 @@ const initialState: IUserState = {
 
 export const userSlice = createSlice({
   name: "user",
+  extraReducers: (builder) => {
+    builder.addCase(sessionExpired, () => initialState);
+  },
   initialState,
   reducers: {
     setUser: (state, action) => {

@@ -1,12 +1,13 @@
 import { Table, Text } from "@mantine/core";
-import type { Dish } from "../../../model/type";
 import {
+  type Dish,
   dishMarkup,
   dishProfit,
   formatMoney,
-} from "../../../model/calculations";
-import { DishIdentity } from "../common/DishIdentity";
-import { DishStatus } from "../common/DishStatus";
+  DishIdentity,
+  DishStatus,
+} from "@/entities/dish";
+
 import { DishDetailsButton } from "../common/DishDetailsButton";
 import { RecommendationPriority } from "./RecommendationPriority";
 

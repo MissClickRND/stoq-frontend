@@ -12,15 +12,29 @@ type ConfirmationModalProps = {
   loading?: boolean;
 };
 
-export function ConfirmationModal({ opened, title, message, warning, confirmText, cancelText, onConfirm, onClose, loading }: ConfirmationModalProps) {
+export function ConfirmationModal({
+  opened,
+  title,
+  message,
+  warning,
+  confirmText,
+  cancelText,
+  onConfirm,
+  onClose,
+  loading,
+}: ConfirmationModalProps) {
   return (
     <Modal opened={opened} onClose={onClose} title={title} centered>
       <Stack gap="lg">
         <Text>{message}</Text>
         {warning && <Alert color="orange">{warning}</Alert>}
         <Group justify="flex-end">
-          <Button variant="default" onClick={onClose} disabled={loading}>{cancelText}</Button>
-          <Button color="red" onClick={onConfirm} loading={loading}>{confirmText}</Button>
+          <Button variant="default" onClick={onClose} disabled={loading}>
+            {cancelText}
+          </Button>
+          <Button color="red" onClick={onConfirm} loading={loading}>
+            {confirmText}
+          </Button>
         </Group>
       </Stack>
     </Modal>

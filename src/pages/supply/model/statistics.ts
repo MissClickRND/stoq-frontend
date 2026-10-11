@@ -6,10 +6,8 @@ import {
   IconPackage,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
-import type { IStatisticCardData } from "@/widgets/default-page-layout/ui/model/type";
-import { supplyTotal } from "./calculations";
-import { formatMoney } from "./format";
-import type { Supply } from "./type";
+import type { IStatisticCardData } from "@/widgets/default-page-layout";
+import { supplyTotal, formatMoney, type Supply } from "@/entities/supply";
 
 export function getSupplyStatistics(supply: Supply): IStatisticCardData[] {
   return [

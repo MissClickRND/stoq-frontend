@@ -2,16 +2,17 @@ import DefaultPageLayout from "@/widgets/default-page-layout";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useState } from "react";
 import StoreTableSection from "./components/StoreTableSection";
-import { storeStatisticData } from "../model/data";
+import { storeStatisticData } from "../model/config";
 import { Button } from "@mantine/core";
 import { TableSummary } from "@/shared/ui/table-summary";
-import { matchesStoreProduct } from "../model/search";
+import { matchesStoreProduct, useStoreProducts } from "@/entities/stock";
 import { IconClipboardCheck } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import { useStoreProducts } from "../model/StoreProvider";
+import { useStartInventory } from "@/features/inventory";
 
 export default function StorePage() {
   const { products } = useStoreProducts();
+  const startInventory = useStartInventory();
   const counts = [
     products.length,
     products.filter((product) => product.status === "end").length,
@@ -44,6 +45,7 @@ export default function StorePage() {
           <Button
             component={Link}
             to="/store/inventory"
+            onClick={startInventory}
             size="lg"
             leftSection={<IconClipboardCheck size={20} />}
           >

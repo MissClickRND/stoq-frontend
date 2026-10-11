@@ -1,0 +1,12 @@
+.fixed {
+  flex-shrink: 0;
+}
+.footer {
+  flex-shrink: 0;
+}
+
+@media (max-width: 48em) {
+  .footer button {
+    width: 100%;
+  }
+}

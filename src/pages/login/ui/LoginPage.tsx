@@ -1,5 +1,5 @@
 import { AuthContent } from "@/widgets/auth-layout";
-import { loginCopy } from "../model/data";
+import { loginCopy } from "../model/config";
 import { LoginForm } from "./components/LoginForm";
 
 export function LoginPage() {

@@ -1,0 +1,9 @@
+.fixed {
+  flex-shrink: 0;
+}
+
+@media (max-width: 48em) {
+  .stepBody {
+    display: none;
+  }
+}

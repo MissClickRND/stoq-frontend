@@ -1,14 +1,3 @@
-import { StoreTableMockData } from "./data";
-
-export const soonExpiredDays = 7;
-
-export const initialStoreProducts = StoreTableMockData.map(
-  (product, index) => ({
-    ...product,
-    id: `stock-${index + 1}`,
-  }),
-);
-
 export const tableColumns = [
   "ID поставки",
   "Продукт / артикул",

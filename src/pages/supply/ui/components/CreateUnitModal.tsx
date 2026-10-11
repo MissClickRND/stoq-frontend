@@ -36,8 +36,7 @@ export function CreateUnitModal({
           )
             return setError("Такая единица измерения уже существует");
           onCreate(trimmed);
-          setName("");
-          setError(null);
+          //! Сбросить форму и закрыть модальное окно после успешного создания на сервере.
         }}
       >
         <Stack>

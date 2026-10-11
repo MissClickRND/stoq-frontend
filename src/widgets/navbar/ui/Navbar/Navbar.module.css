@@ -1,0 +1,28 @@
+.navbar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 280px;
+  min-width: 280px;
+  min-height: 100dvh;
+  padding: 28px 16px 18px;
+  color: var(--mantine-color-white);
+  background-color: var(--mantine-color-secondary-9);
+}
+.content {
+  flex: 1;
+}
+.divider {
+  margin: 14px 0;
+  border-color: color-mix(in srgb, var(--mantine-color-white) 18%, transparent);
+}
+@media (max-width: 48em) {
+  .navbar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: min-content;
+    flex: 1;
+    padding: 16px;
+  }
+}

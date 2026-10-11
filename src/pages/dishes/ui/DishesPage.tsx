@@ -4,17 +4,18 @@ import { IconPlus } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
-import { useDishes } from "../model/DishesProvider";
-import { dishModes, dishStatisticItems, priorityLabels } from "../model/data";
 import {
+  useDishes,
   dishIsStopped,
   matchesDish,
   missingIngredients,
-} from "../model/calculations";
+} from "@/entities/dish";
+import { dishModes, dishStatisticItems, priorityLabels } from "../model/config";
+
 import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
 import { Recomendtation } from "./components/Recomendtation/Recomendtation";
-import { DishFormModal } from "./components/form/DishFormModal";
+import { DishFormModal } from "@/features/dish-form";
 import { TableSummary } from "@/shared/ui/table-summary";
 
 export function DishesPage() {

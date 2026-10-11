@@ -1,0 +1,12 @@
+.option {
+  color: var(--mantine-color-secondary-9);
+}
+.option[data-combobox-selected] {
+  background-color: var(--mantine-color-primary-1);
+  color: var(--mantine-color-secondary-9);
+}
+.option[data-combobox-active],
+.option:hover {
+  background-color: var(--mantine-color-gray-0);
+  color: var(--mantine-color-secondary-9);
+}
