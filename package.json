@@ -13,7 +13,9 @@
     "test:orders": "node --test src/entities/order/lib/calculations.test.mjs",
     "test:guest": "node --test src/entities/order/lib/guest-order.test.mjs",
     "test:architecture": "node --test scripts/architecture.test.mjs scripts/backend-boundaries.test.mjs",
-    "test": "node --test scripts/*.test.mjs src/entities/*/lib/*.test.mjs"
+    "test": "node --test scripts/*.test.mjs src/entities/*/lib/*.test.mjs",
+    "desktop:dev": "node scripts/desktop-icons.cjs && concurrently --kill-others --success command-ELECTRON --names VITE,ELECTRON \"vite --host 127.0.0.1 --port 5174 --strictPort\" \"wait-on --timeout 60000 http-get://127.0.0.1:5174 && node electron/dev.cjs\"",
+    "desktop:build": "node scripts/desktop-icons.cjs && npm run build && electron-builder --win nsis --x64 --publish never"
   },
   "dependencies": {
     "@gfazioli/mantine-qr-code": "^2.0.13",
@@ -36,10 +38,55 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
     "postcss": "^8.5.29",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "typescript": "^7.0.2",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "wait-on": "^9.5.1"
+  },
+  "main": "electron/main.cjs",
+  "description": "STOQ — управление рестораном",
+  "build": {
+    "npmRebuild": false,
+    "directories": {
+      "output": "release"
+    },
+    "appId": "app.stoq.desktop",
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signExecutable": false,
+      "icon": "build/icon.ico"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/main.cjs",
+      "electron/protocol.cjs",
+      "package.json",
+      "!node_modules/**/*",
+      "build/icon.png"
+    ],
+    "artifactName": "${productName}-${version}-Setup.${ext}",
+    "nsis": {
+      "oneClick": false,
+      "createDesktopShortcut": true,
+      "perMachine": false,
+      "runAfterFinish": false,
+      "allowToChangeInstallationDirectory": true,
+      "createStartMenuShortcut": true
+    },
+    "productName": "STOQ",
+    "electronDist": "node_modules/electron/dist"
   }
 }

@@ -19,7 +19,7 @@ export const baseQueryWithReauth: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-    // если это refresh → не пытаемся обновлять токен
+
     if (typeof args === "string" && args.includes("/auth/refresh")) {
       api.dispatch(sessionExpired());
       return result;
@@ -30,7 +30,6 @@ export const baseQueryWithReauth: BaseQueryFn<
       return result;
     }
 
-    // пробуем refresh
     const refreshResult = await baseQuery(
       {
         url: "/auth/refresh",

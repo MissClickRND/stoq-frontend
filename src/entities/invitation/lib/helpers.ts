@@ -1,3 +1,4 @@
+import { getPublicSiteOrigin } from "../../../shared/lib/site-origin.ts";
 import type { Invitation, InvitationStatus } from "../model/type.ts";
 
 export function invitationStatus(
@@ -9,4 +10,4 @@ export function invitationStatus(
   return Date.parse(invitation.expiresAt) <= now ? "expired" : "active";
 }
 export const invitationUrl = (id: string, restaurantId: string) =>
-  `${window.location.origin}/register/employee?restaurantId=${encodeURIComponent(restaurantId)}&invitation=${encodeURIComponent(id)}`;
+  `${getPublicSiteOrigin()}/register/employee?restaurantId=${encodeURIComponent(restaurantId)}&invitation=${encodeURIComponent(id)}`;

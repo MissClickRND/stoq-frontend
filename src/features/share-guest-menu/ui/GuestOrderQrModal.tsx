@@ -1,3 +1,4 @@
+import { getPublicSiteOrigin } from "@/shared/lib/site-origin";
 import { useState } from "react";
 import {
   Accordion,
@@ -39,7 +40,7 @@ export function GuestOrderQrModal({
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const { showError } = useNotifications();
-  const url = guestMenuUrl(window.location.origin, restaurantId);
+  const url = guestMenuUrl(getPublicSiteOrigin(), restaurantId);
   const { ref, download } = useQRCodeDownload({
     fileName: `STOQ-menu-${restaurantId}`,
     scale: 12,

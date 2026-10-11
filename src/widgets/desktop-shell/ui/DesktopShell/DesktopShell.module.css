@@ -1,0 +1,26 @@
+.shell {
+  --app-viewport-height: calc(100dvh - 36px);
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: 36px minmax(0, 1fr);
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 150px 0 12px;
+  color: #ffffff;
+  background: #002a2d;
+  font-size: 13px;
+  font-weight: 600;
+  user-select: none;
+  -webkit-app-region: drag;
+  z-index: 100;
+}
+
+.content {
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}

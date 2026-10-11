@@ -84,13 +84,13 @@ export function StoreTableRow({
           </Button>
           <Tooltip label="Списать продукт">
             <ActionIcon
-              size="lg"
+              size={50}
               variant="light"
               color="red"
               aria-label={`Списать ${product.title}, артикул ${product.article}, поставка ${product.supplyId}`}
               onClick={() => onWriteOff(product)}
             >
-              <IconTrash size={20} />
+              <IconTrash />
             </ActionIcon>
           </Tooltip>
         </Group>

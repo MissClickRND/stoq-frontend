@@ -1,5 +1,5 @@
 .shell {
-  min-height: 100dvh;
+  min-height: var(--app-viewport-height, 100dvh);
   display: flex;
   flex-direction: column;
   background: light-dark(#f5f8f5, var(--mantine-color-dark-9));

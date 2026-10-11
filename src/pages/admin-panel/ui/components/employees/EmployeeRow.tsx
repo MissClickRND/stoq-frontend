@@ -88,7 +88,7 @@ export function EmployeeRow({
               <ActionIcon
                 color="green"
                 variant="light"
-                size="lg"
+                size={50}
                 aria-label={`Одобрить доступ: ${employee.name}`}
                 onClick={() => onApprove(employee.id)}
               >
@@ -109,7 +109,7 @@ export function EmployeeRow({
               disabled={owner}
               color={employee.status === "blocked" ? "green" : "red"}
               variant="light"
-              size="lg"
+              size={50}
               aria-label={`${employee.status === "blocked" ? "Разблокировать" : "Заблокировать"}: ${employee.name}`}
               onClick={() => onBlock(employee)}
             >
