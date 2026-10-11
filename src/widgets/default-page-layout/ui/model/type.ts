@@ -17,6 +17,7 @@ type DefaultPageLayoutBaseProps<T extends string> = {
   children?: ReactNode;
   headerTopSection?: ReactNode;
   headerRightSection?: ReactNode;
+  beforeStatistics?: ReactNode;
   topSection?: TopSectionProps<T>;
 };
 

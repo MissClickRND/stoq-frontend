@@ -16,6 +16,7 @@ import { getMonthStatistics, supplyTotal } from "../model/calculations";
 import { supplyColumns } from "../model/data";
 import { formatMoney } from "../model/format";
 import { useSupplies } from "../model/SuppliesProvider";
+import { TableSummary } from "@/shared/ui/table-summary";
 
 export function SupplyPage() {
   const { supplies } = useSupplies();
@@ -25,7 +26,9 @@ export function SupplyPage() {
   const period = new Intl.DateTimeFormat("ru-RU", {
     month: "long",
     year: "numeric",
-  }).format(now.toDate());
+  })
+    .format(now.toDate())
+    .replace(/\s*г\.$/u, "");
   const statistics = [
     {
       title: "Всего поставок",
@@ -76,22 +79,20 @@ export function SupplyPage() {
         setSearchValue={setSearchValue}
         statisticData={statistics}
       >
-        <Group justify="space-between" style={{ flexShrink: 0 }}>
-          <div>
-            <Text fw={600}>История поставок</Text>
-            <Text size="sm" c="dimmed">
-              Статистика за {period}
-            </Text>
-          </div>
-          <Button
-            component={Link}
-            to="/supply/new"
-            size="lg"
-            leftSection={<IconPlus size={20} />}
-          >
-            Создать поставку
-          </Button>
-        </Group>
+        <TableSummary
+          count={filtered.length}
+          description={`Статистика за ${period}`}
+          action={
+            <Button
+              component={Link}
+              to="/supply/new"
+              size="lg"
+              leftSection={<IconPlus size={20} />}
+            >
+              Создать поставку
+            </Button>
+          }
+        />
         <TableLayout
           columns={supplyColumns}
           data={filtered}

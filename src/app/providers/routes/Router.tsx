@@ -18,7 +18,14 @@ import {
   DishDetailsPage,
   DishesRoutesLayout,
 } from "@/pages/dishes";
-import { ProductsPage } from "@/pages/store";
+import {
+  ProductsPage,
+  StoreRoutesLayout,
+  InventoryRoutesLayout,
+  InventoryCheckPage,
+  InventoryConfirmationPage,
+  InventoryReportPage,
+} from "@/pages/store";
 import { MenuHintsPage } from "@/pages/menu-hints";
 import { OrdersPage } from "@/pages/orders";
 import { LogsPage } from "@/pages/logs";
@@ -49,7 +56,22 @@ const router = createBrowserRouter([
           { path: ":dishId", element: <DishDetailsPage /> },
         ],
       },
-      { path: "/store", element: <ProductsPage /> },
+      {
+        path: "/store",
+        element: <StoreRoutesLayout />,
+        children: [
+          { index: true, element: <ProductsPage /> },
+          {
+            path: "inventory",
+            element: <InventoryRoutesLayout />,
+            children: [
+              { index: true, element: <InventoryCheckPage /> },
+              { path: "confirm", element: <InventoryConfirmationPage /> },
+              { path: "report", element: <InventoryReportPage /> },
+            ],
+          },
+        ],
+      },
       { path: "/menu-hints", element: <MenuHintsPage /> },
       { path: "/orders", element: <OrdersPage /> },
       { path: "/logs", element: <LogsPage /> },

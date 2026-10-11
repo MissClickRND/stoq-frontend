@@ -1,40 +1,32 @@
 import { useState } from "react";
 import TableLayout from "@/widgets/table-layout";
 import { ConfirmationModal } from "@/shared/ui/confirmation-modal";
-import {
-  initialStoreProducts,
-  tableColumns,
-  writeOffText,
-} from "../../model/table-data";
+import { tableColumns, writeOffText } from "../../model/table-data";
 import type { StoreProduct } from "../../model/type";
 import { StoreTableRow } from "./StoreTableRow";
 import { StoreProductModal } from "./StoreProductModal";
+import { useStoreProducts } from "../../model/StoreProvider";
+import { matchesStoreProduct } from "../../model/search";
 
 export default function StoreTableSection({
   searchValue = "",
 }: {
   searchValue?: string;
 }) {
-  const [products, setProducts] =
-    useState<StoreProduct[]>(initialStoreProducts);
+  const { products, removeProduct } = useStoreProducts();
   const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(
     null,
   );
   const [writeOffProduct, setWriteOffProduct] = useState<StoreProduct | null>(
     null,
   );
-  const query = searchValue.trim().toLocaleLowerCase("ru-RU");
   const filteredProducts = products.filter((product) =>
-    `${product.title} ${product.article} ${product.supplyId}`
-      .toLocaleLowerCase("ru-RU")
-      .includes(query),
+    matchesStoreProduct(product, searchValue),
   );
 
   const confirmWriteOff = () => {
     if (!writeOffProduct) return;
-    setProducts((current) =>
-      current.filter((product) => product.id !== writeOffProduct.id),
-    );
+    removeProduct(writeOffProduct.id);
     setSelectedProduct((current) =>
       current?.id === writeOffProduct.id ? null : current,
     );

@@ -15,6 +15,7 @@ import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
 import { Recomendtation } from "./components/Recomendtation/Recomendtation";
 import { DishFormModal } from "./components/form/DishFormModal";
+import { TableSummary } from "@/shared/ui/table-summary";
 
 export function DishesPage() {
   const { dishes } = useDishes();
@@ -51,6 +52,12 @@ export function DishesPage() {
         priorityLabels[a.recommendation!.priority].rank -
         priorityLabels[b.recommendation!.priority].rank,
     );
+  const visibleDishes =
+    mode === "stop"
+      ? matching.filter(dishIsStopped)
+      : mode === "recommended"
+        ? recommendations
+        : matching;
 
   return (
     <>
@@ -66,23 +73,27 @@ export function DishesPage() {
           value: mode,
           onChange: (value) => setParams({ mode: value }),
           ariaLabel: "Режим отображения блюд",
-          rightSection: (
+        }}
+      >
+        <TableSummary
+          count={visibleDishes.length}
+          description="Блюд в текущей таблице"
+          action={
             <Button
               size="lg"
-              leftSection={<IconPlus size={17} />}
+              leftSection={<IconPlus size={20} />}
               onClick={() => setAdding(true)}
             >
               Добавить блюдо
             </Button>
-          ),
-        }}
-      >
+          }
+        />
         {mode === "all" ? (
-          <AllDishes dishes={matching} />
+          <AllDishes dishes={visibleDishes} />
         ) : mode === "stop" ? (
-          <StopList dishes={matching.filter(dishIsStopped)} />
+          <StopList dishes={visibleDishes} />
         ) : (
-          <Recomendtation dishes={recommendations} />
+          <Recomendtation dishes={visibleDishes} />
         )}
       </DefaultPageLayout>
       <DishFormModal opened={adding} onClose={() => setAdding(false)} />

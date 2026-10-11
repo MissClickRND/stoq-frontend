@@ -47,6 +47,9 @@ export default function DefaultPageLayout<T extends string = string>(
         )}
       </Group>
       {topSection && <TopSection {...topSection} />}
+      {props.beforeStatistics && (
+        <Box style={{ flexShrink: 0 }}>{props.beforeStatistics}</Box>
+      )}
       {!props.disableStatistics && (
         <Box style={{ flexShrink: 0 }}>
           <StatisticSection statisticData={props.statisticData} />
