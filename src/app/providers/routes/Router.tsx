@@ -27,7 +27,11 @@ import {
   InventoryReportPage,
 } from "@/pages/store";
 import { MenuHintsPage } from "@/pages/menu-hints";
-import { OrdersPage } from "@/pages/orders";
+import {
+  OrdersPage,
+  CreateOrderPage,
+  OrdersRoutesLayout,
+} from "@/pages/orders";
 import { LogsPage } from "@/pages/logs";
 import { AdminPanelPage } from "@/pages/admin-panel";
 import MainLayout from "../layouts/MainLayout";
@@ -73,7 +77,14 @@ const router = createBrowserRouter([
         ],
       },
       { path: "/menu-hints", element: <MenuHintsPage /> },
-      { path: "/orders", element: <OrdersPage /> },
+      {
+        path: "/orders",
+        element: <OrdersRoutesLayout />,
+        children: [
+          { index: true, element: <OrdersPage /> },
+          { path: "new", element: <CreateOrderPage /> },
+        ],
+      },
       { path: "/logs", element: <LogsPage /> },
       { path: "/admin-panel", element: <AdminPanelPage /> },
     ],

@@ -29,33 +29,35 @@ export function SupplySummary({
         <Title order={3} size="h4">
           Итоги поставки
         </Title>
-        <Group justify="space-between" wrap="nowrap">
-          <Group gap="sm" wrap="nowrap" c="dimmed">
-            <IconPackage size={20} />
-            <Text size="lg">Количество позиций</Text>
+        <Stack gap={4}>
+          <Group justify="space-between" wrap="nowrap">
+            <Group gap="sm" wrap="nowrap" c="dimmed">
+              <IconPackage size={20} />
+              <Text size="lg" fw={600}>
+                Количество позиций
+              </Text>
+            </Group>
+            <Text size="lg" fw={700}>
+              {count} шт.
+            </Text>
           </Group>
-          <Text size="lg" fw={700}>
-            {count}
-          </Text>
-        </Group>
-        <Group justify="space-between" wrap="nowrap">
-          <Text size="lg" c="dimmed">
-            Сумма продуктов
-          </Text>
-          <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-            {formatMoney(total)}
-          </Text>
-        </Group>
-        <Divider />
-        <Group justify="space-between" wrap="nowrap">
-          <Group gap="xs" wrap="nowrap">
-            <IconCoins size={22} />
-            <Text fw={600}>Итого к оплате</Text>
+          <Group justify="space-between" wrap="nowrap">
+            <Group gap="sm" wrap="nowrap" c="dimmed">
+              <IconCoins size={20} />
+              <Text size="lg" fw={600}>
+                Итого к оплате
+              </Text>
+            </Group>
+            <Text
+              size="lg"
+              fw={700}
+              c="primary"
+              style={{ whiteSpace: "nowrap" }}
+            >
+              {formatMoney(total)}
+            </Text>
           </Group>
-          <Text size="xl" fw={700} c="primary" style={{ whiteSpace: "nowrap" }}>
-            {formatMoney(total)}
-          </Text>
-        </Group>
+        </Stack>
         {error && (
           <Alert
             color="red"
@@ -69,6 +71,7 @@ export function SupplySummary({
         <Button
           type="submit"
           size="lg"
+          mt={6}
           fullWidth
           leftSection={<IconCheck size={20} />}
         >

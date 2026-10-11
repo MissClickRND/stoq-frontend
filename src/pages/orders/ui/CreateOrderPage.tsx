@@ -1,0 +1,159 @@
+import { useState, type FormEvent } from "react";
+import { Alert, Button, Group, Paper, Text } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import type { RootState } from "@/app/providers/store/store";
+import DefaultPageLayout from "@/widgets/default-page-layout";
+import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
+import { useNotifications } from "@/shared/lib/hooks/useNotifications";
+import { useDishes } from "@/pages/dishes/model/DishesProvider";
+import { useOrders } from "../model/OrdersProvider";
+import {
+  addOrderDish,
+  orderTotal,
+  validateOrderDraft,
+} from "../model/calculations";
+import { formatOrderMoney } from "../model/format";
+import type { OrderDraft } from "../model/type";
+import { OrderFields } from "./components/OrderFields";
+import { OrderDishesEditor } from "./components/OrderDishesEditor";
+import classes from "./Orders.module.css";
+
+export function CreateOrderPage() {
+  const { dishes } = useDishes();
+  const { createOrder } = useOrders();
+  const navigate = useNavigate();
+  const { showSuccess } = useNotifications();
+  const name = useSelector((state: RootState) => state.user.name);
+  const [draft, setDraft] = useState<OrderDraft>(() => ({
+    createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    type: "dine-in",
+    table: null,
+    guests: 1,
+    items: [],
+  }));
+  const [submitted, setSubmitted] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const errors = submitted ? validateOrderDraft(draft) : {};
+  const change = (patch: Partial<OrderDraft>) => {
+    setDraft((current) => ({ ...current, ...patch }));
+    setMessage(null);
+  };
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    setSubmitted(true);
+    const validation = validateOrderDraft(draft);
+    if (Object.keys(validation).length) {
+      setMessage(validation.items ?? "Заполните данные заказа.");
+      return;
+    }
+    createOrder({
+      createdAt: draft.createdAt!,
+      type: draft.type,
+      table: draft.type === "dine-in" ? Number(draft.table) : null,
+      guests: Number(draft.guests),
+      responsible: name || "Пользователь",
+      items: draft.items.map((item) => ({
+        ...item,
+        quantity: Number(item.quantity),
+      })),
+    });
+    showSuccess("Заказ создан");
+    navigate("/orders");
+  };
+  return (
+    <DefaultPageLayout
+      title="Новый заказ"
+      subtitle="Выберите желаемые блюда "
+      disableSearch
+      disableStatistics
+      headerTopSection={
+        <PageBreadcrumbs
+          parentLabel="Заказы"
+          parentPath="/orders"
+          currentLabel="Новый заказ"
+        />
+      }
+    >
+      <Paper
+        component="form"
+        withBorder
+        p="lg"
+        className={classes.form}
+        onSubmit={submit}
+        noValidate
+      >
+        <OrderFields draft={draft} errors={errors} onChange={change} />
+        {message && (
+          <Alert
+            className={classes.fixed}
+            color="red"
+            role="alert"
+            withCloseButton
+            onClose={() => setMessage(null)}
+          >
+            {message}
+          </Alert>
+        )}
+        <OrderDishesEditor
+          dishes={dishes.filter((dish) => !dish.archived)}
+          items={draft.items}
+          submitted={submitted}
+          onSelect={(dish) => {
+            setDraft((current) => ({
+              ...current,
+              items: addOrderDish(current.items, {
+                dishId: dish.id,
+                name: dish.name,
+                price: dish.price,
+                imageUrl: dish.imageUrl,
+              }),
+            }));
+            setMessage(null);
+          }}
+          onQuantityChange={(id, quantity) => {
+            setDraft((current) => ({
+              ...current,
+              items: current.items.map((item) =>
+                item.dishId === id ? { ...item, quantity } : item,
+              ),
+            }));
+            setMessage(null);
+          }}
+          onRemove={(id) => {
+            setDraft((current) => ({
+              ...current,
+              items: current.items.filter((item) => item.dishId !== id),
+            }));
+            setMessage(null);
+          }}
+        />
+        <Group justify="space-between" className={classes.summary}>
+          <Group gap="xl">
+            <div>
+              <Text size="sm" c="dimmed">
+                Количество позиций
+              </Text>
+              <Text size="xl" fw={700}>
+                {draft.items.length}
+              </Text>
+            </div>
+            <div>
+              <Text size="sm" c="dimmed">
+                Сумма заказа
+              </Text>
+              <Text size="xl" fw={700}>
+                {formatOrderMoney(orderTotal(draft.items))}
+              </Text>
+            </div>
+          </Group>
+          <Button size="lg" type="submit" leftSection={<IconCheck size={20} />}>
+            Создать заказ
+          </Button>
+        </Group>
+      </Paper>
+    </DefaultPageLayout>
+  );
+}

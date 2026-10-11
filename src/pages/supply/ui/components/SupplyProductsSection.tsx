@@ -35,19 +35,23 @@ export function SupplyProductsSection({
 }) {
   return (
     <Paper withBorder p="lg" className={classes.productsSection}>
-      <Stack gap="md">
-        <Group gap="sm">
+      <Stack gap="md" className={classes.productsContent}>
+        <Group gap="sm" className={classes.fixed}>
           <Title order={3} size="h4">
             Продукты в поставке
           </Title>
-          <Badge size="lg" variant="light" color="gray" tt="none">
-            Позиций: {items.length}
-          </Badge>
         </Group>
-        <SupplyProductSearch onSelect={onSelect} />
+        <div className={classes.fixed}>
+          <SupplyProductSearch onSelect={onSelect} />
+        </div>
         {items.length ? (
           <>
-            <ScrollArea type="auto" offsetScrollbars>
+            <ScrollArea
+              type="auto"
+              offsetScrollbars
+              className={classes.productsScroll}
+              classNames={{ viewport: classes.productsViewport }}
+            >
               <div className={classes.productsList}>
                 <div className={classes.productColumns} aria-hidden="true">
                   {[
@@ -81,13 +85,14 @@ export function SupplyProductsSection({
                 </Stack>
               </div>
             </ScrollArea>
-            <Text size="sm" c="dimmed">
-              Цена и сумма пересчитываются автоматически. Для разных сроков
-              годности добавьте продукт отдельными позициями.
-            </Text>
           </>
         ) : (
-          <Stack align="center" gap="xs" py="xl">
+          <Stack
+            align="center"
+            gap="xs"
+            py="xl"
+            className={classes.emptyProducts}
+          >
             <ThemeIcon size={60} radius="xl" variant="light" color="gray">
               <IconPackage size={30} stroke={1.5} />
             </ThemeIcon>

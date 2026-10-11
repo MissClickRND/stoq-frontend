@@ -7,4 +7,6 @@ export type TableLayoutProps<T> = {
   getRowKey: (item: T) => Key;
   emptyText: string;
   minWidth?: number;
+  autoHeight?: boolean;
+  fillHeight?: boolean;
 };

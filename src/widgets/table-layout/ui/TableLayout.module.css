@@ -17,3 +17,13 @@
     min-height: 800px;
   }
 }
+
+.autoHeight {
+  flex: none;
+  height: auto;
+  min-height: 0;
+}
+
+.fillHeight :global(.mantine-ScrollArea-viewport) > div {
+  height: 100%;
+}

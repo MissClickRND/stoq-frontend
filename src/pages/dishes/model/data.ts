@@ -51,7 +51,7 @@ export const dishStatisticItems = [
     title: "Активные блюда",
     description: "Готовы к продаже",
     icon: IconCheck,
-    color: "#13a118",
+    color: "#0f8c14",
   },
 
   {

@@ -41,7 +41,6 @@ export function SupplyProductSearch({
     >
       <Combobox.Target>
         <TextInput
-          label="Добавить продукт"
           size="lg"
           placeholder="Начните вводить название или артикул"
           value={search}

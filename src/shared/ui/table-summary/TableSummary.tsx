@@ -14,7 +14,6 @@ export function TableSummary({
     <Group justify="space-between" style={{ flexShrink: 0 }}>
       <div>
         <Text size="lg" fw={600}>
-          Количество:{" "}
           <Text component="span" inherit fw={700}>
             {count}
           </Text>{" "}

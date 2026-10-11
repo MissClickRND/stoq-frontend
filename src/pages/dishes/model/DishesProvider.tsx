@@ -10,7 +10,7 @@ type DishesContextValue = {
 };
 const DishesContext = createContext<DishesContextValue | null>(null);
 
-function DishesProvider({ children }: { children: ReactNode }) {
+export function DishesProvider({ children }: { children: ReactNode }) {
   const [dishes, setDishes] = useState<Dish[]>(initialDishes);
   const saveDish = (draft: DishDraft, id?: string) => {
     const dishId = id ?? crypto.randomUUID();
@@ -41,9 +41,5 @@ export function useDishes() {
 }
 
 export function DishesRoutesLayout() {
-  return (
-    <DishesProvider>
-      <Outlet />
-    </DishesProvider>
-  );
+  return <Outlet />;
 }
