@@ -1,8 +1,9 @@
 import { Alert, Button, Group, SimpleGrid, Stack, Text } from "@mantine/core";
-import { IconArrowLeft, IconEdit, IconArchive } from "@tabler/icons-react";
+import { IconEdit, IconArchive } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfirmationModal } from "@/shared/ui/confirmation-modal";
+import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import { useDishes } from "../model/DishesProvider";
 import { DishOverview } from "./components/details/DishOverview";
 import { DishIngredients } from "./components/details/DishIngredients";
@@ -24,21 +25,23 @@ export function DishDetailsPage() {
   if (!dish)
     return (
       <Stack p="lg">
+        <PageBreadcrumbs
+          parentLabel="Блюда"
+          parentPath="/dishes"
+          currentLabel="Блюдо не найдено"
+        />
         <Text>Блюдо не найдено</Text>
-        <Button onClick={() => navigate("/dishes")}>К списку блюд</Button>
       </Stack>
     );
 
   return (
     <Stack className={classes.page} gap="md">
       <Group justify="space-between">
-        <Button
-          variant="default"
-          leftSection={<IconArrowLeft size={16} />}
-          onClick={() => navigate("/dishes")}
-        >
-          Назад к блюдам
-        </Button>
+        <PageBreadcrumbs
+          parentLabel="Блюда"
+          parentPath="/dishes"
+          currentLabel={dish.name}
+        />
         <Group gap="xs">
           <Button
             variant="default"

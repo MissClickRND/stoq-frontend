@@ -1,8 +1,11 @@
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/dates/styles.css";
+import "dayjs/locale/ru";
 
 import { MantineProvider, localStorageColorSchemeManager } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { DatesProvider } from "@mantine/dates";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -16,11 +19,15 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <MantineProvider
         theme={theme}
         defaultColorScheme="light"
-        colorSchemeManager={localStorageColorSchemeManager({ key: "stoq-color-scheme" })}
+        colorSchemeManager={localStorageColorSchemeManager({
+          key: "stoq-color-scheme",
+        })}
         cssVariablesResolver={cssVariablesResolver}
       >
         <Notifications />
-        <Router />
+        <DatesProvider settings={{ locale: "ru", firstDayOfWeek: 1 }}>
+          <Router />
+        </DatesProvider>
       </MantineProvider>
     </Provider>
   </React.StrictMode>,

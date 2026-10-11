@@ -15,10 +15,10 @@ export function StoreShelfLife({ shelfLife }: { shelfLife: string }) {
 
   return (
     <Stack gap={2}>
-      <Text size="sm" fw={600} c={color} lh={1.3}>
+      <Text size="lg" fw={600} c={color} lh={1.3}>
         {days === null ? "Срок не определён" : formatShelfLifeDays(days)}
       </Text>
-      <Text size="xs" c="dimmed" lh={1.3}>
+      <Text size="sm" c="dimmed" lh={1.3}>
         до {shelfLife}
       </Text>
     </Stack>

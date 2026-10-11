@@ -13,7 +13,7 @@ export function AllDishesRow({ dish }: { dish: Dish }) {
         <DishIdentity dish={dish} />
       </Table.Td>
       <Table.Td>
-        <Text fw={700} size="md">
+        <Text fw={700} size="lg">
           {formatMoney(dish.price)}
         </Text>
       </Table.Td>
@@ -23,7 +23,7 @@ export function AllDishesRow({ dish }: { dish: Dish }) {
       <Table.Td>
         <Group gap={6} wrap="nowrap">
           <IconPackage size={20} aria-hidden />
-          <Text size="md" fw={700}>
+          <Text size="lg" fw={700}>
             {dish.ingredients.length}
           </Text>
         </Group>

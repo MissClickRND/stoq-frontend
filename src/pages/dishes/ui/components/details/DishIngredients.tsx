@@ -9,7 +9,7 @@ export function DishIngredients({ dish }: { dish: Dish }) {
         Ингредиенты блюда
       </Title>
       <ScrollArea>
-        <Table miw={620} verticalSpacing="sm">
+        <Table miw={850}>
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Ингредиент</Table.Th>
@@ -26,21 +26,29 @@ export function DishIngredients({ dish }: { dish: Dish }) {
               return (
                 <Table.Tr key={item.id}>
                   <Table.Td>
-                    <Text size="sm" fw={500}>
+                    <Text size="lg" fw={600}>
                       {item.name}
                     </Text>
                   </Table.Td>
                   <Table.Td>
-                    {item.quantity} {item.unit}
+                    <Text size="lg" fw={700}>
+                      {item.quantity} {item.unit}
+                    </Text>
                   </Table.Td>
                   <Table.Td>
-                    {item.stock} {item.unit}
+                    <Text size="lg" fw={700}>
+                      {item.stock} {item.unit}
+                    </Text>
                   </Table.Td>
                   <Table.Td>
-                    {formatMoney(item.quantity * item.costPerUnit)}
+                    <Text size="lg" fw={700}>
+                      {formatMoney(item.quantity * item.costPerUnit)}
+                    </Text>
                   </Table.Td>
                   <Table.Td>
                     <Badge
+                      size="lg"
+                      miw="max-content"
                       variant="light"
                       tt="none"
                       color={available ? "green" : "red"}

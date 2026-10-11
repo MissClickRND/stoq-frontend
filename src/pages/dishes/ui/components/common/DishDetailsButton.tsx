@@ -5,7 +5,7 @@ export function DishDetailsButton({ id }: { id: string }) {
   const navigate = useNavigate();
   return (
     <Button
-      size="sm"
+      size="lg"
       variant="default"
       onClick={() => navigate(`/dishes/${id}`)}
     >

@@ -9,7 +9,6 @@ export function DishStatus({ dish }: { dish: Dish }) {
       w="max-content"
       miw="max-content"
       size="lg"
-      fz="sm"
       fw={600}
       color={dish.archived ? "gray" : stopped ? "red" : "green"}
       variant="light"

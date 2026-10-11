@@ -20,8 +20,13 @@ export function NavbarAccount({ user }: NavbarAccountProps) {
 
   return (
     <Group className={classes.profile} wrap="nowrap">
-      <Avatar variant="filled" color="primary" radius="xl" size={48}>
-        {user.initials}
+      <Avatar
+        variant="filled"
+        color="var(--mantine-color-primary-8)"
+        radius="xl"
+        size={48}
+      >
+        <span style={{ color: "white" }}>{user.initials}</span>
       </Avatar>
       <Box className={classes.profileText}>
         <Text size="sm" fw={700} lineClamp={1}>

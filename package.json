@@ -7,19 +7,23 @@
     "dev": "vite --host",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:supply": "node --test src/pages/supply/model/calculations.test.mjs src/pages/supply/model/report.test.mjs"
   },
   "dependencies": {
     "@mantine/core": "^9.7.1",
+    "@mantine/dates": "^9.7.1",
     "@mantine/form": "^9.7.1",
     "@mantine/hooks": "^9.7.1",
     "@mantine/notifications": "^9.7.1",
     "@reduxjs/toolkit": "^2.13.0",
     "@tabler/icons-react": "^3.49.0",
+    "dayjs": "^1.11.23",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-redux": "^9.3.0",
-    "react-router-dom": "^7.18.4"
+    "react-router-dom": "^7.18.4",
+    "write-excel-file": "^4.1.1"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",

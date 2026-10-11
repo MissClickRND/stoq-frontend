@@ -23,9 +23,9 @@ export function CopyInvitationButton({
       });
   }, [clipboard.error]);
   const icon = clipboard.copied ? (
-    <IconCheck size={17} />
+    <IconCheck size={20} />
   ) : (
-    <IconCopy size={17} />
+    <IconCopy size={20} />
   );
   return compact ? (
     <Tooltip label={clipboard.copied ? "Скопировано" : "Скопировать ссылку"}>

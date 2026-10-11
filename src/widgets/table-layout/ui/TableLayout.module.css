@@ -5,22 +5,15 @@
   background: var(--mantine-color-background);
 }
 
-.table th {
-  white-space: nowrap;
-  font-size: var(--mantine-font-size-sm);
-  color: var(--mantine-color-dimmed);
-  font-weight: 600;
-}
-
-.table td {
-  font-size: var(--mantine-font-size-md);
-}
-
 .header {
   background: var(--mantine-color-background);
   box-shadow: 0 1px 0 var(--mantine-color-default-border);
 }
 
 @media (max-width: 48em) {
-  .section { flex: none; height: 800px; min-height: 800px; }
+  .section {
+    flex: none;
+    height: 800px;
+    min-height: 800px;
+  }
 }

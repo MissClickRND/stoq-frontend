@@ -21,7 +21,6 @@ export function TableLayout<T>({
           stickyHeaderOffset={0}
           highlightOnHover
           verticalSpacing="md"
-          className={classes.table}
         >
           <Table.Thead className={classes.header}>
             <Table.Tr>
@@ -41,7 +40,7 @@ export function TableLayout<T>({
             {data.length === 0 && (
               <Table.Tr>
                 <Table.Td colSpan={columns.length}>
-                  <Text ta="center" c="dimmed" py="xl">
+                  <Text size="lg" ta="center" c="dimmed" py="xl">
                     {emptyText}
                   </Text>
                 </Table.Td>

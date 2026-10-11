@@ -5,6 +5,7 @@ import classes from "./StatisticCard.module.css";
 export function StatisticCard({
   title,
   value,
+  valueFontSize,
   description,
   icon,
   color,
@@ -30,7 +31,11 @@ export function StatisticCard({
           <Text className={classes.title} size="xs" fw={600} c="dimmed">
             {title}
           </Text>
-          <Text className={classes.value} fw={750}>
+          <Text
+            className={classes.value}
+            fw={750}
+            style={{ fontSize: valueFontSize }}
+          >
             {value}
           </Text>
           {description && (

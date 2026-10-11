@@ -3,6 +3,18 @@
   border-color: var(--mantine-color-default-border);
 }
 
+.table th {
+  white-space: nowrap;
+  font-size: var(--mantine-font-size-lg);
+  color: var(--mantine-color-dimmed);
+  font-weight: 600;
+}
+
+.table td {
+  font-size: var(--mantine-font-size-lg);
+  font-variant-numeric: tabular-nums;
+}
+
 :where([data-mantine-color-scheme="dark"]) .table {
   --table-border-color: var(--mantine-color-default-border);
   --table-hover-color: var(--mantine-color-default-hover);

@@ -18,7 +18,7 @@ export function RecommendationRow({ dish }: { dish: Dish }) {
         <DishIdentity dish={dish} />
       </Table.Td>
       <Table.Td>
-        <Text size="md" fw={700}>
+        <Text size="lg" fw={700}>
           {formatMoney(dish.price)}
         </Text>
         <Text size="sm" c="dimmed">
@@ -28,13 +28,13 @@ export function RecommendationRow({ dish }: { dish: Dish }) {
               dish.price,
           )}
         </Text>
-        <Text size="sm" fw={600} c={dishProfit(dish) >= 0 ? "green" : "red"}>
+        <Text size="lg" fw={600} c={dishProfit(dish) >= 0 ? "green" : "red"}>
           Прибыль с порции: {formatMoney(dishProfit(dish))}
         </Text>
       </Table.Td>
       <Table.Td>
         <Text
-          size="md"
+          size="lg"
           fw={700}
           c={markup !== null && markup >= 0 ? "green" : "red"}
         >
@@ -45,7 +45,7 @@ export function RecommendationRow({ dish }: { dish: Dish }) {
         <DishStatus dish={dish} />
       </Table.Td>
       <Table.Td>
-        <Text size="md" fw={500} maw={280}>
+        <Text size="lg" fw={500} maw={280}>
           {dish.recommendation?.reason}
         </Text>
       </Table.Td>

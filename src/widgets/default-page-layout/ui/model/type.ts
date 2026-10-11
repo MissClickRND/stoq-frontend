@@ -4,6 +4,7 @@ import type { TopSectionProps } from "../components/TopSection/type";
 export interface IStatisticCardData {
   title: string;
   value: string | number;
+  valueFontSize?: number;
   description?: string;
   icon: ReactNode;
   color: string;
@@ -14,6 +15,8 @@ type DefaultPageLayoutBaseProps<T extends string> = {
   subtitle: string;
 
   children?: ReactNode;
+  headerTopSection?: ReactNode;
+  headerRightSection?: ReactNode;
   topSection?: TopSectionProps<T>;
 };
 

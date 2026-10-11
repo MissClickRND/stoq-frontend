@@ -41,7 +41,7 @@ export function EmployeeRow({
             {initials(employee.name)}
           </Avatar>
           <Box>
-            <Text size="md" fw={600}>
+            <Text size="lg" fw={600}>
               {employee.name}
             </Text>
             <Text size="sm" c="dimmed">
@@ -51,7 +51,7 @@ export function EmployeeRow({
         </Group>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{employee.email}</Text>
+        <Text size="lg">{employee.email}</Text>
       </Table.Td>
       <Table.Td>
         <Badge
@@ -65,12 +65,12 @@ export function EmployeeRow({
         </Badge>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{formatDate(employee.joinedAt)}</Text>
+        <Text size="lg">{formatDate(employee.joinedAt)}</Text>
       </Table.Td>
       <Table.Td>
         <Select
-          w={190}
-          size="sm"
+          w={230}
+          size="lg"
           aria-label={`Изменить роль: ${employee.name}`}
           data={roleOptions}
           value={employee.role}
@@ -92,7 +92,7 @@ export function EmployeeRow({
                 aria-label={`Одобрить доступ: ${employee.name}`}
                 onClick={() => onApprove(employee.id)}
               >
-                <IconCheck size={18} />
+                <IconCheck size={20} />
               </ActionIcon>
             </Tooltip>
           )}
@@ -114,9 +114,9 @@ export function EmployeeRow({
               onClick={() => onBlock(employee)}
             >
               {employee.status === "blocked" ? (
-                <IconLockOpen size={18} />
+                <IconLockOpen size={20} />
               ) : (
-                <IconLock size={18} />
+                <IconLock size={20} />
               )}
             </ActionIcon>
           </Tooltip>

@@ -7,7 +7,12 @@ import { Error404 } from "@/pages/errors/Error404";
 import { LoginPage } from "@/pages/login";
 import { RegisterPage, RestaurantRegisterPage } from "@/pages/register";
 import { DashboardPage } from "@/pages/dashboard";
-import { SupplyPage } from "@/pages/supply";
+import {
+  SupplyPage,
+  CreateSupplyPage,
+  SupplyDetailsPage,
+  SuppliesRoutesLayout,
+} from "@/pages/supply";
 import {
   DishesPage,
   DishDetailsPage,
@@ -27,7 +32,15 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Navigate to="/dashboard" replace /> },
       { path: "/dashboard", element: <DashboardPage /> },
-      { path: "/supply", element: <SupplyPage /> },
+      {
+        path: "/supply",
+        element: <SuppliesRoutesLayout />,
+        children: [
+          { index: true, element: <SupplyPage /> },
+          { path: "new", element: <CreateSupplyPage /> },
+          { path: ":supplyId", element: <SupplyDetailsPage /> },
+        ],
+      },
       {
         path: "/dishes",
         element: <DishesRoutesLayout />,

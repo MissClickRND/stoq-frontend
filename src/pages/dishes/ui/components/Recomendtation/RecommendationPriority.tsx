@@ -13,7 +13,6 @@ export function RecommendationPriority({
       w="max-content"
       miw="max-content"
       size="lg"
-      fz="sm"
       fw={600}
       variant="light"
       color={item.color}

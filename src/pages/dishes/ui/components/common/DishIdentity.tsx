@@ -21,7 +21,7 @@ export function DishIdentity({ dish }: { dish: Dish }) {
         </ThemeIcon>
       )}
       <Box style={{ minWidth: 0 }}>
-        <Text size="md" fw={700}>
+        <Text size="lg" fw={600}>
           {dish.name}
         </Text>
         <Text size="sm" c="dimmed" lineClamp={2}>

@@ -39,7 +39,7 @@ export function InvitationRow({
       <Table.Td>
         <Anchor
           href={url}
-          size="sm"
+          size="lg"
           fw={600}
           maw={260}
           lineClamp={1}
@@ -47,20 +47,20 @@ export function InvitationRow({
         >
           {url}
         </Anchor>
-        <Text size="xs" c="dimmed">
+        <Text size="sm" c="dimmed">
           Код: {invitation.id}
         </Text>
       </Table.Td>
       <Table.Td>
-        <Text size="sm" fw={600}>
+        <Text size="lg" fw={600}>
           {roleLabels[invitation.role]}
         </Text>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{formatDate(invitation.createdAt, true)}</Text>
+        <Text size="lg">{formatDate(invitation.createdAt, true)}</Text>
       </Table.Td>
       <Table.Td>
-        <Text size="sm">{formatDate(invitation.expiresAt, true)}</Text>
+        <Text size="lg">{formatDate(invitation.expiresAt, true)}</Text>
       </Table.Td>
       <Table.Td>
         <Badge
@@ -73,7 +73,7 @@ export function InvitationRow({
           {label.label}
         </Badge>
         {invitation.usedBy && (
-          <Text size="xs" c="dimmed" mt={4}>
+          <Text size="sm" c="dimmed" mt={4}>
             {invitation.usedBy}
           </Text>
         )}
@@ -94,7 +94,7 @@ export function InvitationRow({
               disabled={status !== "active"}
               onClick={() => onRevoke(invitation)}
             >
-              <IconBan size={17} />
+              <IconBan size={20} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Удалить приглашение">
@@ -105,7 +105,7 @@ export function InvitationRow({
               size="lg"
               onClick={() => onDelete(invitation)}
             >
-              <IconTrash size={17} />
+              <IconTrash size={20} />
             </ActionIcon>
           </Tooltip>
         </Group>

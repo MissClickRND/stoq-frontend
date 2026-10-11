@@ -83,7 +83,10 @@ export const theme = createTheme({
     }),
     Select: Select.extend({ classNames: { dropdown: classes.surface } }),
     Input: Input.extend({ classNames: { input: classes.input } }),
-    Table: Table.extend({ classNames: { table: classes.table } }),
+    Table: Table.extend({
+      defaultProps: { horizontalSpacing: "md", verticalSpacing: "md" },
+      classNames: { table: classes.table },
+    }),
     Badge: Badge.extend({ classNames: { root: classes.status } }),
   },
 

@@ -22,13 +22,13 @@ export function StopListRow({ dish }: { dish: Dish }) {
       <Table.Td>
         <Group gap="xs" wrap="nowrap" c="red">
           <ReasonIcon size={22} style={{ flexShrink: 0 }} aria-hidden />
-          <Text size="md" fw={600} maw={280}>
+          <Text size="lg" fw={600} maw={280}>
             {unavailableReason(dish)}
           </Text>
         </Group>
       </Table.Td>
       <Table.Td>
-        <Text size="md" fw={700}>
+        <Text size="lg" fw={700}>
           {missingIngredients(dish).length}
         </Text>
       </Table.Td>

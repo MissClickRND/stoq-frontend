@@ -37,29 +37,35 @@ export function StoreTableRow({
           onClick={() => handleNavigateToSupply(product.supplyId)}
         >
           <Group align="center" gap="2" wrap="nowrap">
-            <Text size="sm" fw={600}>
+            <Text size="lg" fw={600}>
               {product.supplyId}
             </Text>
-            <IconExternalLink size={15} />
+            <IconExternalLink size={20} />
           </Group>
         </UnstyledButton>
       </Table.Td>
       <Table.Td>
-        <Text size="md" fw={600}>
+        <Text size="lg" fw={600}>
           {product.title}
         </Text>
-        <Text size="xs" c="dimmed">
+        <Text size="sm" c="dimmed">
           Арт. {product.article}
         </Text>
       </Table.Td>
       <Table.Td>
-        <Text fw={600}>{product.remains}</Text>
+        <Text size="lg" fw={700}>
+          {product.remains}
+        </Text>
       </Table.Td>
       <Table.Td>
-        <Text fw={500}>{product.units}</Text>
+        <Text size="lg" fw={500}>
+          {product.units}
+        </Text>
       </Table.Td>
       <Table.Td>
-        <Text fw={600}>{formatPrice(product.totalPrice)}</Text>
+        <Text size="lg" fw={700}>
+          {formatPrice(product.totalPrice)}
+        </Text>
       </Table.Td>
       <Table.Td>
         <StoreShelfLife shelfLife={product.shelfLife} />
@@ -70,7 +76,7 @@ export function StoreTableRow({
       <Table.Td>
         <Group gap="xs" wrap="nowrap">
           <Button
-            size="sm"
+            size="lg"
             variant="default"
             onClick={() => onDetails(product)}
           >
@@ -84,7 +90,7 @@ export function StoreTableRow({
               aria-label={`Списать ${product.title}, артикул ${product.article}, поставка ${product.supplyId}`}
               onClick={() => onWriteOff(product)}
             >
-              <IconTrash size={17} />
+              <IconTrash size={20} />
             </ActionIcon>
           </Tooltip>
         </Group>

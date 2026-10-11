@@ -9,16 +9,35 @@ import { TopSection } from "./components/TopSection/TopSection";
 export default function DefaultPageLayout<T extends string = string>(
   props: IDefaultPageLayoutProps<T>,
 ) {
-  const { title, subtitle, children, topSection } = props;
+  const {
+    title,
+    subtitle,
+    children,
+    topSection,
+    headerTopSection,
+    headerRightSection,
+  } = props;
   return (
     <Stack className={classes.page}>
+      {headerTopSection && (
+        <Box style={{ flexShrink: 0 }}>{headerTopSection}</Box>
+      )}
       <Group
-        className={classes.header}
+        className={
+          headerRightSection
+            ? `${classes.header} ${classes.headerWithRight}`
+            : classes.header
+        }
         justify="space-between"
         align="center"
         gap="lg"
       >
-        <TitleSection title={title} subtitle={subtitle} />
+        <Box className={headerRightSection ? classes.headerTitle : undefined}>
+          <TitleSection title={title} subtitle={subtitle} />
+        </Box>
+        {headerRightSection && (
+          <Box className={classes.headerRight}>{headerRightSection}</Box>
+        )}
         {!props.disableSearch && (
           <SearchSection
             searchTitle={props.searchTitle}
