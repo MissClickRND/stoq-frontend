@@ -1,0 +1,138 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid light-dark(#e5ebe8, var(--mantine-color-dark-5));
+  border-radius: 20px;
+  background: light-dark(#fff, var(--mantine-color-dark-8));
+}
+.canvas {
+  flex: 1;
+  position: relative;
+  min-height: 250px;
+  background: light-dark(#fcfdfb, var(--mantine-color-dark-8));
+}
+.canvas :global(.react-flow) {
+  --xy-background-color: transparent;
+  --xy-background-color-default: transparent;
+}
+.canvas :global(.react-flow__node),
+.canvas :global(.react-flow__pane) {
+  cursor: grab;
+}
+.canvas :global(.react-flow__node.dragging),
+.canvas :global(.react-flow__pane.dragging) {
+  cursor: grabbing;
+}
+.canvas :global(.react-flow__edge-path) {
+  transition: opacity 150ms ease;
+}
+.canvas :global(.react-flow__attribution) {
+  font-size: 9px;
+  background: transparent;
+  opacity: 0.65;
+}
+.search {
+  position: absolute;
+  z-index: 5;
+  top: 18px;
+  right: 18px;
+  width: min(340px, calc(100% - 36px));
+  box-shadow: 0 4px 18px #00000006;
+  border-radius: var(--mantine-radius-lg);
+}
+.controls {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  bottom: 18px;
+  padding: 6px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-lg);
+  background: var(--mantine-color-body);
+  box-shadow: 0 4px 18px #00000006;
+}
+.zoom {
+  font-size: 12px;
+  color: var(--mantine-color-dimmed);
+  min-width: 44px;
+  text-align: center;
+  pointer-events: none;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border-top: 1px solid light-dark(#edf0ee, var(--mantine-color-dark-5));
+  flex-shrink: 0;
+}
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--mantine-color-dimmed);
+}
+.legendItem i {
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+}
+.empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(320px, 85%);
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--mantine-color-body);
+  box-shadow: 0 8px 40px #0000000a;
+  text-align: center;
+}
+@media (max-width: 90em) {
+  .hint {
+    display: none;
+  }
+}
+@media (max-width: 48em) {
+  .widget {
+    flex: none;
+    height: 640px;
+    min-height: 0;
+    border-radius: 16px;
+  }
+  .search {
+    top: 14px;
+    right: 14px;
+    width: calc(100% - 28px);
+  }
+  .controls {
+    left: 14px;
+    bottom: 14px;
+  }
+  .footer {
+    padding: 14px;
+  }
+  .legend {
+    gap: 12px;
+  }
+  .legendItem {
+    font-size: 12px;
+    gap: 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .canvas :global(.react-flow__edge-path) {
+    transition: none;
+  }
+}

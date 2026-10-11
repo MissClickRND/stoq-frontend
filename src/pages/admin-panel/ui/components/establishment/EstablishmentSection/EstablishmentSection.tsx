@@ -59,61 +59,71 @@ export function EstablishmentSection({
   return (
     <Box className={componentClasses.content}>
       <form onSubmit={submit} noValidate>
-        <Fieldset
-          legend="Настройки заведения"
-          className={componentClasses.fieldset}
-        >
-          <Stack gap="md">
-            <SimpleGrid cols={{ base: 1, sm: 2 }}>
-              <TextInput
-                size="lg"
-                label="Название ресторана"
-                required
-                value={draft.name}
-                onChange={(event) => update("name", event.currentTarget.value)}
-                error={errors.name}
-              />
-              <TextInput
-                size="lg"
-                label="Город"
-                required
-                value={draft.city}
-                onChange={(event) => update("city", event.currentTarget.value)}
-                error={errors.city}
-              />
-              <TextInput
-                size="lg"
-                label="Email ресторана"
-                type="email"
-                required
-                value={draft.email}
-                onChange={(event) => update("email", event.currentTarget.value)}
-                error={errors.email}
-              />
-              <TextInput
-                size="lg"
-                label="Телефон ресторана"
-                type="tel"
-                required
-                value={draft.phone}
-                onChange={(event) => update("phone", event.currentTarget.value)}
-                error={errors.phone}
-              />
-            </SimpleGrid>
-            <Group justify="flex-end">
-              <Button
-                variant="default"
-                onClick={() => {
-                  onReset();
-                  setErrors({});
-                }}
-              >
-                Отмена
-              </Button>
-              <Button type="submit">Сохранить изменения</Button>
-            </Group>
-          </Stack>
-        </Fieldset>
+        <Group justify="center" grow>
+          <Fieldset
+            legend="Настройки заведения"
+            className={componentClasses.fieldset}
+          >
+            <Stack gap="md">
+              <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                <TextInput
+                  size="lg"
+                  label="Название ресторана"
+                  required
+                  value={draft.name}
+                  onChange={(event) =>
+                    update("name", event.currentTarget.value)
+                  }
+                  error={errors.name}
+                />
+                <TextInput
+                  size="lg"
+                  label="Город"
+                  required
+                  value={draft.city}
+                  onChange={(event) =>
+                    update("city", event.currentTarget.value)
+                  }
+                  error={errors.city}
+                />
+                <TextInput
+                  size="lg"
+                  label="Email ресторана"
+                  type="email"
+                  required
+                  value={draft.email}
+                  onChange={(event) =>
+                    update("email", event.currentTarget.value)
+                  }
+                  error={errors.email}
+                />
+                <TextInput
+                  size="lg"
+                  label="Телефон ресторана"
+                  type="tel"
+                  required
+                  value={draft.phone}
+                  onChange={(event) =>
+                    update("phone", event.currentTarget.value)
+                  }
+                  error={errors.phone}
+                />
+              </SimpleGrid>
+              <Group justify="flex-end">
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    onReset();
+                    setErrors({});
+                  }}
+                >
+                  Отмена
+                </Button>
+                <Button type="submit">Сохранить изменения</Button>
+              </Group>
+            </Stack>
+          </Fieldset>
+        </Group>
       </form>
     </Box>
   );

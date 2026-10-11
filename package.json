@@ -13,7 +13,8 @@
     "test:orders": "node --test src/entities/order/lib/calculations.test.mjs",
     "test:guest": "node --test src/entities/order/lib/guest-order.test.mjs",
     "test:architecture": "node --test scripts/architecture.test.mjs scripts/backend-boundaries.test.mjs",
-    "test": "node --test scripts/*.test.mjs src/entities/*/lib/*.test.mjs",
+    "test:analytics": "node --experimental-strip-types --test src/widgets/dependency-graph/model/*.test.mjs",
+    "test": "node --experimental-strip-types --test scripts/*.test.mjs src/entities/*/lib/*.test.mjs src/widgets/dependency-graph/model/*.test.mjs",
     "desktop:dev": "node scripts/desktop-icons.cjs && concurrently --kill-others --success command-ELECTRON --names VITE,ELECTRON \"vite --host 127.0.0.1 --port 5174 --strictPort\" \"wait-on --timeout 60000 http-get://127.0.0.1:5174 && node electron/dev.cjs\"",
     "desktop:build": "node scripts/desktop-icons.cjs && npm run build && electron-builder --win nsis --x64 --publish never"
   },
@@ -26,6 +27,8 @@
     "@mantine/notifications": "^9.7.1",
     "@reduxjs/toolkit": "^2.13.0",
     "@tabler/icons-react": "^3.49.0",
+    "@xyflow/react": "^12.12.0",
+    "d3-force": "^3.0.0",
     "dayjs": "^1.11.23",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
@@ -34,6 +37,7 @@
     "write-excel-file": "^4.1.1"
   },
   "devDependencies": {
+    "@types/d3-force": "^3.0.10",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

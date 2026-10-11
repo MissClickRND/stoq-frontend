@@ -3,6 +3,7 @@
   min-height: 0;
   overflow-y: auto;
 }
+
 .fieldset {
   max-width: 1000px;
   padding: var(--mantine-spacing-lg);

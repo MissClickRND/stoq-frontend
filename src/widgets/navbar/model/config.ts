@@ -14,7 +14,7 @@ import {
 import { ColorSchemeOption, NavbarAction, NavigationItem } from "./type";
 
 export const navigationItems: NavigationItem[] = [
-  { label: "Дашборд", path: "/dashboard", icon: IconChartBar },
+  { label: "Аналитика", path: "/analytics", icon: IconChartBar },
   { label: "Склад", path: "/store", icon: IconPackage },
   { label: "Поставки", path: "/supply", icon: IconTruckDelivery },
   { label: "Заказы", path: "/orders", icon: IconShoppingCart },
