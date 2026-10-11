@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Button } from "@mantine/core";
+import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import {
   IconCheck,
   IconClock,
   IconCoins,
   IconPlus,
   IconShoppingCart,
+  IconQrcode,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
@@ -15,10 +16,13 @@ import { useOrders } from "./model/OrdersProvider";
 import { getTodayOrderStatistics } from "./model/calculations";
 import { formatOrderMoney } from "./model/format";
 import { OrdersTable } from "./ui/components/OrdersTable";
+import { GuestOrderQrModal } from "./ui/components/GuestOrderQrModal";
+import { initialRestaurant } from "@/pages/admin-panel/model/data";
 
 export function OrdersPage() {
   const { orders, completeOrder } = useOrders();
   const [search, setSearch] = useState("");
+  const [sharing, setSharing] = useState(false);
   const today = getTodayOrderStatistics(orders, dayjs().format("YYYY-MM-DD"));
   const statistics = [
     {
@@ -58,29 +62,48 @@ export function OrdersPage() {
       .includes(query),
   );
   return (
-    <DefaultPageLayout
-      title="Заказы"
-      subtitle="Учёт и обработка заказов ресторана"
-      searchTitle="Поиск по номеру заказа, блюду или сотруднику"
-      searchValue={search}
-      setSearchValue={setSearch}
-      statisticData={statistics}
-    >
-      <TableSummary
-        count={filtered.length}
-        description="Общее количество заказов за сегодня"
-        action={
-          <Button
-            component={Link}
-            to="/orders/new"
-            size="lg"
-            leftSection={<IconPlus size={20} />}
-          >
-            Создать заказ
-          </Button>
-        }
+    <>
+      <DefaultPageLayout
+        title="Заказы"
+        subtitle="Учёт и обработка заказов ресторана"
+        searchTitle="Поиск по номеру заказа, блюду или сотруднику"
+        searchValue={search}
+        setSearchValue={setSearch}
+        statisticData={statistics}
+      >
+        <TableSummary
+          count={filtered.length}
+          description="Общее количество заказов за сегодня"
+          action={
+            <Group gap="sm">
+              <Button
+                component={Link}
+                to="/orders/new"
+                size="lg"
+                leftSection={<IconPlus size={20} />}
+              >
+                Создать заказ
+              </Button>
+              <Tooltip label="Гостевой заказ по QR">
+                <ActionIcon
+                  size="input-lg"
+                  variant="default"
+                  aria-label="Открыть QR гостевого меню"
+                  onClick={() => setSharing(true)}
+                >
+                  <IconQrcode size={24} />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
+          }
+        />
+        <OrdersTable orders={filtered} onComplete={completeOrder} />
+      </DefaultPageLayout>
+      <GuestOrderQrModal
+        opened={sharing}
+        onClose={() => setSharing(false)}
+        restaurantId={initialRestaurant.id}
       />
-      <OrdersTable orders={filtered} onComplete={completeOrder} />
-    </DefaultPageLayout>
+    </>
   );
 }

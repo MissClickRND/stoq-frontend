@@ -36,8 +36,25 @@ import { LogsPage } from "@/pages/logs";
 import { AdminPanelPage } from "@/pages/admin-panel";
 import MainLayout from "../layouts/MainLayout";
 import { AuthLayout } from "@/widgets/auth-layout";
+import {
+  GuestRoutesLayout,
+  GuestMenuPage,
+  GuestDishPage,
+  GuestCartPage,
+  GuestOrderCompletePage,
+} from "@/pages/guest";
 
 const router = createBrowserRouter([
+  {
+    path: "/order/new/guest/:restaurantId",
+    element: <GuestRoutesLayout />,
+    children: [
+      { index: true, element: <GuestMenuPage /> },
+      { path: "dish/:dishId", element: <GuestDishPage /> },
+      { path: "cart", element: <GuestCartPage /> },
+      { path: "complete", element: <GuestOrderCompletePage /> },
+    ],
+  },
   {
     element: <MainLayout />,
     children: [

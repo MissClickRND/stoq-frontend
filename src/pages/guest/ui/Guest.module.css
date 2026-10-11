@@ -1,0 +1,210 @@
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: light-dark(#f5f8f5, var(--mantine-color-dark-9));
+}
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-background);
+}
+.headerInner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+}
+.brand {
+  color: var(--mantine-color-text);
+  text-decoration: none;
+}
+.brandText {
+  font-size: 30px;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+}
+.restaurant {
+  min-width: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--mantine-color-default-border);
+}
+.content {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  flex: 1;
+}
+.footer {
+  max-width: 1312px;
+  width: calc(100% - 48px);
+  margin: 0 auto;
+  border-top: 1px solid var(--mantine-color-default-border);
+  padding: 20px 0;
+}
+.title {
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+.search {
+  width: min(550px, 100%);
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: var(--mantine-color-background);
+  border: 1px solid var(--mantine-color-default-border);
+  box-shadow: 0 5px 20px light-dark(rgb(0 42 45 / 4%), rgb(0 0 0 / 12%));
+}
+.dishPhoto {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+  background: light-dark(#e9f2e1, var(--mantine-color-dark-6));
+}
+.photoFallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--mantine-color-primary-7);
+}
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  padding: 12px 4px 4px;
+}
+.cardActions {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+.cardName {
+  min-height: 56px;
+}
+.menuBottom {
+  margin-top: 24px;
+}
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  margin-top: 24px;
+}
+.detailPhoto {
+  aspect-ratio: 4 / 3;
+}
+.cartGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(350px, 1fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 24px;
+}
+.cartRow {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) auto auto 36px;
+  gap: 16px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}
+.cartRow:last-child {
+  border-bottom: none;
+}
+.cartPhoto {
+  width: 100px;
+  height: 100px;
+  aspect-ratio: 1;
+}
+.checkout {
+  position: sticky;
+  top: 104px;
+}
+.checkoutFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.checkoutGuests {
+  grid-column: 1 / -1;
+}
+.success {
+  max-width: 720px;
+  margin: 32px auto;
+  text-align: center;
+}
+
+@media (max-width: 64em) {
+  .cartGrid,
+  .detailGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .checkout {
+    position: static;
+  }
+}
+@media (max-width: 48em) {
+  .headerInner {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  .brandText {
+    display: none;
+  }
+  .restaurant {
+    padding-left: 0;
+    border: none;
+  }
+  .content {
+    padding: 24px 16px;
+  }
+  .footer {
+    width: calc(100% - 32px);
+  }
+  .cardName {
+    min-height: 0;
+  }
+  .cartGrid {
+    gap: 16px;
+  }
+  .cartRow {
+    grid-template-columns: 72px minmax(0, 1fr) 36px;
+    gap: 12px;
+  }
+  .cartPhoto {
+    width: 72px;
+    height: 72px;
+    grid-row: 1 / 3;
+  }
+  .cartName {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .cartPrice {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .cartQuantity {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .cartRemove {
+    grid-column: 3;
+    grid-row: 1;
+  }
+}

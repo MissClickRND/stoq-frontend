@@ -1,6 +1,7 @@
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
+import "@gfazioli/mantine-qr-code/styles.css";
 import "dayjs/locale/ru";
 
 import { MantineProvider, localStorageColorSchemeManager } from "@mantine/core";
@@ -12,6 +13,7 @@ import { Provider } from "react-redux";
 import { store } from "./providers/store/store";
 import { cssVariablesResolver, theme } from "./theme";
 import { Router } from "./providers/routes/Router";
+import { DishesProvider } from "@/pages/dishes/model/DishesProvider";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -26,7 +28,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       >
         <Notifications />
         <DatesProvider settings={{ locale: "ru", firstDayOfWeek: 1 }}>
-          <Router />
+          <DishesProvider>
+            <Router />
+          </DishesProvider>
         </DatesProvider>
       </MantineProvider>
     </Provider>

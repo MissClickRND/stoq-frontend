@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit",
     "test:supply": "node --test src/pages/supply/model/calculations.test.mjs src/pages/supply/model/report.test.mjs",
     "test:inventory": "node --test src/pages/store/model/inventory.test.mjs",
-    "test:orders": "node --test src/pages/orders/model/calculations.test.mjs"
+    "test:orders": "node --test src/pages/orders/model/calculations.test.mjs",
+    "test:guest": "node --test src/pages/guest/model/guest-order.test.mjs"
   },
   "dependencies": {
+    "@gfazioli/mantine-qr-code": "^2.0.13",
     "@mantine/core": "^9.7.1",
     "@mantine/dates": "^9.7.1",
     "@mantine/form": "^9.7.1",

@@ -1,5 +1,4 @@
 import {
-  Badge,
   Group,
   Paper,
   ScrollArea,
