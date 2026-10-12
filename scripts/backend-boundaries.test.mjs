@@ -13,10 +13,6 @@ import {
   createGuestOrder,
 } from "../src/entities/order/api/order.ts";
 import {
-  useStoreProducts,
-  removeProduct,
-} from "../src/entities/stock/api/stock.ts";
-import {
   useRestaurant,
   getRestaurants,
   saveRestaurant,
@@ -34,10 +30,6 @@ import {
   deleteInvitation,
 } from "../src/entities/invitation/api/invitation.ts";
 import {
-  useInventoryReport,
-  saveInventory,
-} from "../src/entities/inventory/api/inventory.ts";
-import {
   submitLogin,
   submitEmployeeRegistration,
   submitRestaurantRegistration,
@@ -47,12 +39,10 @@ const snapshot = () =>
   JSON.stringify({
     supplies: useSupplies().supplies,
     orders: useOrders().orders,
-    stock: useStoreProducts().products,
     restaurant: useRestaurant().restaurant,
     restaurants: getRestaurants(),
     employees: useEmployees().employees,
     invitations: useInvitations().invitations,
-    report: useInventoryReport().report,
   });
 
 test("backend command placeholders do not mutate fixtures or manufacture saved results", () => {
@@ -60,7 +50,6 @@ test("backend command placeholders do not mutate fixtures or manufacture saved r
   const dish = { id: "27", name: "Омлет", description: "", price: 520, ingredients: [], stopped: false };
   const supply = useSupplies().supplies[0];
   const order = useOrders().orders[0];
-  const report = useInventoryReport().report;
   const results = [
     saveDish({ ...dish, name: "Changed" }, dish.id),
     archiveDish(dish.id),
@@ -72,7 +61,6 @@ test("backend command placeholders do not mutate fixtures or manufacture saved r
       restaurantId: "restaurant-1",
       source: "guest",
     }),
-    removeProduct(useStoreProducts().products[0].id),
     saveRestaurant({ ...useRestaurant().restaurant, name: "Changed" }),
     changeRole("ivan", "WAITER"),
     toggleBlock("ivan"),
@@ -80,7 +68,6 @@ test("backend command placeholders do not mutate fixtures or manufacture saved r
     createInvitation("WAITER", 24),
     revokeInvitation("invite-active"),
     deleteInvitation("invite-active"),
-    saveInventory(report.entries, report.date, "User"),
     submitLogin({ email: "user@example.com", password: "password" }),
     submitEmployeeRegistration({
       name: "User",

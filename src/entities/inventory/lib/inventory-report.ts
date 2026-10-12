@@ -1,3 +1,4 @@
+import { normalizeArticle } from "../../../shared/lib/format.ts";
 import type { CellObject, SheetData, Row } from "write-excel-file/browser";
 import type { InventoryReport } from "../model/type.ts";
 
@@ -80,7 +81,7 @@ export function getInventoryReportData(report: InventoryReport): SheetData {
       type: Number,
       fontWeight: "bold",
     }),
-    metadata("Удалено", {
+    metadata("Списано", {
       value: report.counts.deleted,
       type: Number,
       fontWeight: "bold",
@@ -106,15 +107,15 @@ export function getInventoryReportData(report: InventoryReport): SheetData {
     ...report.entries.map(
       (entry): Row => [
         {
-          ...text(entry.product.title),
+          ...text(entry.product.product?.name ?? "Продукт #" + entry.product.productId),
           fontWeight: "bold",
           wrap: true,
           height: 32,
         },
-        text(entry.product.supplyId),
-        text(entry.product.article),
+        text(normalizeArticle(entry.product.supplyId)),
+        text(normalizeArticle(entry.product.productId)),
         {
-          value: Number(entry.product.remains),
+          value: entry.product.balance.availableQuantity,
           type: Number,
           format: "#,##0.###",
           fontWeight: "bold",
@@ -125,11 +126,11 @@ export function getInventoryReportData(report: InventoryReport): SheetData {
           format: "#,##0.###",
           fontWeight: "bold",
         },
-        text(entry.product.units),
+        text(entry.product.product?.unit?.shortName ?? "шт."),
         text(
           entry.remove
-            ? "Удалено"
-            : Number(entry.actual) !== Number(entry.product.remains)
+            ? "Списано"
+            : Number(entry.actual) !== entry.product.balance.availableQuantity
               ? "Обновлено"
               : "Без изменений",
         ),

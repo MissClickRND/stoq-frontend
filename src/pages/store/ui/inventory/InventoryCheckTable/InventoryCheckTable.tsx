@@ -1,3 +1,4 @@
+import { normalizeArticle } from "@/shared/lib/format";
 import componentClasses from "./InventoryCheckTable.module.css";
 import {
   ActionIcon,
@@ -29,7 +30,7 @@ export function InventoryCheckTable({
   entries: InventoryEntry[];
   submitted: boolean;
   onChange: (
-    id: string,
+    id: number,
     patch: Partial<Pick<InventoryEntry, "actual" | "remove">>,
   ) => void;
 }) {
@@ -46,11 +47,11 @@ export function InventoryCheckTable({
         >
           <Table.Td>
             <Text size="lg" fw={600} style={{ whiteSpace: "nowrap" }}>
-              {entry.product.supplyId}
+              {normalizeArticle(entry.product.supplyId)}
             </Text>
           </Table.Td>
           <Table.Td>
-            <Text size="lg">{entry.product.article}</Text>
+            <Text size="lg">{normalizeArticle(entry.product.productId)}</Text>
           </Table.Td>
           <Table.Td>
             <Text
@@ -58,18 +59,18 @@ export function InventoryCheckTable({
               fw={600}
               td={entry.remove ? "line-through" : undefined}
             >
-              {entry.product.title}
+              {(entry.product.product?.name ?? "Продукт #" + entry.product.productId)}
             </Text>
             {entry.remove && (
               <Text size="sm" c="red">
-                Будет удалён после сохранения
+                Остаток будет обнулён после сохранения
               </Text>
             )}
           </Table.Td>
           <Table.Td>
             <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-              {Number(entry.product.remains).toLocaleString("ru-RU")}{" "}
-              {entry.product.units}
+              {entry.product.balance.availableQuantity.toLocaleString("ru-RU")}{" "}
+              {(entry.product.product?.unit?.shortName ?? "шт.")}
             </Text>
           </Table.Td>
           <Table.Td>
@@ -81,7 +82,7 @@ export function InventoryCheckTable({
               decimalSeparator=","
               allowNegative={false}
               disabled={entry.remove}
-              aria-label={`Фактический остаток ${entry.product.title}, поставка ${entry.product.supplyId}, позиция ${entry.product.id}`}
+              aria-label={`Фактический остаток ${(entry.product.product?.name ?? "Продукт #" + entry.product.productId)}, поставка ${normalizeArticle(entry.product.supplyId)}, позиция ${entry.product.id}`}
               value={entry.actual}
               error={submitted ? inventoryEntryError(entry) : undefined}
               styles={{ input: { fontWeight: 700 } }}
@@ -90,19 +91,19 @@ export function InventoryCheckTable({
           </Table.Td>
           <Table.Td>
             <Text size="lg" fw={500}>
-              {entry.product.units}
+              {(entry.product.product?.unit?.shortName ?? "шт.")}
             </Text>
           </Table.Td>
           <Table.Td>
             <Group gap="xs">
               <Tooltip
-                label={entry.remove ? "Отменить удаление" : "Удалить позицию"}
+                label={entry.remove ? "Отменить списание" : "Списать позицию"}
               >
                 <ActionIcon
                   size="lg"
                   variant="light"
                   color={entry.remove ? "green" : "red"}
-                  aria-label={`${entry.remove ? "Отменить удаление" : "Удалить"} позицию ${entry.product.id}`}
+                  aria-label={`${entry.remove ? "Отменить списание" : "Списать"} позицию ${entry.product.id}`}
                   onClick={() =>
                     onChange(entry.product.id, { remove: !entry.remove })
                   }

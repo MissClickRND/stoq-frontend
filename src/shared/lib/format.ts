@@ -27,3 +27,9 @@ export const initials = (name: string) =>
     .slice(0, 2)
     .map((word) => word[0])
     .join("");
+
+export function normalizeArticle(id: number | string | null | undefined): string {
+  if (id === null || id === undefined) return "—";
+  const value = String(id).trim();
+  return /^\d+$/.test(value) ? value.padStart(5, "0") : "—";
+}

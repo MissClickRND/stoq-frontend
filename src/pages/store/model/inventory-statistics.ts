@@ -24,9 +24,9 @@ export function getInventoryConfirmationStatistics(entries: InventoryEntry[]) {
       color: "#0d5e24",
     },
     {
-      title: "К удалению",
+      title: "К списанию",
       value: counts.deleted,
-      description: "Позиции будут удалены со склада",
+      description: "Остатки позиций будут обнулены",
       icon: createElement(IconTrash),
       color: "#730a17",
     },
@@ -64,7 +64,7 @@ export function getInventoryReportStatistics(report: InventoryReport) {
       color: "#0d5e24",
     },
     {
-      title: "Удалено",
+      title: "Списано",
       value: report.counts.deleted,
       description: "Позиций склада",
       icon: createElement(IconTrash),

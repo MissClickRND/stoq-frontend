@@ -11,17 +11,17 @@ export const tableColumns = [
 
 export const productStatuses: Record<string, { label: string; color: string }> =
   {
-    normal: { label: "В норме", color: "green" },
-    end: { label: "Заканчивается", color: "yellow" },
-    "soon-expired": { label: "Скоро испортится", color: "orange" },
-    expired: { label: "Просрочен", color: "red" },
+    ACTIVE: { label: "В норме", color: "green" },
+    DEPLETED: { label: "Закончился", color: "yellow" },
+    QUARANTINED: { label: "На карантине", color: "orange" },
+    EXPIRED: { label: "Просрочен", color: "red" },
   };
 
 export const writeOffText = {
   title: "Списание продукта",
   confirm: "Списать продукт",
   cancel: "Отмена",
-  warning: "Продукт ещё не испорчен. Списание удалит его остаток со склада.",
+  warning: "Продукт ещё не испорчен. Списание обнулит его остаток на складе.",
 };
 
 export const productDetailFields = [

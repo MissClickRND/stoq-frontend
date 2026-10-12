@@ -1,7 +1,7 @@
-import type { StoreProduct } from "../../stock/@x/inventory.ts";
+import type { IStoreProduct } from "../../store/@x/inventory.ts";
 
 export type InventoryEntry = {
-  product: StoreProduct;
+  product: IStoreProduct;
   actual: number | string;
   remove: boolean;
 };

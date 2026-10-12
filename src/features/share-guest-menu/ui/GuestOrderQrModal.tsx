@@ -105,6 +105,43 @@ export function GuestOrderQrModal({
           readOnly
           onFocus={(event) => event.currentTarget.select()}
         />
+        <Accordion variant="separated">
+          <Accordion.Item value="appearance">
+            <Accordion.Control icon={<IconSettings size={20} />}>
+              Настроить QR
+            </Accordion.Control>
+            <Accordion.Panel>
+              <SimpleGrid cols={2}>
+                <Select
+                  label="Форма элементов"
+                  size="lg"
+                  value={dotStyle}
+                  allowDeselect={false}
+                  data={[
+                    { value: "square", label: "Квадратная" },
+                    { value: "rounded", label: "Скруглённая" },
+                    { value: "dots", label: "Точки" },
+                  ]}
+                  onChange={(value) =>
+                    value && setDotStyle(value as QRCodeDotStyle)
+                  }
+                />
+                <Select
+                  label="Цвет QR"
+                  size="lg"
+                  value={color}
+                  allowDeselect={false}
+                  data={[
+                    { value: "#002a2d", label: "Фирменный" },
+                    { value: "#000000", label: "Чёрный" },
+                    { value: "#165c26", label: "Зелёный" },
+                  ]}
+                  onChange={(value) => value && setColor(value)}
+                />
+              </SimpleGrid>
+            </Accordion.Panel>
+          </Accordion.Item>
+        </Accordion>
         <SimpleGrid cols={{ base: 1, sm: 2 }}>
           <Button
             size="lg"
@@ -125,44 +162,6 @@ export function GuestOrderQrModal({
             Скачать QR
           </Button>
         </SimpleGrid>
-        <Accordion variant="separated">
-          <Accordion.Item value="appearance">
-            <Accordion.Control icon={<IconSettings size={20} />}>
-              Настроить QR
-            </Accordion.Control>
-            <Accordion.Panel>
-              <SimpleGrid cols={2}>
-                <Select
-                  label="Форма элементов"
-                  value={dotStyle}
-                  allowDeselect={false}
-                  data={[
-                    { value: "square", label: "Квадратная" },
-                    { value: "rounded", label: "Скруглённая" },
-                    { value: "dots", label: "Точки" },
-                  ]}
-                  onChange={(value) =>
-                    value && setDotStyle(value as QRCodeDotStyle)
-                  }
-                />
-                <Select
-                  label="Цвет QR"
-                  value={color}
-                  allowDeselect={false}
-                  data={[
-                    { value: "#002a2d", label: "Фирменный" },
-                    { value: "#000000", label: "Чёрный" },
-                    { value: "#165c26", label: "Зелёный" },
-                  ]}
-                  onChange={(value) => value && setColor(value)}
-                />
-              </SimpleGrid>
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
-        <Alert icon={<IconInfoCircle size={20} />} color="blue">
-          Поделитесь ссылкой или QR, чтобы гости могли сами создавать заказ.
-        </Alert>
       </Stack>
     </Modal>
   );

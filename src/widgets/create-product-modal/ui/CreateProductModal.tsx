@@ -2,14 +2,16 @@ import { Alert, Button, Group, Loader, Modal, Select, Stack, TextInput } from "@
 import { useForm } from "@mantine/form";
 import { useGetUnitsQuery } from "@/entities/unit";
 import { useCreateProductMutation } from "@/entities/product";
+import { useNotifications } from "@/shared/lib";
 import { apiErrorMessage } from "@/shared/lib/api-error";
 
 function CreateProductForm({ initialName, onClose }: {
   initialName: string;
   onClose: () => void;
 }) {
+  const { showSuccess, showError } = useNotifications("top-right");
   const { data: units = [], isLoading, isError, refetch } = useGetUnitsQuery();
-  const [createProduct, { isLoading: saving, error }] = useCreateProductMutation();
+  const [createProduct, { isLoading: saving }] = useCreateProductMutation();
   const form = useForm({
     initialValues: { name: initialName, unitId: "" },
     validateInputOnBlur: true,
@@ -26,9 +28,10 @@ function CreateProductForm({ initialName, onClose }: {
     <form noValidate onSubmit={form.onSubmit(async (values) => {
       try {
         await createProduct({ name: values.name.trim(), unitId: Number(values.unitId) }).unwrap();
+        showSuccess("Продукт создан.");
         onClose();
-      } catch {
-        // RTK Query exposes the server error below and preserves the draft.
+      } catch (error) {
+        showError(apiErrorMessage(error, "Не удалось создать продукт"));
       }
     })}>
       <Stack gap="md">
@@ -38,7 +41,6 @@ function CreateProductForm({ initialName, onClose }: {
             <Button type="button" variant="subtle" onClick={() => refetch()}>Повторить</Button>
           </Alert>
         )}
-        {error && <Alert color="red" role="alert">{apiErrorMessage(error, "Не удалось создать продукт")}</Alert>}
         <TextInput
           label="Название"
           placeholder="Введите название продукта"

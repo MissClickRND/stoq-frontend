@@ -7,16 +7,10 @@ import {
 } from "./inventory.ts";
 
 const product = {
-  id: "a",
-  title: "Помидоры",
-  article: "00001",
-  supplyId: "00351",
-  units: "кг",
-  remains: "12",
-  price: "120",
-  totalPrice: "1440",
-  shelfLife: "30.10.2026",
-  status: "normal",
+  id: 27, supplyId: 8, productId: 3, initialQuantity: 50,
+  balance: { availableQuantity: 12, reservedQuantity: 4 },
+  product: { id: 3, name: "Помидоры", unit: { id: 2, name: "Килограмм", shortName: "кг" } },
+  expiresAt: "2026-10-30T12:00:00Z", status: "ACTIVE",
 };
 const entries = [
   { product, actual: 1.25, remove: false },

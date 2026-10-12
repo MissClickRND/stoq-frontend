@@ -1,9 +1,10 @@
+import { normalizeArticle } from "@/shared/lib/format";
 import componentClasses from "./InventoryCheckPage.module.css";
 import { useState } from "react";
-import { Alert, Button, Group, Paper, TextInput } from "@mantine/core";
+import { Alert, Button, Center, Group, Loader, Paper, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { IconArrowRight, IconCalendar, IconSearch } from "@tabler/icons-react";
-import { useNavigate } from "react-router-dom";
+import { IconArrowLeft, IconArrowRight, IconCalendar, IconSearch } from "@tabler/icons-react";
+import { Link, useNavigate } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import { useInventory, InventorySteps } from "@/features/inventory";
@@ -12,14 +13,16 @@ import { InventoryCheckTable } from "../InventoryCheckTable/InventoryCheckTable"
 import classes from "../../../classes/Inventory.module.css";
 
 export function InventoryCheckPage() {
-  const { entries, date, setDate, updateEntry, prepare } = useInventory();
+  const {
+    entries, date, setDate, updateEntry, prepare, isLoading, isError, refetch,
+  } = useInventory();
   const [search, setSearch] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const query = search.trim().toLocaleLowerCase("ru-RU");
   const matching = entries.filter((entry) =>
-    `${entry.product.title} ${entry.product.article} ${entry.product.supplyId}`
+    `${(entry.product.product?.name ?? "Продукт #" + entry.product.productId)} ${normalizeArticle(entry.product.productId)} ${normalizeArticle(entry.product.supplyId)}`
       .toLocaleLowerCase("ru-RU")
       .includes(query),
   );
@@ -77,6 +80,12 @@ export function InventoryCheckPage() {
           {error}
         </Alert>
       )}
+      {isError && (
+        <Alert color="red" title="Не удалось загрузить склад">
+          <Button variant="subtle" onClick={() => refetch()}>Повторить</Button>
+        </Alert>
+      )}
+      {isLoading && <Center p="xl"><Loader /></Center>}
       <InventoryCheckTable
         entries={matching}
         submitted={submitted}
@@ -85,10 +94,13 @@ export function InventoryCheckPage() {
           setError(null);
         }}
       />
-      <Group className={classes.footer} justify="flex-end">
+      <Group className={classes.footer} justify="space-between">
+        <Button component={Link} to="/store" size="lg" variant="default" leftSection={<IconArrowLeft size={20} />}>
+          Вернуться на склад
+        </Button>
         <Button
           size="lg"
-          disabled={!entries.length}
+          disabled={isLoading || !entries.length}
           rightSection={<IconArrowRight size={20} />}
           onClick={() => {
             setSubmitted(true);

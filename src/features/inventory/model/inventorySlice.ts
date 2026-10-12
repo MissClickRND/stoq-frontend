@@ -1,22 +1,23 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import dayjs from "dayjs";
-import type { StoreProduct } from "@/entities/stock";
-import type { InventoryEntry } from "@/entities/inventory";
+import type { IStoreProduct } from "@/entities/store";
+import type { InventoryEntry, InventoryReport } from "@/entities/inventory";
 const initialState = {
   entries: [] as InventoryEntry[],
   date: dayjs().format("YYYY-MM-DD") as string | null,
   ready: false,
   initialized: false,
+  report: null as InventoryReport | null,
 };
 const slice = createSlice({
   name: "inventoryDraft",
   initialState,
   reducers: {
-    initialize(state, action: PayloadAction<StoreProduct[]>) {
+    initialize(state, action: PayloadAction<IStoreProduct[]>) {
       if (state.initialized) return;
       state.entries = action.payload.map((product) => ({
         product: { ...product },
-        actual: Number(product.remains),
+        actual: product.balance.availableQuantity,
         remove: false,
       }));
       state.initialized = true;
@@ -26,6 +27,7 @@ const slice = createSlice({
       state.date = action.payload;
       state.ready = false;
       state.initialized = false;
+      state.report = null;
     },
     setDate(state, action: PayloadAction<string | null>) {
       state.date = action.payload;
@@ -34,7 +36,7 @@ const slice = createSlice({
     updateEntry(
       state,
       action: PayloadAction<{
-        id: string;
+        id: number;
         patch: Partial<Pick<InventoryEntry, "actual" | "remove">>;
       }>,
     ) {
@@ -42,6 +44,10 @@ const slice = createSlice({
         (entry) => entry.product.id === action.payload.id,
       );
       if (entry) Object.assign(entry, action.payload.patch);
+      state.ready = false;
+    },
+    complete(state, action: PayloadAction<InventoryReport>) {
+      state.report = action.payload;
       state.ready = false;
     },
     setReady(state, action: PayloadAction<boolean>) {

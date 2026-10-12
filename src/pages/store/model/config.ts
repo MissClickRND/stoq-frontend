@@ -14,7 +14,7 @@ export const storeStatisticData = [
     color: "#0d5e24",
   },
   {
-    title: "Заканчиваются",
+    title: "Закончились",
     description: "Требуется пополнение",
     icon: createElement(IconAlertTriangle),
     color: "#bcbf0d",

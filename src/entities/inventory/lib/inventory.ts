@@ -1,3 +1,4 @@
+import type { IInventoryStoreRequest } from "../../store/@x/inventory.ts";
 import type { InventoryEntry, InventoryCounts } from "../model/type.ts";
 
 export function inventoryEntryError(entry: InventoryEntry): string | null {
@@ -13,7 +14,7 @@ export function inventoryCounts(entries: InventoryEntry[]): InventoryCounts {
   const deleted = entries.filter((entry) => entry.remove).length;
   const updated = entries.filter(
     (entry) =>
-      !entry.remove && Number(entry.actual) !== Number(entry.product.remains),
+      !entry.remove && Number(entry.actual) !== entry.product.balance.availableQuantity,
   ).length;
   return {
     checked: entries.length,
@@ -26,7 +27,23 @@ export function inventoryCounts(entries: InventoryEntry[]): InventoryCounts {
 export function inventoryChange(entry: InventoryEntry) {
   return entry.remove
     ? "deleted"
-    : Number(entry.actual) !== Number(entry.product.remains)
+    : Number(entry.actual) !== entry.product.balance.availableQuantity
       ? "updated"
       : "unchanged";
+}
+
+export function toInventoryStoreRequest(
+  entries: InventoryEntry[],
+): IInventoryStoreRequest {
+  return {
+    items: entries.flatMap((entry) => {
+      const error = inventoryEntryError(entry);
+      if (error) throw new Error(error);
+      if (!entry.remove && inventoryChange(entry) === "unchanged") return [];
+      return [{
+        batchId: entry.product.id,
+        quantity: entry.remove ? 0 : Number(entry.actual),
+      }];
+    }),
+  };
 }

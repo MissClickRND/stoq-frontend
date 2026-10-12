@@ -1,3 +1,4 @@
+import { normalizeArticle } from "@/shared/lib/format";
 import { Badge, Table, Text } from "@mantine/core";
 import TableLayout from "@/shared/ui/table-layout";
 import { inventoryChange } from "../lib/inventory.ts";
@@ -29,8 +30,8 @@ export function InventoryChangesTable({
         const label =
           change === "deleted"
             ? applied
-              ? "Удалено"
-              : "Удаление"
+              ? "Списано"
+              : "Списание"
             : change === "updated"
               ? applied
                 ? "Обновлено"
@@ -40,21 +41,21 @@ export function InventoryChangesTable({
           <Table.Tr>
             <Table.Td>
               <Text size="lg" fw={600} style={{ whiteSpace: "nowrap" }}>
-                {entry.product.supplyId}
+                {normalizeArticle(entry.product.supplyId)}
               </Text>
             </Table.Td>
             <Table.Td>
-              <Text size="lg">{entry.product.article}</Text>
+              <Text size="lg">{normalizeArticle(entry.product.productId)}</Text>
             </Table.Td>
             <Table.Td>
               <Text size="lg" fw={600}>
-                {entry.product.title}
+                {(entry.product.product?.name ?? "Продукт #" + entry.product.productId)}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-                {Number(entry.product.remains).toLocaleString("ru-RU")}{" "}
-                {entry.product.units}
+                {entry.product.balance.availableQuantity.toLocaleString("ru-RU")}{" "}
+                {(entry.product.product?.unit?.shortName ?? "шт.")}
               </Text>
             </Table.Td>
             <Table.Td>
@@ -71,8 +72,8 @@ export function InventoryChangesTable({
                 style={{ whiteSpace: "nowrap" }}
               >
                 {entry.remove
-                  ? "—"
-                  : `${Number(entry.actual).toLocaleString("ru-RU")} ${entry.product.units}`}
+                  ? "0 " + (entry.product.product?.unit?.shortName ?? "шт.")
+                  : `${Number(entry.actual).toLocaleString("ru-RU")} ${(entry.product.product?.unit?.shortName ?? "шт.")}`}
               </Text>
             </Table.Td>
             <Table.Td>

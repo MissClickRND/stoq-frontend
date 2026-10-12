@@ -1,11 +1,13 @@
 import { notifications } from "@mantine/notifications";
 
-export const useNotifications = () => {
+export const useNotifications = (
+  position: "top-right" | "bottom-right" = "bottom-right",
+) => {
   const showError = (message: string) => {
     notifications.show({
       title: "Ошибка",
       message: message,
-      position: "bottom-right",
+      position,
       color: "red",
       autoClose: 3000,
     });
@@ -15,7 +17,7 @@ export const useNotifications = () => {
     notifications.show({
       title: " Успешно",
       message: message,
-      position: "bottom-right",
+      position,
       color: "green",
       autoClose: 3000,
     });

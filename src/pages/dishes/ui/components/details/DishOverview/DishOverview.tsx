@@ -1,6 +1,7 @@
 import componentClasses from "./DishOverview.module.css";
 import {
   Box,
+  Center,
   Image,
   Paper,
   SimpleGrid,
@@ -9,7 +10,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconChefHat } from "@tabler/icons-react";
+import { IconChefHat, IconSoupFilled } from "@tabler/icons-react";
 import {
   type Dish,
   dishCost,
@@ -28,14 +29,13 @@ export function DishOverview({ dish }: { dish: Dish }) {
           src={dish.imageUrl}
           alt={dish.name}
           className={componentClasses.photo}
+          fallbackSrc="https://placehold.co/750x400?text=Тут могла быть ваша реклама"
           radius="md"
         />
       ) : (
-        <Box className={componentClasses.photoPlaceholder}>
-          <ThemeIcon variant="light" size={100} color="primary" radius="xl">
-            <IconChefHat size={52} />
-          </ThemeIcon>
-        </Box>
+        <Center className={componentClasses.photo} bg="#DDDDDD" bdrs="md">
+          <IconSoupFilled color="gray" size={48} />
+        </Center>
       )}
       <Stack gap="md" style={{ flex: 1, minWidth: 0 }}>
         <Box>

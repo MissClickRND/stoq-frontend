@@ -1,7 +1,7 @@
-import { Button, Text } from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
+import { Button, Group, Text } from "@mantine/core";
+import { IconArrowLeft, IconCheck } from "@tabler/icons-react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
@@ -9,10 +9,14 @@ import { useInventory, InventorySteps } from "@/features/inventory";
 import { getInventoryConfirmationStatistics } from "../../model/inventory-statistics";
 import { inventoryChange, InventoryChangesTable } from "@/entities/inventory";
 
+import { useNotifications } from "@/shared/lib";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 import classes from "../../classes/Inventory.module.css";
 
 export function InventoryConfirmationPage() {
-  const { entries, ready, date, save } = useInventory();
+  const { entries, ready, date, save, isSaving } = useInventory();
+  const navigate = useNavigate();
+  const { showSuccess, showError } = useNotifications("top-right");
   const name = useSelector((state: RootState) => state.user.name);
   if (!ready || !date) return <Navigate to="/store/inventory" replace />;
   const sorted = [...entries].sort(
@@ -36,22 +40,44 @@ export function InventoryConfirmationPage() {
       }
     >
       <Text size="sm" c="dimmed" className={classes.fixed}>
-        Остатки и удаления будут применены после нажатия «Сохранить». Для
+        Остатки и списания будут применены после нажатия «Сохранить». Для
         исправления вернитесь к проверке через хлебные крошки.
       </Text>
       <InventoryChangesTable entries={sorted} />
-      <Button
-        className={classes.footer}
-        size="lg"
-        fullWidth
-        leftSection={<IconCheck size={20} />}
-        onClick={() => {
-          save(name || "Пользователь");
-          //! Открыть итоговый отчёт по ID, полученному после сохранения на сервере.
-        }}
-      >
-        Сохранить
-      </Button>
+      <Group className={classes.footer} justify="space-between">
+        <Button
+          component={Link}
+          to="/store"
+          variant="default"
+          size="lg"
+          leftSection={<IconArrowLeft size={20} />}
+          disabled={isSaving}
+        >
+          Вернуться на склад
+        </Button>
+        <Button
+          loading={isSaving}
+          size="lg"
+          leftSection={<IconCheck size={20} />}
+          onClick={async () => {
+            try {
+              await save(name || "Пользователь");
+              showSuccess("Изменения инвентаризации сохранены.");
+              navigate("/store/inventory/report");
+            } catch (error) {
+              showError(
+                error instanceof Error
+                  ? error.message
+                  : apiErrorMessage(error,
+                    "Не удалось сохранить инвентаризацию. Черновик сохранён; повторите попытку.",
+                  ),
+              );
+            }
+          }}
+        >
+          Сохранить
+        </Button>
+      </Group>
     </DefaultPageLayout>
   );
 }

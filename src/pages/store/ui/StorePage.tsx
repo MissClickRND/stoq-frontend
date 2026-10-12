@@ -5,25 +5,31 @@ import StoreTableSection from "./components/StoreTableSection";
 import { storeStatisticData } from "../model/config";
 import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import { TableSummary } from "@/shared/ui/table-summary";
-import { matchesStoreProduct, useStoreProducts } from "@/entities/stock";
+import { useGetStoreQuery, getShelfLifeDays, soonExpiredDays } from "@/entities/store";
 import { IconClipboardCheck, IconCubePlus } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { useStartInventory } from "@/features/inventory";
 import { CreateProductModal } from "@/widgets/create-product-modal";
 
 export default function StorePage() {
-  const { products } = useStoreProducts();
-
   const [opened, { open, close }] = useDisclosure(false);
   const startInventory = useStartInventory();
-  const counts = [
-    products.length,
-    products.filter((product) => product.status === "end").length,
-    products.filter((product) => product.status === "soon-expired").length,
-    products.filter((product) => product.status === "expired").length,
-  ];
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearchValue] = useDebouncedValue(searchValue, 200);
+  const search = debouncedSearchValue.trim();
+  const all = useGetStoreQuery({ search: "" });
+  const filtered = useGetStoreQuery({ search }, { skip: !search });
+  const listing = search ? filtered : all;
+  const products = listing.currentData ?? [];
+  const counts = [
+    all.currentData?.length ?? 0,
+    all.currentData?.filter((product) => product.status === "DEPLETED").length ?? 0,
+    all.currentData?.filter((product) => {
+      const days = getShelfLifeDays(product.expiresAt);
+      return product.status === "ACTIVE" && days !== null && days >= 0 && days <= soonExpiredDays;
+    }).length ?? 0,
+    all.currentData?.filter((product) => product.status === "EXPIRED").length ?? 0,
+  ];
 
   return (
     <>
@@ -40,11 +46,7 @@ export default function StorePage() {
         }))}
       >
         <TableSummary
-          count={
-            products.filter((product) =>
-              matchesStoreProduct(product, debouncedSearchValue),
-            ).length
-          }
+          count={products.length}
           description="На текущий момент"
           action={
             <Group gap="md">
@@ -70,7 +72,12 @@ export default function StorePage() {
             </Group>
           }
         />
-        <StoreTableSection searchValue={debouncedSearchValue} />
+        <StoreTableSection
+          products={products}
+          isLoading={!listing.currentData && listing.isFetching}
+          isError={listing.isError}
+          onRetry={() => listing.refetch()}
+        />
       </DefaultPageLayout>
     </>
   );

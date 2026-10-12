@@ -89,11 +89,16 @@ export function SupplyProductCard({
             size="lg"
             style={{ flex: 1, minWidth: 0 }}
             aria-label={"Ед. измерения " + item.product.name}
-            data={unitOptions.map((unit) => ({ value: String(unit.id), label: unit.shortName }))}
+            data={unitOptions.map((unit) => ({
+              value: String(unit.id),
+              label: unit.shortName,
+            }))}
             value={item.unitId === null ? null : String(item.unitId)}
             allowDeselect={false}
             error={errors.unitId}
-            onChange={(unitId) => onChange({ unitId: unitId ? Number(unitId) : null })}
+            onChange={(unitId) =>
+              onChange({ unitId: unitId ? Number(unitId) : null })
+            }
           />
           <Tooltip label="Создать единицу измерения">
             <ActionIcon

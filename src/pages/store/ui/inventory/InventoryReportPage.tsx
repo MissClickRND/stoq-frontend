@@ -1,22 +1,23 @@
-import { Alert, Group } from "@mantine/core";
-import { IconCircleCheck } from "@tabler/icons-react";
+import { Button, Group } from "@mantine/core";
+import { IconArrowLeft } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import {
-  useInventoryReport,
   inventoryChange,
   InventoryChangesTable,
 } from "@/entities/inventory";
 import { getInventoryReportStatistics } from "../../model/inventory-statistics";
 
-import { InventorySteps } from "@/features/inventory";
+import { Link, Navigate } from "react-router-dom";
+import { InventorySteps, useInventoryReport } from "@/features/inventory";
 
 import { InventoryReportButton } from "@/features/export-report";
 import classes from "../../classes/Inventory.module.css";
 
 export function InventoryReportPage() {
   const { report } = useInventoryReport();
+  if (!report) return <Navigate to="/store/inventory" replace />;
   const sorted = [...report.entries].sort(
     (a, b) =>
       Number(inventoryChange(a) === "unchanged") -
@@ -38,16 +39,10 @@ export function InventoryReportPage() {
       }
     >
       <InventoryChangesTable entries={sorted} applied />
-      <Alert
-        color="green"
-        icon={<IconCircleCheck size={24} />}
-        title="Инвентаризация завершена"
-        className={classes.fixed}
-      >
-        Изменения сохранены. Провёл: {report.completedBy}. Без изменений:{" "}
-        {report.counts.unchanged} позиций.
-      </Alert>
-      <Group className={classes.footer} justify="flex-end">
+      <Group className={classes.footer} justify="space-between">
+        <Button component={Link} to="/store" size="lg" variant="default" leftSection={<IconArrowLeft size={20} />}>
+          Вернуться на склад
+        </Button>
         <InventoryReportButton report={report} />
       </Group>
     </DefaultPageLayout>

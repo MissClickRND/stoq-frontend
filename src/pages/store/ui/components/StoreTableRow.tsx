@@ -1,3 +1,4 @@
+import { normalizeArticle } from "@/shared/lib/format";
 import {
   ActionIcon,
   Button,
@@ -8,16 +9,16 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconExternalLink, IconTrash } from "@tabler/icons-react";
-import { type StoreProduct, formatPrice } from "@/entities/stock";
+import { type IStoreProduct, formatPrice } from "@/entities/store";
 
 import { StoreProductStatus } from "./StoreProductStatus";
 import { StoreShelfLife } from "./StoreShelfLife";
 import { useNavigate } from "react-router-dom";
 
 type StoreTableRowProps = {
-  product: StoreProduct;
-  onDetails: (product: StoreProduct) => void;
-  onWriteOff: (product: StoreProduct) => void;
+  product: IStoreProduct;
+  onDetails: (product: IStoreProduct) => void;
+  onWriteOff: (product: IStoreProduct) => void;
 };
 
 export function StoreTableRow({
@@ -26,7 +27,7 @@ export function StoreTableRow({
   onWriteOff,
 }: StoreTableRowProps) {
   const navigate = useNavigate();
-  const handleNavigateToSupply = (supplyId: string) => {
+  const handleNavigateToSupply = (supplyId: number) => {
     navigate(`/supply/${encodeURIComponent(supplyId)}`);
   };
 
@@ -38,7 +39,7 @@ export function StoreTableRow({
         >
           <Group align="center" gap="2" wrap="nowrap">
             <Text size="lg" fw={600}>
-              {product.supplyId}
+              {normalizeArticle(product.supplyId)}
             </Text>
             <IconExternalLink size={20} />
           </Group>
@@ -46,29 +47,29 @@ export function StoreTableRow({
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={600}>
-          {product.title}
+          {(product.product?.name ?? "Продукт #" + product.productId)}
         </Text>
         <Text size="sm" c="dimmed">
-          Арт. {product.article}
+          Арт. {normalizeArticle(product.id)}
         </Text>
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>
-          {product.remains}
+          {product.balance.availableQuantity}
         </Text>
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={500}>
-          {product.units}
+          {(product.product?.unit?.shortName ?? "шт.")}
         </Text>
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>
-          {formatPrice(product.totalPrice)}
+          {formatPrice("0")}
         </Text>
       </Table.Td>
       <Table.Td>
-        <StoreShelfLife shelfLife={product.shelfLife} />
+        <StoreShelfLife shelfLife={product.expiresAt} status={product.status} />
       </Table.Td>
       <Table.Td>
         <StoreProductStatus status={product.status} />
@@ -87,7 +88,7 @@ export function StoreTableRow({
               size={50}
               variant="light"
               color="red"
-              aria-label={`Списать ${product.title}, артикул ${product.article}, поставка ${product.supplyId}`}
+              aria-label={`Списать ${(product.product?.name ?? "Продукт #" + product.productId)}, артикул ${normalizeArticle(product.productId)}, поставка ${normalizeArticle(product.supplyId)}`}
               onClick={() => onWriteOff(product)}
             >
               <IconTrash />

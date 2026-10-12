@@ -1,5 +1,5 @@
-import { Box, Group, Image, Text, ThemeIcon } from "@mantine/core";
-import { IconChefHat } from "@tabler/icons-react";
+import { Box, Center, Group, Image, Text } from "@mantine/core";
+import { IconSoupFilled } from "@tabler/icons-react";
 import type { Dish } from "../model/view";
 
 export function DishIdentity({ dish }: { dish: Dish }) {
@@ -14,11 +14,12 @@ export function DishIdentity({ dish }: { dish: Dish }) {
           radius="md"
           fit="cover"
           style={{ flexShrink: 0 }}
+          fallbackSrc="https://placehold.co/900x400?text=Тут могла быть ваша реклама"
         />
       ) : (
-        <ThemeIcon variant="light" color="primary" size={60} radius="md">
-          <IconChefHat size={28} />
-        </ThemeIcon>
+        <Center style={{ flexShrink: 0 }} w={112} h={76} bg="#DDDDDD" bdrs="md">
+          <IconSoupFilled color="gray" size={48} />
+        </Center>
       )}
       <Box style={{ minWidth: 0 }}>
         <Text size="lg" fw={600}>
