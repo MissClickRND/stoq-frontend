@@ -1,6 +1,14 @@
 import dayjs from "dayjs";
-import { mockDishes } from "../../dish/@x/order.ts";
 import type { Order } from "./type";
+
+// Снимки позиций исторических заказов, независимые от текущего меню.
+const orderItemSnapshots = [
+  { dishId: "salmon-steak", name: "Стейк из лосося", price: 1490 },
+  { dishId: "caesar", name: "Салат «Цезарь» с креветками", price: 790 },
+  { dishId: "carbonara", name: "Паста «Карбонара»", price: 690 },
+  { dishId: "cheesecake", name: "Чизкейк с ягодами", price: 450 },
+  { dishId: "burger", name: "Бургер с говядиной", price: 890 },
+];
 
 export function createMockOrders(): Order[] {
   const now = dayjs();
@@ -17,13 +25,11 @@ export function createMockOrders(): Order[] {
     guests: 1 + (index % 4),
     responsible: names[index % names.length],
     status: statuses[index % statuses.length],
-    items: mockDishes
+    items: orderItemSnapshots
       .slice(index % 3, (index % 3) + 2 + (index % 2))
-      .map((dish, dishIndex) => ({
-        dishId: dish.id,
-        name: dish.name,
-        price: dish.price,
-        imageUrl: dish.imageUrl,
+      .map((item, dishIndex) => ({
+        ...item,
+        imageUrl: "https://i.pinimg.com/originals/f6/8c/02/f68c022de85632efc2a1bad16d4f042f.jpg",
         quantity: 1 + (dishIndex % 2),
       })),
   }));

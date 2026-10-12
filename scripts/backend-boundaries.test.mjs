@@ -1,10 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import {
-  useDishes,
-  saveDish,
-  archiveDish,
-} from "../src/entities/dish/api/dish.ts";
+import { saveDish, archiveDish } from "../src/entities/dish/api/commands.ts";
 import {
   useSupplies,
   useSupply,
@@ -49,7 +45,6 @@ import {
 
 const snapshot = () =>
   JSON.stringify({
-    dishes: useDishes().dishes,
     supplies: useSupplies().supplies,
     orders: useOrders().orders,
     stock: useStoreProducts().products,
@@ -62,7 +57,7 @@ const snapshot = () =>
 
 test("backend command placeholders do not mutate fixtures or manufacture saved results", () => {
   const before = snapshot();
-  const dish = useDishes().dishes[0];
+  const dish = { id: "27", name: "Омлет", description: "", price: 520, ingredients: [], stopped: false };
   const supply = useSupplies().supplies[0];
   const order = useOrders().orders[0];
   const report = useInventoryReport().report;

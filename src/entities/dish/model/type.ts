@@ -1,27 +1,30 @@
+import type { IProduct } from "../../product/@x/dish";
+
 export type DishPriority = "high" | "medium" | "low";
 
-export type DishIngredient = {
-  id: string;
-  name: string;
-  unit: string;
+export type IDishIngredient = {
+  id: number;
+  productId: number;
+  dishId: number;
   quantity: number;
-  stock: number;
-  costPerUnit: number;
-  expiresOn: string;
+  product: IProduct;
 };
 
-export type Dish = {
-  id: string;
+export type IDish = {
+  id: number;
   name: string;
   description: string;
-  price: number;
+  salePrice: number;
   imageUrl?: string;
-  stopped: boolean;
-  archived?: boolean;
-  stopReason?: string;
-  ingredients: DishIngredient[];
-  recommendation?: { reason: string; priority: DishPriority };
-  sales: { date: string; quantity: number }[];
+
+  recipeItems: IDishIngredient[];
 };
 
-export type DishDraft = Omit<Dish, "id" | "sales" | "recommendation">;
+export type DishDraft = Omit<IDish, "id" | "sales" | "recommendation">;
+
+export type ICreateDishRequest = Pick<
+  IDish,
+  "name" | "description" | "imageUrl" | "salePrice"
+> & {
+  recipeItems: Pick<IDishIngredient, "productId" | "quantity">;
+};

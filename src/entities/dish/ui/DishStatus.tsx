@@ -1,6 +1,6 @@
 import { Badge } from "@mantine/core";
 import { dishIsStopped } from "../lib/calculations";
-import type { Dish } from "../model/type";
+import type { Dish } from "../model/view";
 
 export function DishStatus({ dish }: { dish: Dish }) {
   const stopped = dishIsStopped(dish);

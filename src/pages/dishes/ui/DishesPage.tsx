@@ -1,26 +1,25 @@
 import { createElement, useState } from "react";
-import { Button } from "@mantine/core";
+import { Alert, Button, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import {
   useDishes,
-  dishIsStopped,
+  useStopList,
+  useDishRecommendations,
   matchesDish,
-  missingIngredients,
 } from "@/entities/dish";
-import { dishModes, dishStatisticItems, priorityLabels } from "../model/config";
+import { dishModes, dishStatisticItems } from "../model/config";
 
 import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
-import { Recomendtation } from "./components/Recomendtation/Recomendtation";
+import { Recommendation } from "./components/Recomendtation/Recomendtation";
 import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
 
 export function DishesPage() {
-  const { dishes } = useDishes();
   const [searchValue, setSearchValue] = useState("");
   const [query] = useDebouncedValue(searchValue, 200);
   const [adding, setAdding] = useState(false);
@@ -30,15 +29,20 @@ export function DishesPage() {
     requestedMode === "stop" || requestedMode === "recommended"
       ? requestedMode
       : "all";
-  const matching = dishes.filter((dish) => matchesDish(dish, query));
-  const menuDishes = dishes.filter((dish) => !dish.archived);
-  const stopped = dishes.filter(dishIsStopped);
+  const { dishes, isLoading, isError, refetch } = useDishes("", {
+    skip: mode !== "all",
+  });
+  const stopList = useStopList();
+  const recommendations = useDishRecommendations();
+  const source = mode === "stop" ? stopList : recommendations;
+  const visibleDishes = (mode === "all" ? dishes : source.dishes)
+    .filter((dish) => !dish.archived && matchesDish(dish, query));
+  //! Подключить статистику отдельно, когда API начнёт отдавать доступность.
   const counts = {
-    total: menuDishes.length,
-    active: menuDishes.length - stopped.length,
-    stopped: stopped.length,
-    missing: menuDishes.filter((dish) => missingIngredients(dish).length > 0)
-      .length,
+    total: dishes.filter((dish) => !dish.archived).length,
+    active: 0,
+    stopped: 0,
+    missing: 0,
   };
   const statistics = dishStatisticItems.map((item) => ({
     title: item.title,
@@ -47,19 +51,6 @@ export function DishesPage() {
     color: item.color,
     icon: createElement(item.icon),
   }));
-  const recommendations = matching
-    .filter((dish) => !dish.archived && dish.recommendation)
-    .sort(
-      (a, b) =>
-        priorityLabels[a.recommendation!.priority].rank -
-        priorityLabels[b.recommendation!.priority].rank,
-    );
-  const visibleDishes =
-    mode === "stop"
-      ? matching.filter(dishIsStopped)
-      : mode === "recommended"
-        ? recommendations
-        : matching;
 
   return (
     <>
@@ -77,6 +68,22 @@ export function DishesPage() {
           ariaLabel: "Режим отображения блюд",
         }}
       >
+        {mode !== "all" && !source.isAvailable && (
+          <Text c="dimmed">
+            {mode === "stop"
+              ? "Стоп-лист пока недоступен."
+              : "Рекомендации пока недоступны."}
+          </Text>
+        )}
+        {mode === "all" && isLoading && <Text role="status">Загрузка блюд…</Text>}
+        {mode === "all" && isError && (
+          <Alert color="red" role="alert">
+            Не удалось загрузить блюда.
+            <Button type="button" variant="subtle" onClick={() => refetch()}>
+              Повторить
+            </Button>
+          </Alert>
+        )}
         <TableSummary
           count={visibleDishes.length}
           description="Блюд в текущей таблице"
@@ -95,7 +102,7 @@ export function DishesPage() {
         ) : mode === "stop" ? (
           <StopList dishes={visibleDishes} />
         ) : (
-          <Recomendtation dishes={visibleDishes} />
+          <Recommendation dishes={visibleDishes} />
         )}
       </DefaultPageLayout>
       <DishFormModal

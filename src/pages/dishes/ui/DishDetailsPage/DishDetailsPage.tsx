@@ -1,11 +1,10 @@
 import componentClasses from "./DishDetailsPage.module.css";
 import { Alert, Button, Group, SimpleGrid, Stack, Text } from "@mantine/core";
-import { IconEdit, IconArchive } from "@tabler/icons-react";
+import { IconEdit } from "@tabler/icons-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { ConfirmationModal } from "@/shared/ui/confirmation-modal";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
-import { useDishes } from "@/entities/dish";
+import { useDish, useDishes } from "@/entities/dish";
 import { DishOverview } from "../components/details/DishOverview/DishOverview";
 import { DishIngredients } from "../components/details/DishIngredients";
 import { DishSales } from "../components/details/DishSales/DishSales";
@@ -17,10 +16,21 @@ import { DishIngredientSearch } from "../components/DishIngredientSearch";
 
 export function DishDetailsPage() {
   const { dishId } = useParams();
-  const { dishes, archiveDish } = useDishes();
-  const dish = dishes.find((item) => item.id === dishId);
+  const { dishes } = useDishes();
+  const { dish, isLoading, isError, refetch } = useDish(dishId);
   const [editing, setEditing] = useState(false);
-  const [archiving, setArchiving] = useState(false);
+
+  if (isLoading)
+    return <Text p="lg" role="status">Загрузка блюда…</Text>;
+  if (isError)
+    return (
+      <Alert m="lg" color="red" role="alert">
+        Не удалось загрузить блюдо.
+        <Button type="button" variant="subtle" onClick={() => refetch()}>
+          Повторить
+        </Button>
+      </Alert>
+    );
 
   if (!dish)
     return (
@@ -50,23 +60,9 @@ export function DishDetailsPage() {
           >
             Редактировать
           </Button>
-          <Button
-            variant="light"
-            color="red"
-            leftSection={<IconArchive size={16} />}
-            onClick={() => setArchiving(true)}
-            disabled={dish.archived}
-          >
-            {dish.archived ? "В архиве" : "В архив"}
-          </Button>
         </Group>
       </Group>
       <DishOverview dish={dish} />
-      {dish.archived && (
-        <Alert color="gray" title="Блюдо в архиве">
-          Блюдо исключено из текущего меню.
-        </Alert>
-      )}
 
       <DishDetailsStatistics dish={dish} dishes={dishes} />
       <DishFinancialSummary dish={dish} />
@@ -82,18 +78,6 @@ export function DishDetailsPage() {
         onClose={() => setEditing(false)}
         dish={dish}
         renderIngredientSearch={(props) => <DishIngredientSearch {...props} />}
-      />
-      <ConfirmationModal
-        opened={archiving}
-        title="Архивировать блюдо"
-        message={`Переместить «${dish.name}» в архив? Блюдо исчезнет из текущего меню.`}
-        confirmText="В архив"
-        cancelText="Отмена"
-        onClose={() => setArchiving(false)}
-        onConfirm={() => {
-          archiveDish(dish.id);
-          //! Возвращаться к списку только после успешной архивации на сервере.
-        }}
       />
     </Stack>
   );

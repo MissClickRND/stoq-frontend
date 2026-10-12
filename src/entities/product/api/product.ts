@@ -29,7 +29,7 @@ export const productApi = baseApi.injectEndpoints({
     createProduct: build.mutation<IProduct, ICreateProductRequest>({
       query: (data) => ({
         url: "/product",
-        method: "PUT",
+        method: "POST",
         body: data,
       }),
       invalidatesTags: [{ type: "Product", id: "LIST" }],
@@ -38,7 +38,7 @@ export const productApi = baseApi.injectEndpoints({
     createManyProduct: build.mutation<IProduct[], ICreateProductRequest[]>({
       query: (data) => ({
         url: "/product/few",
-        method: "PUT",
+        method: "POST",
         body: data,
       }),
       invalidatesTags: [{ type: "Product", id: "LIST" }],

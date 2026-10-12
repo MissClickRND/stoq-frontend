@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Group,
   NumberInput,
@@ -7,21 +8,24 @@ import {
   TextInput,
 } from "@mantine/core";
 import { formRootRule, useForm } from "@mantine/form";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { dishFormDefaults } from "../model/defaults";
 import {
   useIngredients,
-  useDishes,
+  useSaveDish,
   type Dish,
-  type DishDraft,
+  type DishFormValues,
   type DishIngredient,
 } from "@/entities/dish";
 import { IngredientQuantityFields } from "./IngredientQuantityFields";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 
 export type IngredientSearchProps = {
   items: DishIngredient[];
   onSelect: (ingredient: DishIngredient) => void;
   error?: ReactNode;
+  loading?: boolean;
+  queryError?: ReactNode;
 };
 
 export function DishForm({
@@ -33,9 +37,15 @@ export function DishForm({
   onClose: () => void;
   renderIngredientSearch: (props: IngredientSearchProps) => ReactNode;
 }) {
-  const { ingredients: ingredientCatalog } = useIngredients();
-  const { saveDish } = useDishes();
-  const form = useForm<DishDraft>({
+  const {
+    ingredients,
+    isLoading: ingredientsLoading,
+    isError: ingredientsError,
+    refetch: refetchIngredients,
+  } = useIngredients();
+  const { saveDish, isSaving } = useSaveDish();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const form = useForm<DishFormValues>({
     mode: "controlled",
     initialValues: dish
       ? {
@@ -71,7 +81,7 @@ export function DishForm({
       },
     },
   });
-  const availableIngredients = ingredientCatalog.filter(
+  const availableIngredients = ingredients.filter(
     (item) =>
       !form.values.ingredients.some((selected) => selected.id === item.id),
   );
@@ -79,22 +89,40 @@ export function DishForm({
     form.insertListItem("ingredients", { ...ingredient });
     form.clearFieldError("ingredients");
   };
-  const submit = form.onSubmit((values) => {
-    saveDish(
-      {
-        ...values,
-        name: values.name.trim(),
-        description: values.description.trim(),
-        imageUrl: values.imageUrl?.trim(),
-      },
-      dish?.id,
-    );
-    //! Закрыть форму и обновить блюдо только после ответа сервера.
+  const submit = form.onSubmit(async (values) => {
+    if (isSaving) return;
+    setSubmitError(null);
+    try {
+      const saved = await saveDish(
+        {
+          ...values,
+          name: values.name.trim(),
+          description: values.description.trim(),
+          imageUrl: values.imageUrl?.trim(),
+        },
+        dish?.id,
+      );
+      if (saved) onClose();
+      else {
+        setSubmitError(
+          "Обновление блюда пока не подключено к API. Изменения не сохранены.",
+        );
+      }
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : apiErrorMessage(error, "Не удалось сохранить блюдо"),
+      );
+    }
   });
 
   return (
     <form onSubmit={submit} noValidate>
       <Stack gap="md">
+        {submitError && (
+          <Alert color="red" role="alert">{submitError}</Alert>
+        )}
         <TextInput
           label="Ссылка на фото"
           size="lg"
@@ -127,6 +155,20 @@ export function DishForm({
           items: availableIngredients,
           onSelect: addIngredient,
           error: form.errors.ingredients,
+          loading: ingredientsLoading,
+          queryError: ingredientsError ? (
+            <>
+              Не удалось загрузить продукты.
+              <Button
+                type="button"
+                variant="subtle"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => refetchIngredients()}
+              >
+                Повторить
+              </Button>
+            </>
+          ) : undefined,
         })}
         <IngredientQuantityFields
           ingredients={form.values.ingredients}
@@ -136,10 +178,21 @@ export function DishForm({
           onRemove={(index) => form.removeListItem("ingredients", index)}
         />
         <Group justify="flex-end">
-          <Button type="button" size="lg" variant="default" onClick={onClose}>
+          <Button
+            type="button"
+            size="lg"
+            variant="default"
+            disabled={isSaving}
+            onClick={onClose}
+          >
             Отмена
           </Button>
-          <Button type="submit" size="lg">
+          <Button
+            type="submit"
+            size="lg"
+            loading={isSaving}
+            disabled={ingredientsLoading || ingredientsError}
+          >
             {dish ? "Сохранить изменения" : "Добавить блюдо"}
           </Button>
         </Group>

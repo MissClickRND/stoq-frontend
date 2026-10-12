@@ -47,8 +47,7 @@ export default function StorePage() {
           }
           description="На текущий момент"
           action={
-            <Group>
-              {" "}
+            <Group gap="md">
               <Tooltip label="Создать продукт">
                 <ActionIcon
                   type="button"

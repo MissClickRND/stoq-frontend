@@ -1,4 +1,5 @@
-import type { mockProducts, Product } from "../../product/@x/supply.ts";
+import type { Product } from "../../product/@x/supply.ts";
+import type { mockProducts } from "./mock.ts";
 export type { Product } from "../../product/@x/supply.ts";
 export type SupplyItem = {
   id: string;

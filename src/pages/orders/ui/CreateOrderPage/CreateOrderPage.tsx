@@ -20,7 +20,12 @@ import { OrderFields, OrderDishesEditor } from "@/features/order-editor";
 import { OrderDishSearch } from "../components/OrderDishSearch";
 
 export function CreateOrderPage() {
-  const { dishes } = useDishes();
+  const {
+    dishes,
+    isLoading: dishesLoading,
+    isError: dishesError,
+    refetch: refetchDishes,
+  } = useDishes();
   const { createOrder } = useOrders();
   const name = useSelector((state: RootState) => state.user.name);
   const [draft, setDraft] = useState<OrderDraft>(() => ({
@@ -98,6 +103,20 @@ export function CreateOrderPage() {
           search={
             <OrderDishSearch
               dishes={dishes.filter((dish) => !dish.archived)}
+              loading={dishesLoading}
+              queryError={dishesError ? (
+                <>
+                  Не удалось загрузить блюда.
+                  <Button
+                    type="button"
+                    variant="subtle"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => refetchDishes()}
+                  >
+                    Повторить
+                  </Button>
+                </>
+              ) : undefined}
               onSelect={(dish) => {
                 setDraft((current) => ({
                   ...current,

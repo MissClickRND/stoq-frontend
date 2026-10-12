@@ -1,6 +1,8 @@
 import componentClasses from "./GuestMenuPage.module.css";
 import { useState } from "react";
 import {
+  Alert,
+  Button,
   Group,
   Pagination,
   Paper,
@@ -17,7 +19,7 @@ import classes from "../../classes/Guest.module.css";
 
 const pageSize = 6;
 export function GuestMenuPage() {
-  const { dishes } = useDishes();
+  const { dishes, isLoading, isError, refetch } = useDishes();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const query = search.trim().toLocaleLowerCase("ru-RU");
@@ -56,7 +58,14 @@ export function GuestMenuPage() {
           }}
         />
       </Group>
-      {visible.length ? (
+      {isLoading ? (
+        <Text role="status">Загрузка блюд…</Text>
+      ) : isError ? (
+        <Alert color="red" role="alert">
+          Не удалось загрузить блюда.
+          <Button type="button" variant="subtle" onClick={() => refetch()}>Повторить</Button>
+        </Alert>
+      ) : visible.length ? (
         <SimpleGrid cols={{ base: 1, xs: 2, lg: 3 }} spacing="lg">
           {visible.map((dish) => (
             <GuestDishCard key={dish.id} dish={dish} />

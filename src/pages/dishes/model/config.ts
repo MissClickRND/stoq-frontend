@@ -74,9 +74,9 @@ export const priorityLabels: Record<
   DishPriority,
   { label: string; color: string; rank: number }
 > = {
-  high: { label: "Продать сегодня", color: "red", rank: 0 },
+  high: { label: "Высокий приоритет", color: "red", rank: 0 },
   medium: { label: "Средний приоритет", color: "orange", rank: 1 },
-  low: { label: "Рекомендуется", color: "green", rank: 2 },
+  low: { label: "Низкий", color: "green", rank: 2 },
 };
 
 export const detailStatisticItems = [

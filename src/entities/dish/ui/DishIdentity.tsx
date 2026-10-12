@@ -1,6 +1,6 @@
 import { Box, Group, Image, Text, ThemeIcon } from "@mantine/core";
 import { IconChefHat } from "@tabler/icons-react";
-import type { Dish } from "../model/type";
+import type { Dish } from "../model/view";
 
 export function DishIdentity({ dish }: { dish: Dish }) {
   return (

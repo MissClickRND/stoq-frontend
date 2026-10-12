@@ -8,7 +8,7 @@ export default function StatisticSection({
   statisticData: IStatisticCardData[];
 }) {
   return (
-    <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="xs">
+    <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="md">
       {statisticData.map((item, index) => (
         <StatisticCard key={index} {...item} />
       ))}

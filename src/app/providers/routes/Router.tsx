@@ -7,6 +7,7 @@ import { Error404 } from "@/pages/errors/Error404";
 import { LoginPage } from "@/pages/login";
 import { RegisterPage, RestaurantRegisterPage } from "@/pages/register";
 import {
+  AnalyticsLayout,
   AnalyticsDashboardPage,
   IngredientAnalysisPage,
   DependencyMapPage,
@@ -57,6 +58,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/analytics",
+        element: <AnalyticsLayout />,
         children: [
           {
             index: true,
