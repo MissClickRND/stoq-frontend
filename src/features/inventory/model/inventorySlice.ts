@@ -17,7 +17,7 @@ const slice = createSlice({
       if (state.initialized) return;
       state.entries = action.payload.map((product) => ({
         product: { ...product },
-        actual: product.balance.availableQuantity,
+        actual: product.Quantity,
         remove: false,
       }));
       state.initialized = true;

@@ -5,6 +5,14 @@ import type {
   ICreateProductRequest,
 } from "../model/type";
 
+type ProductResponse = Omit<IProduct, "unitId"> & { unitId?: number };
+
+// Catalog GET responses provide the unit relation without the foreign-key field.
+const normalizeProduct = (product: ProductResponse): IProduct => ({
+  ...product,
+  unitId: product.unitId ?? product.unit.id,
+});
+
 export const productApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getProducts: build.query<IProduct[], IGetProductsRequest>({
@@ -15,6 +23,8 @@ export const productApi = baseApi.injectEndpoints({
         },
       }),
 
+      transformResponse: (products: ProductResponse[]) =>
+        products.map(normalizeProduct),
       providesTags: [{ type: "Product", id: "LIST" }],
     }),
 
@@ -23,6 +33,7 @@ export const productApi = baseApi.injectEndpoints({
         url: `/product/${id}`,
       }),
 
+      transformResponse: normalizeProduct,
       providesTags: (_result, _error, arg) => [{ type: "Product", id: arg.id }],
     }),
 
@@ -32,6 +43,7 @@ export const productApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      transformResponse: normalizeProduct,
       invalidatesTags: [{ type: "Product", id: "LIST" }],
     }),
 
@@ -41,6 +53,8 @@ export const productApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      transformResponse: (products: ProductResponse[]) =>
+        products.map(normalizeProduct),
       invalidatesTags: [{ type: "Product", id: "LIST" }],
     }),
 

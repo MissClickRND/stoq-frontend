@@ -55,7 +55,7 @@ export function StoreTableRow({
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>
-          {product.balance.availableQuantity}
+          {product.Quantity}
         </Text>
       </Table.Td>
       <Table.Td>

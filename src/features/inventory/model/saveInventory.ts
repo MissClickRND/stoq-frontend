@@ -18,7 +18,7 @@ export async function saveInventoryDraft(
   if (!draft.entries.length) throw new Error("Нет позиций для инвентаризации");
   const request = toInventoryStoreRequest(draft.entries);
   const saved = await persist(request);
-  const quantities = new Map(saved.map((batch) => [batch.id, batch.balance.availableQuantity]));
+  const quantities = new Map(saved.map((batch) => [batch.id, batch.Quantity]));
   const entries = draft.entries.map((entry) => ({
     ...entry,
     actual: entry.remove ? 0 : quantities.get(entry.product.id) ?? Number(entry.actual),

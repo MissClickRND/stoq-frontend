@@ -1,4 +1,5 @@
-import type { Supply, SupplyItemDraft } from "../model/type.ts";
+import dayjs from "dayjs";
+import type { ISupply, SupplyItemDraft } from "../model/type.ts";
 
 const roundMoney = (value: number) =>
   Math.round((value + Number.EPSILON) * 100) / 100;
@@ -16,9 +17,9 @@ export function calculateItemPrices(
     : { unitPrice: price, total: roundMoney(quantity * price) };
 }
 
-export function getMonthStatistics(supplies: Supply[], month: string) {
+export function getMonthStatistics(supplies: ISupply[], month: string) {
   const monthly = supplies.filter((supply) =>
-    supply.receivedAt.startsWith(month),
+    dayjs(supply.receivedAt).format("YYYY-MM") === month,
   );
   const total = roundMoney(
     monthly.reduce((sum, supply) => sum + supplyTotal(supply), 0),
@@ -26,13 +27,13 @@ export function getMonthStatistics(supplies: Supply[], month: string) {
   return {
     count: monthly.length,
     total,
-    products: monthly.reduce((sum, supply) => sum + supply.items.length, 0),
+    products: monthly.reduce((sum, supply) => sum + (supply.items?.length ?? 0), 0),
     average: monthly.length ? roundMoney(total / monthly.length) : 0,
   };
 }
 
-export const supplyTotal = (supply: Supply) =>
-  roundMoney(supply.items.reduce((sum, item) => sum + item.total, 0));
+// Supply responses contain no prices yet.
+export const supplyTotal = (_supply: ISupply) => 0;
 
 export function validateItem(
   item: Omit<SupplyItemDraft, "id" | "product">,
@@ -45,7 +46,9 @@ export function validateItem(
     errors.quantity = "Укажите количество больше нуля";
   if (!Number.isInteger(item.unitId) || Number(item.unitId) <= 0) errors.unitId = "Выберите единицу измерения";
   if (!item.expiresAt) errors.expiresAt = "Укажите срок годности";
-  else if (receivedAt && item.expiresAt <= receivedAt)
+  else if (!Number.isFinite(new Date(item.expiresAt.replace(" ", "T")).getTime()))
+    errors.expiresAt = "Укажите корректный срок годности";
+  else if (receivedAt && new Date(item.expiresAt.replace(" ", "T")) <= new Date(receivedAt.replace(" ", "T")))
     errors.expiresAt = "Срок годности должен быть позже поступления";
   if (
     item.price === "" ||

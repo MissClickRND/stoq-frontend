@@ -3,21 +3,26 @@ import { DateTimePicker } from "@mantine/dates";
 import { IconCalendarTime, IconTruckDelivery } from "@tabler/icons-react";
 
 export function SupplyDeliveryFields({
-  receivedAt,
-  supplier,
-  submitted,
-  onDateChange,
-  onSupplierChange,
+  receivedAt, supplyNumber, submitted, onDateChange, onSupplyNumberChange,
 }: {
   receivedAt: string | null;
-  supplier: string;
+  supplyNumber: string;
   submitted: boolean;
   onDateChange: (date: string | null) => void;
-  onSupplierChange: (supplier: string) => void;
+  onSupplyNumberChange: (value: string) => void;
 }) {
   return (
     <Paper withBorder p="lg">
       <Stack gap="lg">
+        <TextInput
+          label="Номер поставки"
+          placeholder="П-2026-0042"
+          size="lg"
+          required
+          value={supplyNumber}
+          onChange={(event) => onSupplyNumberChange(event.currentTarget.value)}
+          error={submitted && !supplyNumber.trim() ? "Укажите номер поставки" : undefined}
+        />
         <DateTimePicker
           label="Дата и время поступления"
           withAsterisk
@@ -29,26 +34,10 @@ export function SupplyDeliveryFields({
           clearable
           leftSection={<IconCalendarTime size={20} />}
           error={submitted && !receivedAt ? "Укажите дату и время" : undefined}
-          timePickerProps={{
-            format: "24h",
-            hoursInputLabel: "Часы",
-            minutesInputLabel: "Минуты",
-          }}
+          timePickerProps={{ format: "24h", hoursInputLabel: "Часы", minutesInputLabel: "Минуты" }}
           submitButtonProps={{ "aria-label": "Подтвердить дату поступления" }}
         />
-        <TextInput
-          label="Поставщик"
-          withAsterisk
-          size="lg"
-          placeholder="Название компании или имя поставщика"
-          value={supplier}
-          maxLength={200}
-          leftSection={<IconTruckDelivery size={20} />}
-          onChange={(event) => onSupplierChange(event.currentTarget.value)}
-          error={
-            submitted && !supplier.trim() ? "Введите поставщика" : undefined
-          }
-        />
+        <TextInput label="Поставщик" size="lg" value="—" disabled leftSection={<IconTruckDelivery size={20} />} />
       </Stack>
     </Paper>
   );

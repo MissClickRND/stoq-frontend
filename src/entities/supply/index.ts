@@ -5,3 +5,4 @@ export * from "./lib/format.ts";
 export * from "./lib/report.ts";
 
 export * from "./lib/product-snapshot.ts";
+export { toCreateSupplyRequest } from "./lib/create-request.ts";

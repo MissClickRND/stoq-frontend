@@ -6,11 +6,7 @@ export type IStoreProduct = {
   id: number;
   supplyId: number;
   productId: number;
-  initialQuantity: number; //Сколько было в поставке
-  balance: {
-    availableQuantity: number; //Сколько сейчас
-    reservedQuantity: number; // Сколько зарезервировано
-  };
+  Quantity: number;
   expiresAt: string;
   status: IStoreStatus;
   product: Pick<Product, "id" | "name" | "unit">;

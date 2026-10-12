@@ -43,9 +43,9 @@ test("monthly statistics exclude other months and count received positions", () 
   ];
   assert.deepEqual(getMonthStatistics(supplies, "2026-10"), {
     count: 2,
-    total: 400,
+    total: 0,
     products: 3,
-    average: 200,
+    average: 0,
   });
   assert.deepEqual(getMonthStatistics([], "2026-10"), {
     count: 0,

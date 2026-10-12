@@ -1,6 +1,6 @@
 import { supplyProductName, supplyProductReference } from "./product-snapshot.ts";
 import type { CellObject, Row, SheetData } from "write-excel-file/browser";
-import type { Supply } from "../model/type.ts";
+import type { ISupply } from "../model/type.ts";
 
 const currencyFormat = '#,##0.00 "₽"';
 const dateFormat = "dd.mm.yyyy hh:mm";
@@ -18,11 +18,16 @@ const moneyCell = (value: number): CellObject => ({
 });
 
 // Excel serial dates store wall-clock time; UTC encoding preserves the selected local hours.
-const dateCell = (value: string): CellObject => ({
-  value: new Date(`${value.replace(" ", "T")}Z`),
-  type: Date,
-  format: dateFormat,
-});
+const dateCell = (value: string): CellObject => {
+  const local = new Date(value.replace(" ", "T"));
+  if (!Number.isFinite(local.getTime())) return textCell("—");
+  return {
+    value: new Date(Date.UTC(local.getFullYear(), local.getMonth(), local.getDate(),
+      local.getHours(), local.getMinutes(), local.getSeconds())),
+    type: Date,
+    format: dateFormat,
+  };
+};
 
 const metadataRow = (label: string, cell: CellObject): Row => [
   {
@@ -50,7 +55,7 @@ export const supplyReportColumns = [
   { width: 26 },
 ];
 
-export function getSupplyReportData(supply: Supply, total: number): SheetData {
+export function getSupplyReportData(supply: ISupply, total: number): SheetData {
   const headings = [
     "ID / артикул",
     "Продукт",
@@ -63,7 +68,7 @@ export function getSupplyReportData(supply: Supply, total: number): SheetData {
   return [
     [
       {
-        ...textCell(`STOQ · Поставка ${supply.id}`),
+        ...textCell(`STOQ · Поставка ${supply.supplyNumber}`),
         columnSpan: 7,
         fontSize: 20,
         fontWeight: "bold",
@@ -93,12 +98,12 @@ export function getSupplyReportData(supply: Supply, total: number): SheetData {
       null,
     ],
     [],
-    metadataRow("ID поставки", textCell(supply.id)),
-    metadataRow("Поставщик", textCell(supply.supplier)),
+    metadataRow("Номер поставки", textCell(supply.supplyNumber)),
+    metadataRow("Поставщик", textCell("—")),
     metadataRow("Дата поступления", dateCell(supply.receivedAt)),
-    metadataRow("Принял", textCell(supply.acceptedBy)),
+    metadataRow("Принял", textCell(supply.acceptedBy || "Пользователь")),
     metadataRow("Позиций", {
-      value: supply.items.length,
+      value: (supply.items?.length ?? 0),
       type: Number,
       fontWeight: "bold",
     }),
@@ -112,7 +117,7 @@ export function getSupplyReportData(supply: Supply, total: number): SheetData {
       wrap: true,
       alignVertical: "center",
     })),
-    ...supply.items.map(
+    ...(supply.items ?? []).map(
       (item): Row =>
         (
           [
@@ -125,9 +130,9 @@ export function getSupplyReportData(supply: Supply, total: number): SheetData {
               align: "right",
               fontWeight: "bold",
             },
-            textCell(item.unit),
-            moneyCell(item.unitPrice),
-            moneyCell(item.total),
+            textCell(item.product?.unit?.shortName ?? "шт."),
+            moneyCell(0),
+            moneyCell(0),
             dateCell(item.expiresAt),
           ] satisfies CellObject[]
         ).map(

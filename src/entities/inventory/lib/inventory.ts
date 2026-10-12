@@ -14,7 +14,7 @@ export function inventoryCounts(entries: InventoryEntry[]): InventoryCounts {
   const deleted = entries.filter((entry) => entry.remove).length;
   const updated = entries.filter(
     (entry) =>
-      !entry.remove && Number(entry.actual) !== entry.product.balance.availableQuantity,
+      !entry.remove && Number(entry.actual) !== entry.product.Quantity,
   ).length;
   return {
     checked: entries.length,
@@ -27,7 +27,7 @@ export function inventoryCounts(entries: InventoryEntry[]): InventoryCounts {
 export function inventoryChange(entry: InventoryEntry) {
   return entry.remove
     ? "deleted"
-    : Number(entry.actual) !== entry.product.balance.availableQuantity
+    : Number(entry.actual) !== entry.product.Quantity
       ? "updated"
       : "unchanged";
 }

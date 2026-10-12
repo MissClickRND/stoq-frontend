@@ -2,13 +2,16 @@ import { useGetUnitsQuery, type IUnit } from "@/entities/unit";
 import { Alert, Button } from "@mantine/core";
 import componentClasses from "./CreateSupplyPage.module.css";
 import { useState, type FormEvent } from "react";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useNotifications } from "@/shared/lib";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import {
-  useSupplies,
-  calculateItemPrices,
+  useCreateSupplyMutation,
+  suppliesApi,
+  toCreateSupplyRequest,
   validateItem,
   type SupplyItemDraft,
   type Product,
@@ -21,26 +24,25 @@ import { SupplySummary } from "../components/SupplySummary/SupplySummary";
 import { SupplyProductsSection } from "../components/SupplyProductsSection/SupplyProductsSection";
 
 export function CreateSupplyPage() {
-  const { addSupply } = useSupplies();
+  const [createSupply, { isLoading: saving }] = useCreateSupplyMutation();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { showSuccess, showError } = useNotifications("top-right");
   const {
     data: units = [],
     isError: unitsError,
     refetch: refetchUnits,
   } = useGetUnitsQuery();
-  const employeeName = useSelector((state: RootState) => state.user.name);
   const [receivedAt, setReceivedAt] = useState<string | null>(() =>
     dayjs().format("YYYY-MM-DD HH:mm:ss"),
   );
-  const [supplier, setSupplier] = useState("");
+  const [supplyNumber, setSupplyNumber] = useState("");
   const [items, setItems] = useState<SupplyItemDraft[]>([]);
   const [unitFor, setUnitFor] = useState<string | null>(null);
   const [productName, setProductName] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const total = items.reduce(
-    (sum, item) => sum + calculateItemPrices(item).total,
-    0,
-  );
+  const total = 0;
   const updateItem = (id: string, patch: Partial<SupplyItemDraft>) =>
     setItems((current) =>
       current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
@@ -55,7 +57,7 @@ export function CreateSupplyPage() {
         quantity: "",
         unitId: product.unitId,
         expiresAt: null,
-        price: "",
+        price: 0,
         pricingMode: "unit",
       },
       ...current,
@@ -68,11 +70,13 @@ export function CreateSupplyPage() {
     );
   };
 
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (saving) return;
     setSubmitted(true);
-    if (!receivedAt || !supplier.trim())
-      return setFormError("Заполните дату поступления и поставщика.");
+    setFormError(null);
+    if (!receivedAt || !supplyNumber.trim())
+      return setFormError("Заполните номер поставки и дату поступления.");
     if (!items.length)
       return setFormError("Добавьте хотя бы один продукт в поставку.");
     const unknownUnit = items.find(
@@ -96,30 +100,22 @@ export function CreateSupplyPage() {
         ?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
-    addSupply({
-      supplier: supplier.trim(),
-      receivedAt,
-      acceptedBy: employeeName || "Пользователь",
-      items: items.map((item) => ({
-        id: item.id,
-        product: item.product,
-        quantity: Number(item.quantity),
-        unitId: item.unitId!,
-        unit:
-          units.find((unit) => unit.id === item.unitId)?.shortName ??
-          item.product.unit.shortName,
-        expiresAt: item.expiresAt!,
-        ...calculateItemPrices(item),
-      })),
-    });
-    //! Показывать успех и переходить к списку только после ответа сервера.
+    try {
+      const request = toCreateSupplyRequest({ supplyNumber, receivedAt, items });
+      const supply = await createSupply(request).unwrap();
+      dispatch(suppliesApi.util.invalidateTags([{ type: "Store", id: "LIST" }]));
+      showSuccess("Поставка создана.");
+      navigate("/supply/" + supply.id);
+    } catch (error) {
+      showError(error instanceof Error ? error.message : apiErrorMessage(error, "Не удалось создать поставку. Повторите попытку."));
+    }
   };
 
   return (
     <>
       <DefaultPageLayout
         title="Создание поставки"
-        subtitle="Добавьте продукты, укажите количество, цены и сроки годности"
+        subtitle="Добавьте продукты, укажите количество и сроки годности"
         disableSearch
         disableStatistics
         headerTopSection={
@@ -131,16 +127,18 @@ export function CreateSupplyPage() {
         }
       >
         <form onSubmit={submit} className={componentClasses.form} noValidate>
+          <fieldset disabled={saving} style={{ display: "contents" }}>
           <div className={componentClasses.topSections}>
             <SupplyDeliveryFields
               receivedAt={receivedAt}
-              supplier={supplier}
+              supplyNumber={supplyNumber}
               submitted={submitted}
               onDateChange={setReceivedAt}
-              onSupplierChange={setSupplier}
+              onSupplyNumberChange={setSupplyNumber}
             />
             <SupplySummary
               count={items.length}
+              saving={saving}
               total={total}
               error={formError}
               onClearError={() => setFormError(null)}
@@ -171,6 +169,7 @@ export function CreateSupplyPage() {
             }
             onAddUnit={setUnitFor}
           />
+          </fieldset>
         </form>
       </DefaultPageLayout>
       <CreateProductModal

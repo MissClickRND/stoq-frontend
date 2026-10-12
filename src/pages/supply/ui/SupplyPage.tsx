@@ -1,6 +1,7 @@
-import { supplyProductName } from "@/entities/supply";
+import { useDebouncedValue } from "@mantine/hooks";
+import { normalizeArticle } from "@/shared/lib/format";
 import { createElement, useState } from "react";
-import { Avatar, Button, Group, Table, Text } from "@mantine/core";
+import { Alert, Avatar, Button, Center, Group, Loader, Table, Text } from "@mantine/core";
 import {
   IconChevronRight,
   IconCoins,
@@ -17,15 +18,20 @@ import {
   getMonthStatistics,
   supplyTotal,
   formatMoney,
-  useSupplies,
+  useGetSuppliesQuery,
 } from "@/entities/supply";
 import { supplyColumns } from "../model/config";
 
 import { TableSummary } from "@/shared/ui/table-summary";
 
 export function SupplyPage() {
-  const { supplies } = useSupplies();
   const [searchValue, setSearchValue] = useState("");
+  const [search] = useDebouncedValue(searchValue.trim(), 200);
+  const all = useGetSuppliesQuery({ search: "" });
+  const searched = useGetSuppliesQuery({ search }, { skip: !search });
+  const listing = search ? searched : all;
+  const supplies = all.currentData ?? [];
+  const filtered = listing.currentData ?? [];
   const now = dayjs();
   const monthly = getMonthStatistics(supplies, now.format("YYYY-MM"));
   const period = new Intl.DateTimeFormat("ru-RU", {
@@ -67,19 +73,14 @@ export function SupplyPage() {
       color: "#526877",
     },
   ];
-  const query = searchValue.trim().toLocaleLowerCase("ru-RU");
-  const filtered = supplies.filter((supply) =>
-    `${supply.id} ${supply.supplier} ${supply.acceptedBy} ${supply.items.map((item) => supplyProductName(item.product)).join(" ")}`
-      .toLocaleLowerCase("ru-RU")
-      .includes(query),
-  );
+
 
   return (
     <>
       <DefaultPageLayout
         title="Поставки"
         subtitle="Учёт поступлений и контроль приёмки продуктов"
-        searchTitle="Поиск по ID, поставщику или продукту"
+        searchTitle="Поиск по номеру поставки или продукту"
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         statisticData={statistics}
@@ -98,7 +99,13 @@ export function SupplyPage() {
             </Button>
           }
         />
-        <TableLayout
+        {listing.isError && (
+          <Alert color="red" title="Не удалось загрузить поставки">
+            <Button variant="subtle" onClick={() => listing.refetch()}>Повторить</Button>
+          </Alert>
+        )}
+        {listing.isFetching && !listing.currentData && <Center p="xl"><Loader /></Center>}
+        {!listing.isError && !(listing.isFetching && !listing.currentData) && <TableLayout
           columns={supplyColumns}
           data={filtered}
           getRowKey={(supply) => supply.id}
@@ -108,12 +115,13 @@ export function SupplyPage() {
             <Table.Tr>
               <Table.Td>
                 <Text fw={600} size="lg" style={{ whiteSpace: "nowrap" }}>
-                  {supply.id}
+                  {supply.supplyNumber}
                 </Text>
+                <Text size="sm" c="dimmed">ID {normalizeArticle(supply.id)}</Text>
               </Table.Td>
               <Table.Td>
                 <Text fw={600} size="lg">
-                  {supply.supplier}
+                  {"—"}
                 </Text>
               </Table.Td>
               <Table.Td>
@@ -126,7 +134,7 @@ export function SupplyPage() {
               </Table.Td>
               <Table.Td>
                 <Text size="lg" fw={700}>
-                  {supply.items.length}
+                  {(supply.items?.length ?? 0)}
                 </Text>
               </Table.Td>
               <Table.Td>
@@ -137,14 +145,14 @@ export function SupplyPage() {
               <Table.Td>
                 <Group gap="xs" wrap="nowrap">
                   <Avatar size="md" color="gray" radius="xl">
-                    {supply.acceptedBy
+                    {(supply.acceptedBy || "Пользователь")
                       .split(" ")
                       .map((part) => part[0])
                       .slice(0, 2)
                       .join("")}
                   </Avatar>
                   <Text size="lg" fw={500}>
-                    {supply.acceptedBy}
+                    {supply.acceptedBy || "Пользователь"}
                   </Text>
                 </Group>
               </Table.Td>
@@ -161,7 +169,7 @@ export function SupplyPage() {
               </Table.Td>
             </Table.Tr>
           )}
-        />
+        />}
       </DefaultPageLayout>
     </>
   );

@@ -7,13 +7,13 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import type { IStatisticCardData } from "@/widgets/default-page-layout";
-import { supplyTotal, formatMoney, type Supply } from "@/entities/supply";
+import { supplyTotal, formatMoney, type ISupply } from "@/entities/supply";
 
-export function getSupplyStatistics(supply: Supply): IStatisticCardData[] {
+export function getSupplyStatistics(supply: ISupply): IStatisticCardData[] {
   return [
     {
-      title: "ID поставки",
-      value: supply.id,
+      title: "Номер поставки",
+      value: supply.supplyNumber,
       valueFontSize: 22,
       description: "Номер поступления",
       icon: createElement(IconFileInvoice),
@@ -29,7 +29,7 @@ export function getSupplyStatistics(supply: Supply): IStatisticCardData[] {
     },
     {
       title: "Позиций",
-      value: supply.items.length,
+      value: supply.items?.length ?? 0,
       description: "Продуктов в поставке",
       icon: createElement(IconPackage),
       color: "#0d5e24",

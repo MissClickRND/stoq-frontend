@@ -49,13 +49,14 @@ export function InventoryChangesTable({
             </Table.Td>
             <Table.Td>
               <Text size="lg" fw={600}>
-                {(entry.product.product?.name ?? "Продукт #" + entry.product.productId)}
+                {entry.product.product?.name ??
+                  "Продукт #" + entry.product.productId}
               </Text>
             </Table.Td>
             <Table.Td>
               <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-                {entry.product.balance.availableQuantity.toLocaleString("ru-RU")}{" "}
-                {(entry.product.product?.unit?.shortName ?? "шт.")}
+                {entry.product.Quantity.toLocaleString("ru-RU")}{" "}
+                {entry.product.product?.unit?.shortName ?? "шт."}
               </Text>
             </Table.Td>
             <Table.Td>
@@ -73,7 +74,7 @@ export function InventoryChangesTable({
               >
                 {entry.remove
                   ? "0 " + (entry.product.product?.unit?.shortName ?? "шт.")
-                  : `${Number(entry.actual).toLocaleString("ru-RU")} ${(entry.product.product?.unit?.shortName ?? "шт.")}`}
+                  : `${Number(entry.actual).toLocaleString("ru-RU")} ${entry.product.product?.unit?.shortName ?? "шт."}`}
               </Text>
             </Table.Td>
             <Table.Td>

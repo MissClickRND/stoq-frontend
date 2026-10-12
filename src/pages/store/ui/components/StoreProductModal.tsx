@@ -39,18 +39,22 @@ export function StoreProductModal({
   onWriteOff,
 }: StoreProductModalProps) {
   const navigate = useNavigate();
-  const { currentData, isFetching, isError, refetch } = useGetStoreProductByIdQuery(
-    productId === null ? skipToken : { id: productId },
-    { refetchOnMountOrArgChange: true },
-  );
+  const { currentData, isFetching, isError, refetch } =
+    useGetStoreProductByIdQuery(
+      productId === null ? skipToken : { id: productId },
+      { refetchOnMountOrArgChange: true },
+    );
   const product = currentData ?? null;
   const catalogProduct = product?.product ?? fallbackProduct?.product;
-  const name = catalogProduct?.name ?? fallbackProduct?.product?.name ??
+  const name =
+    catalogProduct?.name ??
+    fallbackProduct?.product?.name ??
     "Продукт #" + (product?.productId ?? fallbackProduct?.productId);
-  const unit = catalogProduct?.unit?.shortName ??
-    fallbackProduct?.product?.unit?.shortName ?? "шт.";
-  const availableQuantity = product?.balance?.availableQuantity ??
-    fallbackProduct?.balance?.availableQuantity ?? 0;
+  const unit =
+    catalogProduct?.unit?.shortName ??
+    fallbackProduct?.product?.unit?.shortName ??
+    "шт.";
+  const Quantity = product?.Quantity ?? fallbackProduct?.Quantity ?? 0;
 
   const handleNavigateToSupply = (supplyId: number) => {
     onClose();
@@ -65,7 +69,9 @@ export function StoreProductModal({
       size="lg"
     >
       {isFetching && !product && (
-        <Center p="xl"><Loader /></Center>
+        <Center p="xl">
+          <Loader />
+        </Center>
       )}
       {isError && (
         <Alert color="red" title="Не удалось загрузить запись склада">
@@ -108,7 +114,9 @@ export function StoreProductModal({
                 Срок годности
               </Text>
               <StoreShelfLife
-                shelfLife={product.expiresAt ?? fallbackProduct?.expiresAt ?? "—"}
+                shelfLife={
+                  product.expiresAt ?? fallbackProduct?.expiresAt ?? "—"
+                }
                 status={product.status}
               />
             </Box>
@@ -117,7 +125,7 @@ export function StoreProductModal({
                 Остаток
               </Text>
               <Text fw={600}>
-                {availableQuantity} {unit}
+                {Quantity} {unit}
               </Text>
             </Box>
             <Box>
@@ -137,10 +145,12 @@ export function StoreProductModal({
             <Button
               color="red"
               variant="light"
-              onClick={() => onWriteOff({
-                ...product,
-                product: catalogProduct ?? product.product,
-              })}
+              onClick={() =>
+                onWriteOff({
+                  ...product,
+                  product: catalogProduct ?? product.product,
+                })
+              }
             >
               Списать продукт
             </Button>

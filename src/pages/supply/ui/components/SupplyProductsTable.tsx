@@ -1,7 +1,7 @@
 import { supplyProductName, supplyProductReference } from "@/entities/supply";
 import { Table, Text } from "@mantine/core";
 import TableLayout from "@/shared/ui/table-layout";
-import { formatMoney, formatDateTime, SupplyItem } from "@/entities/supply";
+import { formatMoney, formatDateTime, ISupplyItem } from "@/entities/supply";
 
 const columns = [
   "ID / артикул",
@@ -13,7 +13,7 @@ const columns = [
   "Срок годности",
 ];
 
-export function SupplyProductsTable({ items }: { items: SupplyItem[] }) {
+export function SupplyProductsTable({ items }: { items: ISupplyItem[] }) {
   return (
     <TableLayout
       columns={columns}
@@ -42,17 +42,17 @@ export function SupplyProductsTable({ items }: { items: SupplyItem[] }) {
           </Table.Td>
           <Table.Td>
             <Text size="lg" fw={500}>
-              {item.unit}
+              {(item.product?.unit?.shortName ?? "шт.")}
             </Text>
           </Table.Td>
           <Table.Td>
             <Text size="lg" fw={600} style={{ whiteSpace: "nowrap" }}>
-              {formatMoney(item.unitPrice)}
+              {formatMoney(0)}
             </Text>
           </Table.Td>
           <Table.Td>
             <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-              {formatMoney(item.total)}
+              {formatMoney(0)}
             </Text>
           </Table.Td>
           <Table.Td>

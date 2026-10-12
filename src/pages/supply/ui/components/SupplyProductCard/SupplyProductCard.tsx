@@ -86,6 +86,7 @@ export function SupplyProductCard({
         </Text>
         <Group gap={6} align="flex-start" wrap="nowrap">
           <Select
+            disabled
             size="lg"
             style={{ flex: 1, minWidth: 0 }}
             aria-label={"Ед. измерения " + item.product.name}
@@ -105,6 +106,7 @@ export function SupplyProductCard({
               size="lg"
               mt={8}
               variant="light"
+              disabled
               aria-label={"Создать единицу измерения для " + item.product.name}
               onClick={onAddUnit}
             >
@@ -139,6 +141,7 @@ export function SupplyProductCard({
         <NumberInput
           size="lg"
           label="Цена за единицу"
+          disabled
           classNames={{ label: componentClasses.fieldLabel }}
           aria-label={"Цена за единицу " + item.product.name}
           placeholder="0"
@@ -162,6 +165,7 @@ export function SupplyProductCard({
         <NumberInput
           size="lg"
           label="Сумма позиции"
+          disabled
           classNames={{ label: componentClasses.fieldLabel }}
           aria-label={"Сумма позиции " + item.product.name}
           placeholder="0"

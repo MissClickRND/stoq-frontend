@@ -1,7 +1,8 @@
-import type { SupplyItem } from "../model/type.ts";
+import type { ISupplyItem } from "../model/type.ts";
+import { normalizeArticle } from "../../../shared/lib/format.ts";
 
-export const supplyProductName = (product: SupplyItem["product"]) =>
-  "name" in product ? product.name : product.title;
+export const supplyProductName = (product: ISupplyItem["product"]) =>
+  product?.name ?? "Продукт";
 
-export const supplyProductReference = (product: SupplyItem["product"]) =>
-  "name" in product ? String(product.id) : product.article;
+export const supplyProductReference = (product: ISupplyItem["product"]) =>
+  normalizeArticle(product?.id);

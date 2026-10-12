@@ -1,6 +1,6 @@
-import { downloadSupplyReport, type Supply } from "@/entities/supply";
+import { downloadSupplyReport, type ISupply } from "@/entities/supply";
 import { DownloadButton } from "@/shared/ui/download-button";
-export function SupplyReportButton({ supply }: { supply: Supply }) {
+export function SupplyReportButton({ supply }: { supply: ISupply }) {
   return (
     <DownloadButton
       variant="default"

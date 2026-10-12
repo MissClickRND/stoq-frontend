@@ -1,24 +1,21 @@
 import type { Product } from "../../product/@x/supply.ts";
-import type { mockProducts } from "./mock.ts";
 export type { Product } from "../../product/@x/supply.ts";
-export type SupplyItem = {
-  id: string;
-  // Исторические поставки пока используют снимки старого каталога.
-  product: Product | (typeof mockProducts)[number];
-  quantity: number;
-  unit: string;
-  unitId?: number;
+
+export type ISupplyStatus = "RECEIVED" | "CANCELLED" | "IN_TRANSIT";
+
+export type ISupplyItem = {
+  id: number;
+  product: Product;
   expiresAt: string;
-  unitPrice: number;
-  total: number;
+  quantity: number;
 };
 
-export type Supply = {
-  id: string;
-  supplier: string;
+export type ISupply = {
+  id: number;
+  supplyNumber: string;
   receivedAt: string;
   acceptedBy: string;
-  items: SupplyItem[];
+  items: ISupplyItem[];
 };
 
 export type SupplyItemDraft = {
@@ -29,4 +26,11 @@ export type SupplyItemDraft = {
   expiresAt: string | null;
   price: number | string;
   pricingMode: "unit" | "total";
+};
+
+export type ICreateSupplyRequest = Pick<
+  ISupply,
+  "supplyNumber" | "receivedAt"
+> & {
+  items: { productId: number; quantity: number; expiresAt: Date }[];
 };

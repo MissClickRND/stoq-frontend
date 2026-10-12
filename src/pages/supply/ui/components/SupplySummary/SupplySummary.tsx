@@ -5,11 +5,13 @@ import { formatMoney } from "@/entities/supply";
 
 export function SupplySummary({
   count,
+  saving,
   total,
   error,
   onClearError,
 }: {
   count: number;
+  saving?: boolean;
   total: number;
   error: string | null;
   onClearError: () => void;
@@ -61,6 +63,7 @@ export function SupplySummary({
         )}
         <Button
           type="submit"
+          loading={saving}
           size="lg"
           mt={6}
           fullWidth

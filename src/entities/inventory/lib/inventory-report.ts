@@ -115,7 +115,7 @@ export function getInventoryReportData(report: InventoryReport): SheetData {
         text(normalizeArticle(entry.product.supplyId)),
         text(normalizeArticle(entry.product.productId)),
         {
-          value: entry.product.balance.availableQuantity,
+          value: entry.product.Quantity,
           type: Number,
           format: "#,##0.###",
           fontWeight: "bold",
@@ -130,7 +130,7 @@ export function getInventoryReportData(report: InventoryReport): SheetData {
         text(
           entry.remove
             ? "Списано"
-            : Number(entry.actual) !== entry.product.balance.availableQuantity
+            : Number(entry.actual) !== entry.product.Quantity
               ? "Обновлено"
               : "Без изменений",
         ),

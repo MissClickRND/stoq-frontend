@@ -2,11 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { saveDish, archiveDish } from "../src/entities/dish/api/commands.ts";
 import {
-  useSupplies,
-  useSupply,
-  createSupply,
-} from "../src/entities/supply/api/supply.ts";
-import {
   useOrders,
   createOrder,
   completeOrder,
@@ -37,7 +32,6 @@ import {
 
 const snapshot = () =>
   JSON.stringify({
-    supplies: useSupplies().supplies,
     orders: useOrders().orders,
     restaurant: useRestaurant().restaurant,
     restaurants: getRestaurants(),
@@ -48,12 +42,10 @@ const snapshot = () =>
 test("backend command placeholders do not mutate fixtures or manufacture saved results", () => {
   const before = snapshot();
   const dish = { id: "27", name: "Омлет", description: "", price: 520, ingredients: [], stopped: false };
-  const supply = useSupplies().supplies[0];
   const order = useOrders().orders[0];
   const results = [
     saveDish({ ...dish, name: "Changed" }, dish.id),
     archiveDish(dish.id),
-    createSupply(supply),
     createOrder(order),
     completeOrder(order.id),
     createGuestOrder({
@@ -83,11 +75,4 @@ test("backend command placeholders do not mutate fixtures or manufacture saved r
   ];
   assert.ok(results.every((result) => result === undefined));
   assert.equal(snapshot(), before);
-});
-
-test("detail reads share the same fixture records and handle unknown identifiers", () => {
-  const supply = useSupplies().supplies[0];
-  assert.equal(useSupply(supply.id).supply, supply);
-  assert.equal(useSupply("unknown").supply, undefined);
-  assert.equal(useSupply(undefined).supply, undefined);
 });
