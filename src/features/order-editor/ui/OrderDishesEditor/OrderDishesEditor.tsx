@@ -11,27 +11,23 @@ import {
   Title,
 } from "@mantine/core";
 import { IconChefHat, IconTrash } from "@tabler/icons-react";
-import type { Dish } from "@/entities/dish";
+import type { ReactNode } from "react";
 import {
   type OrderItemDraft,
   orderTotal,
   formatOrderMoney,
 } from "@/entities/order";
 
-import { OrderDishSearch } from "../OrderDishSearch";
-
 export function OrderDishesEditor({
-  dishes,
+  search,
   items,
   submitted,
-  onSelect,
   onQuantityChange,
   onRemove,
 }: {
-  dishes: Dish[];
+  search: ReactNode;
   items: OrderItemDraft[];
   submitted: boolean;
-  onSelect: (dish: Dish) => void;
   onQuantityChange: (id: string, quantity: number | string) => void;
   onRemove: (id: string) => void;
 }) {
@@ -41,7 +37,7 @@ export function OrderDishesEditor({
         Блюда в заказе
       </Title>
       <div className={componentClasses.fixed}>
-        <OrderDishSearch dishes={dishes} onSelect={onSelect} />
+        {search}
       </div>
       {items.length ? (
         <ScrollArea

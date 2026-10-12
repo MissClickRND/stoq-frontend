@@ -19,7 +19,6 @@ export const baseQueryWithReauth: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error && result.error.status === 401) {
-
     if (typeof args === "string" && args.includes("/auth/refresh")) {
       api.dispatch(sessionExpired());
       return result;

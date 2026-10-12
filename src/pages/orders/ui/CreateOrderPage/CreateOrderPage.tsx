@@ -17,6 +17,7 @@ import {
 } from "@/entities/order";
 
 import { OrderFields, OrderDishesEditor } from "@/features/order-editor";
+import { OrderDishSearch } from "../components/OrderDishSearch";
 
 export function CreateOrderPage() {
   const { dishes } = useDishes();
@@ -92,21 +93,25 @@ export function CreateOrderPage() {
           </Alert>
         )}
         <OrderDishesEditor
-          dishes={dishes.filter((dish) => !dish.archived)}
           items={draft.items}
           submitted={submitted}
-          onSelect={(dish) => {
-            setDraft((current) => ({
-              ...current,
-              items: addOrderDish(current.items, {
-                dishId: dish.id,
-                name: dish.name,
-                price: dish.price,
-                imageUrl: dish.imageUrl,
-              }),
-            }));
-            setMessage(null);
-          }}
+          search={
+            <OrderDishSearch
+              dishes={dishes.filter((dish) => !dish.archived)}
+              onSelect={(dish) => {
+                setDraft((current) => ({
+                  ...current,
+                  items: addOrderDish(current.items, {
+                    dishId: dish.id,
+                    name: dish.name,
+                    price: dish.price,
+                    imageUrl: dish.imageUrl,
+                  }),
+                }));
+                setMessage(null);
+              }}
+            />
+          }
           onQuantityChange={(id, quantity) => {
             setDraft((current) => ({
               ...current,

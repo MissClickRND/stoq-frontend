@@ -13,6 +13,7 @@ import { DishStock } from "../components/details/DishStock";
 import { DishFinancialSummary } from "../components/details/DishFinancialSummary";
 import { DishDetailsStatistics } from "../components/details/DishDetailsStatistics";
 import { DishFormModal } from "@/features/dish-form";
+import { DishIngredientSearch } from "../components/DishIngredientSearch";
 
 export function DishDetailsPage() {
   const { dishId } = useParams();
@@ -80,6 +81,7 @@ export function DishDetailsPage() {
         opened={editing}
         onClose={() => setEditing(false)}
         dish={dish}
+        renderIngredientSearch={(props) => <DishIngredientSearch {...props} />}
       />
       <ConfirmationModal
         opened={archiving}

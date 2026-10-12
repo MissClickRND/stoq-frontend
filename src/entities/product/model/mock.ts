@@ -1,5 +1,4 @@
-import type { Product } from "./type.ts";
-export const mockProducts: Product[] = [
+export const mockProducts = [
   {
     id: "tomato",
     title: "Помидоры свежие",

@@ -1,3 +1,4 @@
+import type { IUnit } from "@/entities/unit";
 import componentClasses from "./SupplyProductsSection.module.css";
 import {
   Group,
@@ -25,7 +26,7 @@ export function SupplyProductsSection({
   onAddUnit,
 }: {
   items: SupplyItemDraft[];
-  units: string[];
+  units: IUnit[];
   receivedAt: string | null;
   submitted: boolean;
   onSelect: (product: Product) => void;

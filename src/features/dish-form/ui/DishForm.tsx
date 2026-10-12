@@ -1,35 +1,40 @@
 import {
-  Autocomplete,
   Button,
   Group,
   NumberInput,
   Stack,
   Textarea,
   TextInput,
-  useCombobox,
 } from "@mantine/core";
 import { formRootRule, useForm } from "@mantine/form";
-import { useState } from "react";
+import type { ReactNode } from "react";
 import { dishFormDefaults } from "../model/defaults";
 import {
   useIngredients,
   useDishes,
   type Dish,
   type DishDraft,
+  type DishIngredient,
 } from "@/entities/dish";
 import { IngredientQuantityFields } from "./IngredientQuantityFields";
+
+export type IngredientSearchProps = {
+  items: DishIngredient[];
+  onSelect: (ingredient: DishIngredient) => void;
+  error?: ReactNode;
+};
 
 export function DishForm({
   dish,
   onClose,
+  renderIngredientSearch,
 }: {
   dish?: Dish;
   onClose: () => void;
+  renderIngredientSearch: (props: IngredientSearchProps) => ReactNode;
 }) {
   const { ingredients: ingredientCatalog } = useIngredients();
   const { saveDish } = useDishes();
-  const ingredientCombobox = useCombobox();
-  const [ingredientSearch, setIngredientSearch] = useState("");
   const form = useForm<DishDraft>({
     mode: "controlled",
     initialValues: dish
@@ -70,12 +75,9 @@ export function DishForm({
     (item) =>
       !form.values.ingredients.some((selected) => selected.id === item.id),
   );
-  const addIngredient = (id: string) => {
-    const ingredient = availableIngredients.find((item) => item.id === id);
-    if (!ingredient) return;
+  const addIngredient = (ingredient: DishIngredient) => {
     form.insertListItem("ingredients", { ...ingredient });
     form.clearFieldError("ingredients");
-    setIngredientSearch("");
   };
   const submit = form.onSubmit((values) => {
     saveDish(
@@ -121,31 +123,11 @@ export function DishForm({
           decimalScale={2}
           {...form.getInputProps("price")}
         />
-        <Autocomplete
-          label="Ингредиенты"
-          size="lg"
-          placeholder="Начните вводить название ингредиента"
-          description="Выберите ингредиент из подсказок, чтобы добавить его в состав"
-          withAsterisk
-          clearable
-          data={availableIngredients.map((item) => ({
-            value: item.id,
-            label: item.name,
-          }))}
-          value={ingredientSearch}
-          onChange={setIngredientSearch}
-          comboboxProps={{
-            store: ingredientCombobox,
-            onOptionSubmit: (id) => {
-              addIngredient(id);
-              ingredientCombobox.closeDropdown();
-            },
-          }}
-          error={form.errors.ingredients}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") event.preventDefault();
-          }}
-        />
+        {renderIngredientSearch({
+          items: availableIngredients,
+          onSelect: addIngredient,
+          error: form.errors.ingredients,
+        })}
         <IngredientQuantityFields
           ingredients={form.values.ingredients}
           getQuantityInputProps={(index) =>

@@ -1,63 +1,110 @@
-import { useState } from "react";
-import { Button, Group, Modal, Stack, TextInput } from "@mantine/core";
+import { Alert, Button, Group, Modal, Stack, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useCreateUnitMutation, type IUnit } from "@/entities/unit";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 
 export function CreateUnitModal({
   opened,
   units,
   onClose,
-  onCreate,
+  onCreated,
 }: {
   opened: boolean;
-  units: string[];
+  units: IUnit[];
   onClose: () => void;
-  onCreate: (name: string) => void;
+  onCreated: (unit: IUnit) => void;
 }) {
-  const [name, setName] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [createUnit, { isLoading, error }] = useCreateUnitMutation();
+  const form = useForm({
+    initialValues: { name: "", shortName: "" },
+    validateInputOnBlur: true,
+    validate: {
+      name: (value) =>
+        !value.trim()
+          ? "Введите название"
+          : value.trim().length > 100
+            ? "Не более 100 символов"
+            : units.some(
+                  (unit) =>
+                    unit.name.toLocaleLowerCase("ru-RU") ===
+                    value.trim().toLocaleLowerCase("ru-RU"),
+                )
+              ? "Такая единица уже существует"
+              : null,
+      shortName: (value) =>
+        !value.trim()
+          ? "Введите сокращение"
+          : value.trim().length > 10
+            ? "Не более 10 символов"
+            : units.some(
+                  (unit) =>
+                    unit.shortName.toLocaleLowerCase("ru-RU") ===
+                    value.trim().toLocaleLowerCase("ru-RU"),
+                )
+              ? "Такое сокращение уже существует"
+              : null,
+    },
+  });
   return (
     <Modal
       opened={opened}
       onClose={onClose}
       title="Новая единица измерения"
       centered
-      size="sm"
+      size="md"
     >
       <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          const trimmed = name.trim().replace(/\s+/g, " ");
-          if (!trimmed) return setError("Введите название");
-          if (
-            units.some(
-              (unit) =>
-                unit.toLocaleLowerCase("ru-RU") ===
-                trimmed.toLocaleLowerCase("ru-RU"),
-            )
-          )
-            return setError("Такая единица измерения уже существует");
-          onCreate(trimmed);
-          //! Сбросить форму и закрыть модальное окно после успешного создания на сервере.
-        }}
+        noValidate
+        onSubmit={form.onSubmit(async (values) => {
+          try {
+            const unit = await createUnit({
+              name: values.name.trim(),
+              shortName: values.shortName.trim(),
+            }).unwrap();
+            onCreated(unit);
+          } catch {
+            // Preserve the draft and display the server error.
+          }
+        })}
       >
-        <Stack>
+        <Stack gap="md">
+          {error && (
+            <Alert color="red" role="alert">
+              {apiErrorMessage(error, "Не удалось создать единицу измерения")}
+            </Alert>
+          )}
           <TextInput
             label="Название"
-            placeholder="Например, коробка"
-            withAsterisk
-            maxLength={30}
+            placeholder="Килограмм"
+            size="lg"
+            required
+            maxLength={100}
             data-autofocus
-            value={name}
-            error={error}
-            onChange={(event) => {
-              setName(event.currentTarget.value);
-              setError(null);
-            }}
+            disabled={isLoading}
+            {...form.getInputProps("name")}
+          />
+          <TextInput
+            label="Сокращение"
+            placeholder="кг"
+            size="lg"
+            required
+            maxLength={10}
+            disabled={isLoading}
+            {...form.getInputProps("shortName")}
           />
           <Group justify="flex-end">
-            <Button variant="default" onClick={onClose}>
+            <Button
+              type="button"
+              size="lg"
+              variant="default"
+              disabled={isLoading}
+              onClick={onClose}
+            >
               Отмена
             </Button>
-            <Button type="submit">Создать</Button>
+            <Button type="submit" size="lg" loading={isLoading}>
+              Создать
+            </Button>
           </Group>
         </Stack>
       </form>

@@ -16,6 +16,7 @@ import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
 import { Recomendtation } from "./components/Recomendtation/Recomendtation";
 import { DishFormModal } from "@/features/dish-form";
+import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
 
 export function DishesPage() {
@@ -97,7 +98,11 @@ export function DishesPage() {
           <Recomendtation dishes={visibleDishes} />
         )}
       </DefaultPageLayout>
-      <DishFormModal opened={adding} onClose={() => setAdding(false)} />
+      <DishFormModal
+        opened={adding}
+        onClose={() => setAdding(false)}
+        renderIngredientSearch={(props) => <DishIngredientSearch {...props} />}
+      />
     </>
   );
 }

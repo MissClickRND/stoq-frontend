@@ -1,21 +1,46 @@
-import { Button, Group, Stack, Text, ThemeIcon } from "@mantine/core";
-import { IconPackage } from "@tabler/icons-react";
-import { useProducts, type Product } from "@/entities/product";
-import { CatalogSearch } from "@/shared/ui/catalog-search";
+import { useState } from "react";
+import { useDebouncedValue } from "@mantine/hooks";
+import { Button, Stack, Text } from "@mantine/core";
+import { useGetProductsQuery, type IProduct } from "@/entities/product";
+import { CatalogSearch } from "@/widgets/catalog-search";
+
 export function SupplyProductSearch({
   onSelect,
   onCreate,
 }: {
-  onSelect: (product: Product) => void;
+  onSelect: (product: IProduct) => void;
   onCreate: (name: string) => void;
 }) {
-  const { products } = useProducts();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [search, setSearch] = useState("");
+  const [query] = useDebouncedValue(search.trim(), 200);
+  const {
+    currentData: products = [],
+    isFetching,
+    isError,
+    refetch,
+  } = useGetProductsQuery({ search: query });
   return (
     <CatalogSearch
       items={products}
-      attached
-      renderEmpty={(search) => (
+      onSearchChange={setSearch}
+      filterLocally={false}
+      loading={isFetching || query !== search.trim()}
+      queryError={
+        isError ? (
+          <>
+            Не удалось загрузить продукты.{" "}
+            <Button
+              type="button"
+              variant="subtle"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => refetch()}
+            >
+              Повторить
+            </Button>
+          </>
+        ) : undefined
+      }
+      renderEmpty={(name) => (
         <Stack align="center" gap="sm" p="md">
           <Text size="lg" c="dimmed">
             Продукт не найден
@@ -25,32 +50,17 @@ export function SupplyProductSearch({
             size="lg"
             variant="light"
             onMouseDown={(event) => event.preventDefault()}
-            onClick={() => onCreate(search)}
+            onClick={() => onCreate(name)}
           >
             Создать продукт
           </Button>
         </Stack>
       )}
-      getId={(product) => product.id}
-      getSearchText={(product) => product.title + " " + product.article}
+      getId={(product) => String(product.id)}
+      getSearchText={(product) => product.name}
       onSelect={onSelect}
-      placeholder="Начните вводить название или артикул"
+      placeholder="Начните вводить название продукта"
       emptyText="Продукты не найдены"
-      renderOption={(product) => (
-        <Group gap="sm">
-          <ThemeIcon variant="light" size={32}>
-            <IconPackage size={18} />
-          </ThemeIcon>
-          <div>
-            <Text size="lg" fw={600}>
-              {product.title}
-            </Text>
-            <Text size="sm" c="dimmed">
-              Артикул {product.article} · {product.unit}
-            </Text>
-          </div>
-        </Group>
-      )}
     />
   );
 }

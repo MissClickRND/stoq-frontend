@@ -1,15 +1,18 @@
 import { Modal } from "@mantine/core";
 import type { Dish } from "@/entities/dish";
-import { DishForm } from "./DishForm";
+import type { ReactNode } from "react";
+import { DishForm, type IngredientSearchProps } from "./DishForm";
 
 export function DishFormModal({
   opened,
   onClose,
   dish,
+  renderIngredientSearch,
 }: {
   opened: boolean;
   onClose: () => void;
   dish?: Dish;
+  renderIngredientSearch: (props: IngredientSearchProps) => ReactNode;
 }) {
   return (
     <Modal
@@ -19,7 +22,13 @@ export function DishFormModal({
       centered
       size="lg"
     >
-      {opened && <DishForm dish={dish} onClose={onClose} />}
+      {opened && (
+        <DishForm
+          dish={dish}
+          onClose={onClose}
+          renderIngredientSearch={renderIngredientSearch}
+        />
+      )}
     </Modal>
   );
 }

@@ -54,3 +54,12 @@ test("report includes every position and the supplied grand total", () => {
   assert.equal(rows[8][1].value, 374.99);
   assert.equal(rows.at(-1)[5].value, 374.99);
 });
+
+
+test("report uses backend product name and numeric ID without an article or catalog price", () => {
+  const product = { id: 42, name: "Молоко", unitId: 7, unit: { id: 7, name: "Литр", shortName: "л" } };
+  const rows = getSupplyReportData({ ...supply, items: [{ ...supply.items[0], product }] }, 124.99);
+  assert.equal(rows[11][0].value, "42");
+  assert.equal(rows[11][1].value, "Молоко");
+  assert.equal(rows[11][4].value, 99.99);
+});

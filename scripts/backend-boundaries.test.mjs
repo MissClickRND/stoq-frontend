@@ -20,7 +20,6 @@ import {
   useStoreProducts,
   removeProduct,
 } from "../src/entities/stock/api/stock.ts";
-import { useUnits, createUnit } from "../src/entities/unit/api/unit.ts";
 import {
   useRestaurant,
   getRestaurants,
@@ -54,7 +53,6 @@ const snapshot = () =>
     supplies: useSupplies().supplies,
     orders: useOrders().orders,
     stock: useStoreProducts().products,
-    units: useUnits().units,
     restaurant: useRestaurant().restaurant,
     restaurants: getRestaurants(),
     employees: useEmployees().employees,
@@ -80,7 +78,6 @@ test("backend command placeholders do not mutate fixtures or manufacture saved r
       source: "guest",
     }),
     removeProduct(useStoreProducts().products[0].id),
-    createUnit("Коробка"),
     saveRestaurant({ ...useRestaurant().restaurant, name: "Changed" }),
     changeRole("ivan", "WAITER"),
     toggleBlock("ivan"),

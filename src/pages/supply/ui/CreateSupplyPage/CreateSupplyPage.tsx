@@ -1,3 +1,5 @@
+import { useGetUnitsQuery, type IUnit } from "@/entities/unit";
+import { Alert, Button } from "@mantine/core";
 import componentClasses from "./CreateSupplyPage.module.css";
 import { useState, type FormEvent } from "react";
 import { useSelector } from "react-redux";
@@ -11,7 +13,6 @@ import {
   type SupplyItemDraft,
   type Product,
 } from "@/entities/supply";
-import { useUnits } from "@/entities/unit";
 
 import { CreateProductModal } from "@/widgets/create-product-modal";
 import { CreateUnitModal } from "../components/CreateUnitModal";
@@ -21,7 +22,11 @@ import { SupplyProductsSection } from "../components/SupplyProductsSection/Suppl
 
 export function CreateSupplyPage() {
   const { addSupply } = useSupplies();
-  const { units, addUnit } = useUnits();
+  const {
+    data: units = [],
+    isError: unitsError,
+    refetch: refetchUnits,
+  } = useGetUnitsQuery();
   const employeeName = useSelector((state: RootState) => state.user.name);
   const [receivedAt, setReceivedAt] = useState<string | null>(() =>
     dayjs().format("YYYY-MM-DD HH:mm:ss"),
@@ -48,9 +53,9 @@ export function CreateSupplyPage() {
         id,
         product,
         quantity: "",
-        unit: product.unit,
+        unitId: product.unitId,
         expiresAt: null,
-        price: product.price,
+        price: "",
         pricingMode: "unit",
       },
       ...current,
@@ -70,11 +75,22 @@ export function CreateSupplyPage() {
       return setFormError("Заполните дату поступления и поставщика.");
     if (!items.length)
       return setFormError("Добавьте хотя бы один продукт в поставку.");
+    const unknownUnit = items.find(
+      (item) =>
+        item.unitId !== item.product.unitId &&
+        !units.some((unit) => unit.id === item.unitId),
+    );
+    if (unknownUnit)
+      return setFormError(
+        "Выберите доступную единицу измерения для «" +
+          unknownUnit.product.name +
+          "».",
+      );
     const invalid = items.find(
       (item) => Object.keys(validateItem(item, receivedAt)).length > 0,
     );
     if (invalid) {
-      setFormError("Проверьте поля продукта «" + invalid.product.title + "».");
+      setFormError("Проверьте поля продукта «" + invalid.product.name + "».");
       document
         .getElementById("supply-item-" + invalid.id)
         ?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -88,7 +104,10 @@ export function CreateSupplyPage() {
         id: item.id,
         product: item.product,
         quantity: Number(item.quantity),
-        unit: item.unit,
+        unitId: item.unitId!,
+        unit:
+          units.find((unit) => unit.id === item.unitId)?.shortName ??
+          item.product.unit.shortName,
         expiresAt: item.expiresAt!,
         ...calculateItemPrices(item),
       })),
@@ -127,6 +146,18 @@ export function CreateSupplyPage() {
               onClearError={() => setFormError(null)}
             />
           </div>
+          {unitsError && (
+            <Alert color="red" role="alert">
+              Не удалось загрузить единицы измерения.
+              <Button
+                type="button"
+                variant="subtle"
+                onClick={() => refetchUnits()}
+              >
+                Повторить
+              </Button>
+            </Alert>
+          )}
           <SupplyProductsSection
             items={items}
             units={units}
@@ -152,9 +183,9 @@ export function CreateSupplyPage() {
         opened={unitFor !== null}
         units={units}
         onClose={() => setUnitFor(null)}
-        onCreate={(name) => {
-          addUnit(name);
-          //! Обновить список единиц и выбрать созданную единицу после ответа сервера.
+        onCreated={(unit: IUnit) => {
+          if (unitFor) updateItem(unitFor, { unitId: unit.id });
+          setUnitFor(null);
         }}
       />
     </>

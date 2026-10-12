@@ -58,7 +58,7 @@ test("monthly statistics exclude other months and count received positions", () 
 test("incomplete positions and expiration before receipt are rejected", () => {
   const valid = {
     quantity: 2,
-    unit: "кг",
+    unitId: 7,
     expiresAt: "2026-10-12 10:00:00",
     price: 100,
     pricingMode: "unit",
@@ -73,4 +73,7 @@ test("incomplete positions and expiration before receipt are rejected", () => {
       .expiresAt,
   );
   assert.ok(validateItem(valid, "2026-10-13 10:00:00").expiresAt);
+  for (const unitId of [null, 0, -1, 1.5, "кг"]) {
+    assert.ok(validateItem({ ...valid, unitId }, "2026-10-11 10:00:00").unitId);
+  }
 });

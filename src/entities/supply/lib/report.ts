@@ -1,3 +1,4 @@
+import { supplyProductName, supplyProductReference } from "./product-snapshot.ts";
 import type { CellObject, Row, SheetData } from "write-excel-file/browser";
 import type { Supply } from "../model/type.ts";
 
@@ -51,7 +52,7 @@ export const supplyReportColumns = [
 
 export function getSupplyReportData(supply: Supply, total: number): SheetData {
   const headings = [
-    "Артикул",
+    "ID / артикул",
     "Продукт",
     "Количество",
     "Ед. измерения",
@@ -115,8 +116,8 @@ export function getSupplyReportData(supply: Supply, total: number): SheetData {
       (item): Row =>
         (
           [
-            textCell(item.product.article),
-            { ...textCell(item.product.title), fontWeight: "bold", wrap: true },
+            textCell(supplyProductReference(item.product)),
+            { ...textCell(supplyProductName(item.product)), fontWeight: "bold", wrap: true },
             {
               value: item.quantity,
               type: Number,

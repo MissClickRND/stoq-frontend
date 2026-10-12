@@ -1,3 +1,4 @@
+import { supplyProductName, supplyProductReference } from "@/entities/supply";
 import componentClasses from "./SupplyDetailsPage.module.css";
 import { useState } from "react";
 import { Group, Text } from "@mantine/core";
@@ -35,7 +36,7 @@ export function SupplyDetailsPage() {
 
   const query = searchValue.trim().toLocaleLowerCase("ru-RU");
   const items = supply.items.filter((item) =>
-    `${item.product.title} ${item.product.article}`
+    `${supplyProductName(item.product)} ${supplyProductReference(item.product)}`
       .toLocaleLowerCase("ru-RU")
       .includes(query),
   );

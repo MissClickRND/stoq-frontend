@@ -1,10 +1,12 @@
-import type { Product } from "../../product/@x/supply.ts";
+import type { mockProducts, Product } from "../../product/@x/supply.ts";
 export type { Product } from "../../product/@x/supply.ts";
 export type SupplyItem = {
   id: string;
-  product: Product;
+  // Исторические поставки пока используют снимки старого каталога.
+  product: Product | (typeof mockProducts)[number];
   quantity: number;
   unit: string;
+  unitId?: number;
   expiresAt: string;
   unitPrice: number;
   total: number;
@@ -22,7 +24,7 @@ export type SupplyItemDraft = {
   id: string;
   product: Product;
   quantity: number | string;
-  unit: string;
+  unitId: number | null;
   expiresAt: string | null;
   price: number | string;
   pricingMode: "unit" | "total";

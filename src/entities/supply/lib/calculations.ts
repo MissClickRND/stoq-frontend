@@ -39,11 +39,11 @@ export function validateItem(
   receivedAt: string | null,
 ) {
   const errors: Partial<
-    Record<"quantity" | "unit" | "expiresAt" | "price", string>
+    Record<"quantity" | "unitId" | "expiresAt" | "price", string>
   > = {};
   if (!Number.isFinite(Number(item.quantity)) || Number(item.quantity) <= 0)
     errors.quantity = "Укажите количество больше нуля";
-  if (!item.unit.trim()) errors.unit = "Выберите единицу измерения";
+  if (!Number.isInteger(item.unitId) || Number(item.unitId) <= 0) errors.unitId = "Выберите единицу измерения";
   if (!item.expiresAt) errors.expiresAt = "Укажите срок годности";
   else if (receivedAt && item.expiresAt <= receivedAt)
     errors.expiresAt = "Срок годности должен быть позже поступления";

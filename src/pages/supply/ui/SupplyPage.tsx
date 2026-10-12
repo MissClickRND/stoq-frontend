@@ -1,3 +1,4 @@
+import { supplyProductName } from "@/entities/supply";
 import { createElement, useState } from "react";
 import { Avatar, Button, Group, Table, Text } from "@mantine/core";
 import {
@@ -68,7 +69,7 @@ export function SupplyPage() {
   ];
   const query = searchValue.trim().toLocaleLowerCase("ru-RU");
   const filtered = supplies.filter((supply) =>
-    `${supply.id} ${supply.supplier} ${supply.acceptedBy} ${supply.items.map((item) => item.product.title).join(" ")}`
+    `${supply.id} ${supply.supplier} ${supply.acceptedBy} ${supply.items.map((item) => supplyProductName(item.product)).join(" ")}`
       .toLocaleLowerCase("ru-RU")
       .includes(query),
   );

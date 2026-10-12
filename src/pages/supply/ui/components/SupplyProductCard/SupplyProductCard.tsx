@@ -1,3 +1,4 @@
+import type { IUnit } from "@/entities/unit";
 import componentClasses from "./SupplyProductCard.module.css";
 import {
   ActionIcon,
@@ -31,13 +32,16 @@ export function SupplyProductCard({
   onAddUnit,
 }: {
   item: SupplyItemDraft;
-  units: string[];
+  units: IUnit[];
   receivedAt: string | null;
   submitted: boolean;
   onChange: (patch: Partial<SupplyItemDraft>) => void;
   onRemove: () => void;
   onAddUnit: () => void;
 }) {
+  const unitOptions = units.some((unit) => unit.id === item.product.unitId)
+    ? units
+    : [item.product.unit, ...units];
   const prices = calculateItemPrices(item);
   const errors = submitted ? validateItem(item, receivedAt) : {};
   return (
@@ -52,10 +56,10 @@ export function SupplyProductCard({
         </ThemeIcon>
         <div>
           <Text size="lg" fw={600}>
-            {item.product.title}
+            {item.product.name}
           </Text>
           <Text size="sm" c="dimmed">
-            Арт. {item.product.article}
+            ID {item.product.id}
           </Text>
         </div>
       </Group>
@@ -64,7 +68,7 @@ export function SupplyProductCard({
           size="lg"
           label="Количество"
           classNames={{ label: componentClasses.fieldLabel }}
-          aria-label={"Количество " + item.product.title}
+          aria-label={"Количество " + item.product.name}
           placeholder="0"
           value={item.quantity}
           min={0}
@@ -84,19 +88,19 @@ export function SupplyProductCard({
           <Select
             size="lg"
             style={{ flex: 1, minWidth: 0 }}
-            aria-label={"Ед. измерения " + item.product.title}
-            data={units}
-            value={item.unit}
+            aria-label={"Ед. измерения " + item.product.name}
+            data={unitOptions.map((unit) => ({ value: String(unit.id), label: unit.shortName }))}
+            value={item.unitId === null ? null : String(item.unitId)}
             allowDeselect={false}
-            error={errors.unit}
-            onChange={(unit) => onChange({ unit: unit ?? "" })}
+            error={errors.unitId}
+            onChange={(unitId) => onChange({ unitId: unitId ? Number(unitId) : null })}
           />
           <Tooltip label="Создать единицу измерения">
             <ActionIcon
               size="lg"
               mt={8}
               variant="light"
-              aria-label={"Создать единицу измерения для " + item.product.title}
+              aria-label={"Создать единицу измерения для " + item.product.name}
               onClick={onAddUnit}
             >
               <IconPlus size={20} />
@@ -109,7 +113,7 @@ export function SupplyProductCard({
           size="lg"
           label="Годен до"
           classNames={{ label: componentClasses.fieldLabel }}
-          aria-label={"Годен до " + item.product.title}
+          aria-label={"Годен до " + item.product.name}
           valueFormat="DD.MM.YYYY.HH.mm"
           placeholder="дд.мм.гггг.чч.мм"
           value={item.expiresAt}
@@ -131,7 +135,7 @@ export function SupplyProductCard({
           size="lg"
           label="Цена за единицу"
           classNames={{ label: componentClasses.fieldLabel }}
-          aria-label={"Цена за единицу " + item.product.title}
+          aria-label={"Цена за единицу " + item.product.name}
           placeholder="0"
           suffix=" ₽"
           min={0}
@@ -154,7 +158,7 @@ export function SupplyProductCard({
           size="lg"
           label="Сумма позиции"
           classNames={{ label: componentClasses.fieldLabel }}
-          aria-label={"Сумма позиции " + item.product.title}
+          aria-label={"Сумма позиции " + item.product.name}
           placeholder="0"
           suffix=" ₽"
           min={0}
@@ -174,7 +178,7 @@ export function SupplyProductCard({
           variant="light"
           color="red"
           size="lg"
-          aria-label={"Удалить " + item.product.title}
+          aria-label={"Удалить " + item.product.name}
           onClick={onRemove}
         >
           <IconTrash size={20} />
