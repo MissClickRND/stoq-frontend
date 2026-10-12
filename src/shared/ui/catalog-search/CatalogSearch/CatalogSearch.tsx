@@ -1,3 +1,4 @@
+import classes from "./CatalogSearch.module.css";
 import { useState, type ReactNode } from "react";
 import {
   ActionIcon,
@@ -17,6 +18,8 @@ type CatalogSearchProps<T> = {
   placeholder: string;
   label?: string;
   emptyText: string;
+  attached?: boolean;
+  renderEmpty?: (search: string) => ReactNode;
 };
 
 export function CatalogSearch<T>({
@@ -28,6 +31,8 @@ export function CatalogSearch<T>({
   placeholder,
   label,
   emptyText,
+  attached = false,
+  renderEmpty,
 }: CatalogSearchProps<T>) {
   const [search, setSearch] = useState("");
   const combobox = useCombobox({
@@ -40,6 +45,9 @@ export function CatalogSearch<T>({
   return (
     <Combobox
       store={combobox}
+      offset={attached ? 0 : undefined}
+      position={attached ? "bottom-start" : undefined}
+      middlewares={attached ? { flip: false, shift: true } : undefined}
       onOptionSubmit={(id) => {
         const item = items.find((item) => getId(item) === id);
         if (item) onSelect(item);
@@ -50,6 +58,9 @@ export function CatalogSearch<T>({
       <Combobox.Target>
         <TextInput
           size="lg"
+          classNames={{
+            input: attached && combobox.dropdownOpened ? classes.inputAttached : undefined,
+          }}
           label={label}
           aria-label={label ?? placeholder}
           placeholder={placeholder}
@@ -82,7 +93,7 @@ export function CatalogSearch<T>({
           }
         />
       </Combobox.Target>
-      <Combobox.Dropdown>
+      <Combobox.Dropdown className={attached ? classes.dropdownAttached : undefined}>
         <Combobox.Options>
           <ScrollArea.Autosize mah={280} type="auto">
             {matching.length ? (
@@ -92,7 +103,11 @@ export function CatalogSearch<T>({
                 </Combobox.Option>
               ))
             ) : (
-              <Combobox.Empty>{emptyText}</Combobox.Empty>
+              renderEmpty ? (
+                renderEmpty(search.trim())
+              ) : (
+                <Combobox.Empty>{emptyText}</Combobox.Empty>
+              )
             )}
           </ScrollArea.Autosize>
         </Combobox.Options>

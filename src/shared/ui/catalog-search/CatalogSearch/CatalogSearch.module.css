@@ -1,0 +1,11 @@
+.inputAttached {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.dropdownAttached {
+  padding: 0;
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  overflow: hidden;
+}

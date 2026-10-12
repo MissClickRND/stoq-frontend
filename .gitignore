@@ -1,5 +1,9 @@
 AGENTS.md
 ARCHITECTURE.md
+docs/
+docs/*
+docs
+
 # Logs
 logs
 *.log

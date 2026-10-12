@@ -19,6 +19,7 @@ export function SupplyProductsSection({
   receivedAt,
   submitted,
   onSelect,
+  onCreateProduct,
   onChange,
   onRemove,
   onAddUnit,
@@ -28,6 +29,7 @@ export function SupplyProductsSection({
   receivedAt: string | null;
   submitted: boolean;
   onSelect: (product: Product) => void;
+  onCreateProduct: (name: string) => void;
   onChange: (id: string, patch: Partial<SupplyItemDraft>) => void;
   onRemove: (id: string) => void;
   onAddUnit: (id: string) => void;
@@ -35,13 +37,17 @@ export function SupplyProductsSection({
   return (
     <Paper withBorder p="lg" className={componentClasses.productsSection}>
       <Stack gap="md" className={componentClasses.productsContent}>
-        <Group gap="sm" className={componentClasses.fixed}>
+        <Group
+          gap="sm"
+          justify="space-between"
+          className={componentClasses.fixed}
+        >
           <Title order={3} size="h4">
             Продукты в поставке
           </Title>
         </Group>
         <div className={componentClasses.fixed}>
-          <SupplyProductSearch onSelect={onSelect} />
+          <SupplyProductSearch onSelect={onSelect} onCreate={onCreateProduct} />
         </div>
         {items.length ? (
           <>

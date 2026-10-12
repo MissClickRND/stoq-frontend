@@ -13,6 +13,7 @@ import {
 } from "@/entities/supply";
 import { useUnits } from "@/entities/unit";
 
+import { CreateProductModal } from "@/widgets/create-product-modal";
 import { CreateUnitModal } from "../components/CreateUnitModal";
 import { SupplyDeliveryFields } from "../components/SupplyDeliveryFields";
 import { SupplySummary } from "../components/SupplySummary/SupplySummary";
@@ -28,6 +29,7 @@ export function CreateSupplyPage() {
   const [supplier, setSupplier] = useState("");
   const [items, setItems] = useState<SupplyItemDraft[]>([]);
   const [unitFor, setUnitFor] = useState<string | null>(null);
+  const [productName, setProductName] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const total = items.reduce(
@@ -131,6 +133,7 @@ export function CreateSupplyPage() {
             receivedAt={receivedAt}
             submitted={submitted}
             onSelect={addProduct}
+            onCreateProduct={setProductName}
             onChange={updateItem}
             onRemove={(id) =>
               setItems((current) => current.filter((item) => item.id !== id))
@@ -139,6 +142,11 @@ export function CreateSupplyPage() {
           />
         </form>
       </DefaultPageLayout>
+      <CreateProductModal
+        opened={productName !== null}
+        initialName={productName ?? ""}
+        onClose={() => setProductName(null)}
+      />
       <CreateUnitModal
         key={unitFor ?? "closed"}
         opened={unitFor !== null}

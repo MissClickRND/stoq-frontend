@@ -1,5 +1,5 @@
 import { memo, type CSSProperties } from "react";
-import { IconChefHat } from "@tabler/icons-react";
+import { IconSoupFilled } from "@tabler/icons-react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { statusPresentation } from "../../model/config";
 import type { FlowNode } from "../../model/type";
@@ -28,14 +28,14 @@ export const GraphNode = memo(function GraphNode({
         <span className={classes.dot} />
       ) : (
         <span className={classes.dishIcon}>
-          <IconChefHat size={24} stroke={1.6} />
+          <IconSoupFilled size={24} stroke={1.6} />
         </span>
       )}
       <span className={classes.content}>
         <span className={classes.name}>{node.data.name}</span>
-        <span className={classes.caption}>
+        {/* <span className={classes.caption}>
           {isIngredient ? quantity : status.dishLabel}
-        </span>
+        </span> */}
       </span>
       {[Position.Left, Position.Right, Position.Top, Position.Bottom].map(
         (position) => (

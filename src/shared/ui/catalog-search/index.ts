@@ -1,1 +1,1 @@
-export { CatalogSearch } from "./CatalogSearch";
+export { CatalogSearch } from "./CatalogSearch/CatalogSearch";

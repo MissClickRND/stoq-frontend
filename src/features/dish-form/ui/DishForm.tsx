@@ -1,26 +1,22 @@
 import {
-  Alert,
+  Autocomplete,
   Button,
   Group,
-  MultiSelect,
   NumberInput,
   Stack,
-  Switch,
-  Text,
   Textarea,
   TextInput,
+  useCombobox,
 } from "@mantine/core";
+import { formRootRule, useForm } from "@mantine/form";
 import { useState } from "react";
 import { dishFormDefaults } from "../model/defaults";
 import {
   useIngredients,
-  dishCost,
-  formatMoney,
   useDishes,
   type Dish,
   type DishDraft,
 } from "@/entities/dish";
-
 import { IngredientQuantityFields } from "./IngredientQuantityFields";
 
 export function DishForm({
@@ -32,147 +28,136 @@ export function DishForm({
 }) {
   const { ingredients: ingredientCatalog } = useIngredients();
   const { saveDish } = useDishes();
-  const [draft, setDraft] = useState<DishDraft>(
-    dish
-      ? { ...dish, ingredients: dish.ingredients.map((item) => ({ ...item })) }
+  const ingredientCombobox = useCombobox();
+  const [ingredientSearch, setIngredientSearch] = useState("");
+  const form = useForm<DishDraft>({
+    mode: "controlled",
+    initialValues: dish
+      ? {
+          name: dish.name,
+          description: dish.description,
+          price: dish.price,
+          imageUrl: dish.imageUrl ?? "",
+          stopped: dish.stopped,
+          archived: dish.archived,
+          stopReason: dish.stopReason ?? "",
+          ingredients: dish.ingredients.map((item) => ({ ...item })),
+        }
       : { ...dishFormDefaults, ingredients: [] },
+    validateInputOnBlur: true,
+    validate: {
+      name: (value) => (value.trim() ? null : "Укажите название блюда"),
+      description: (value) => (value.trim() ? null : "Укажите описание блюда"),
+      price: (value) =>
+        Number.isFinite(value) && value > 0
+          ? null
+          : "Укажите положительную цену",
+      imageUrl: (value) =>
+        !value || /^(https?:\/\/|\/)/.test(value.trim())
+          ? null
+          : "Укажите адрес с http://, https:// или путь из public",
+      ingredients: {
+        [formRootRule]: (value) =>
+          value.length ? null : "Добавьте хотя бы один ингредиент",
+        quantity: (value) =>
+          Number.isFinite(value) && value > 0
+            ? null
+            : "Укажите положительное количество",
+      },
+    },
+  });
+  const availableIngredients = ingredientCatalog.filter(
+    (item) =>
+      !form.values.ingredients.some((selected) => selected.id === item.id),
   );
-  const [error, setError] = useState<string | null>(null);
-  const cost = dishCost({ ...draft, id: "draft", sales: [] });
-  const submit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (
-      !draft.name.trim() ||
-      !draft.description.trim() ||
-      draft.price <= 0 ||
-      !Number.isFinite(draft.price) ||
-      !draft.ingredients.length ||
-      draft.ingredients.some(
-        (item) => item.quantity <= 0 || !Number.isFinite(item.quantity),
-      )
-    ) {
-      setError(
-        "Укажите название, описание, положительную цену и хотя бы один ингредиент с количеством на порцию.",
-      );
-      return;
-    }
-    if (draft.imageUrl && !/^(https?:\/\/|\/)/.test(draft.imageUrl)) {
-      setError(
-        "Укажите адрес изображения с http://, https:// или путь из public.",
-      );
-      return;
-    }
+  const addIngredient = (id: string) => {
+    const ingredient = availableIngredients.find((item) => item.id === id);
+    if (!ingredient) return;
+    form.insertListItem("ingredients", { ...ingredient });
+    form.clearFieldError("ingredients");
+    setIngredientSearch("");
+  };
+  const submit = form.onSubmit((values) => {
     saveDish(
       {
-        ...draft,
-        name: draft.name.trim(),
-        description: draft.description.trim(),
+        ...values,
+        name: values.name.trim(),
+        description: values.description.trim(),
+        imageUrl: values.imageUrl?.trim(),
       },
       dish?.id,
     );
     //! Закрыть форму и обновить блюдо только после ответа сервера.
-  };
+  });
 
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} noValidate>
       <Stack gap="md">
-        {error && (
-          <Alert color="red" role="alert">
-            {error}
-          </Alert>
-        )}
         <TextInput
-          label="Название блюда"
+          label="Ссылка на фото"
+          size="lg"
+          placeholder="Введите ссылку на фотографию блюда"
+          {...form.getInputProps("imageUrl")}
+        />
+        <TextInput
+          label="Название"
+          size="lg"
+          placeholder="Введите название блюда"
           required
-          value={draft.name}
-          onChange={(event) =>
-            setDraft({ ...draft, name: event.currentTarget.value })
-          }
+          {...form.getInputProps("name")}
         />
         <Textarea
           label="Описание"
+          size="lg"
+          placeholder="Введите краткое описание"
           required
-          value={draft.description}
-          onChange={(event) =>
-            setDraft({ ...draft, description: event.currentTarget.value })
-          }
+          {...form.getInputProps("description")}
         />
         <NumberInput
           label="Цена продажи, ₽"
           required
+          size="lg"
           min={0.01}
           decimalScale={2}
-          value={draft.price}
-          onChange={(value) => setDraft({ ...draft, price: Number(value) })}
+          {...form.getInputProps("price")}
         />
-        <TextInput
-          label="Адрес изображения"
-          placeholder="Необязательно"
-          value={draft.imageUrl ?? ""}
-          onChange={(event) =>
-            setDraft({ ...draft, imageUrl: event.currentTarget.value })
-          }
-        />
-        <MultiSelect
+        <Autocomplete
           label="Ингредиенты"
-          required
-          searchable
-          data={ingredientCatalog.map((item) => ({
+          size="lg"
+          placeholder="Начните вводить название ингредиента"
+          description="Выберите ингредиент из подсказок, чтобы добавить его в состав"
+          withAsterisk
+          clearable
+          data={availableIngredients.map((item) => ({
             value: item.id,
             label: item.name,
           }))}
-          value={draft.ingredients.map((item) => item.id)}
-          onChange={(ids) =>
-            setDraft({
-              ...draft,
-              ingredients: ids.map(
-                (id) =>
-                  draft.ingredients.find((item) => item.id === id) ?? {
-                    ...ingredientCatalog.find((item) => item.id === id)!,
-                  },
-              ),
-            })
-          }
+          value={ingredientSearch}
+          onChange={setIngredientSearch}
+          comboboxProps={{
+            store: ingredientCombobox,
+            onOptionSubmit: (id) => {
+              addIngredient(id);
+              ingredientCombobox.closeDropdown();
+            },
+          }}
+          error={form.errors.ingredients}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") event.preventDefault();
+          }}
         />
         <IngredientQuantityFields
-          ingredients={draft.ingredients}
-          onChange={(id, quantity) =>
-            setDraft({
-              ...draft,
-              ingredients: draft.ingredients.map((item) =>
-                item.id === id ? { ...item, quantity } : item,
-              ),
-            })
+          ingredients={form.values.ingredients}
+          getQuantityInputProps={(index) =>
+            form.getInputProps(`ingredients.${index}.quantity`)
           }
+          onRemove={(index) => form.removeListItem("ingredients", index)}
         />
-        <Text size="sm" c="dimmed">
-          Себестоимость порции: {formatMoney(cost)}
-        </Text>
-        <Switch
-          label="Поместить в стоп-лист"
-          checked={draft.stopped}
-          onChange={(event) =>
-            setDraft({
-              ...draft,
-              stopped: event.currentTarget.checked,
-              stopReason: event.currentTarget.checked ? draft.stopReason : "",
-            })
-          }
-        />
-        {draft.stopped && (
-          <TextInput
-            label="Причина остановки"
-            value={draft.stopReason ?? ""}
-            onChange={(event) =>
-              setDraft({ ...draft, stopReason: event.currentTarget.value })
-            }
-          />
-        )}
         <Group justify="flex-end">
-          <Button variant="default" onClick={onClose}>
+          <Button type="button" size="lg" variant="default" onClick={onClose}>
             Отмена
           </Button>
-          <Button type="submit">
+          <Button type="submit" size="lg">
             {dish ? "Сохранить изменения" : "Добавить блюдо"}
           </Button>
         </Group>

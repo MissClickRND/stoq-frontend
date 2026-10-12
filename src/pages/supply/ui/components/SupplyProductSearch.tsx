@@ -1,16 +1,36 @@
-import { Group, Text, ThemeIcon } from "@mantine/core";
+import { Button, Group, Stack, Text, ThemeIcon } from "@mantine/core";
 import { IconPackage } from "@tabler/icons-react";
 import { useProducts, type Product } from "@/entities/product";
 import { CatalogSearch } from "@/shared/ui/catalog-search";
 export function SupplyProductSearch({
   onSelect,
+  onCreate,
 }: {
   onSelect: (product: Product) => void;
+  onCreate: (name: string) => void;
 }) {
   const { products } = useProducts();
+  const [opened, { open, close }] = useDisclosure(false);
   return (
     <CatalogSearch
       items={products}
+      attached
+      renderEmpty={(search) => (
+        <Stack align="center" gap="sm" p="md">
+          <Text size="lg" c="dimmed">
+            Продукт не найден
+          </Text>
+          <Button
+            type="button"
+            size="lg"
+            variant="light"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => onCreate(search)}
+          >
+            Создать продукт
+          </Button>
+        </Stack>
+      )}
       getId={(product) => product.id}
       getSearchText={(product) => product.title + " " + product.article}
       onSelect={onSelect}

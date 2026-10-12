@@ -60,7 +60,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Navigate to="/analytics/dependencies" replace />,
+            element: <Navigate to="/analytics/dashboard" replace />,
           },
           { path: "dashboard", element: <AnalyticsDashboardPage /> },
           { path: "ingredients", element: <IngredientAnalysisPage /> },
