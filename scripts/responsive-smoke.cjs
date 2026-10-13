@@ -42,7 +42,7 @@ const routes = ['/analytics/dashboard', '/analytics/ingredients', '/analytics/de
       const url = new URL(request.url());
       let data = {};
       if (url.pathname === '/dishes') data = dishes;
-      else if (url.pathname === '/analytics/dependencies') data = dependencyGraph;
+      else if (url.pathname === '/analytics/graph') data = dependencyGraph;
       else if (/^\/dishes\/\d+$/.test(url.pathname)) data = dishes.find(item => item.id === Number(url.pathname.split('/').pop())) ?? dish;
       else if (url.pathname === '/product') data = [product];
       else if (url.pathname === '/product/units') data = [unit];

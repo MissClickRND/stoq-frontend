@@ -24,7 +24,7 @@ const graph = { nodes: [
     let release;
     await page.route('**/*', async route => {
       if (!['fetch', 'xhr'].includes(route.request().resourceType())) return route.continue();
-      if (new URL(route.request().url()).pathname !== '/analytics/dependencies') {
+      if (new URL(route.request().url()).pathname !== '/analytics/graph') {
         return route.fulfill({ contentType: 'application/json', body: '{}' });
       }
       if (mode === 'loading') await new Promise(resolve => { release = resolve; });

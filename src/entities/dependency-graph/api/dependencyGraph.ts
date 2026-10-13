@@ -5,7 +5,7 @@ const emptyGraph: DependencyGraph = { nodes: [], edges: [] };
 export const dependencyGraphApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getDependencyGraph: build.query<DependencyGraph, void>({
-      query: () => "/analytics/dependencies",
+      query: () => "/analytics/graph",
       providesTags: [{ type: "Dish", id: "LIST" }, { type: "Product", id: "LIST" }, { type: "Store", id: "LIST" }],
     }),
   }),

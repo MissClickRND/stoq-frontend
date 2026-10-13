@@ -31,7 +31,7 @@ test('graph loads real API data without recalculating server statuses and refres
   const api = module.dependencyGraphApi;
   let calls = 0;
   t.mock.method(globalThis, 'fetch', async request => {
-    assert.equal(new URL(request.url).pathname, '/analytics/dependencies');
+    assert.equal(new URL(request.url).pathname, '/analytics/graph');
     calls++;
     return new Response(JSON.stringify(graph), { headers: { 'Content-Type': 'application/json' } });
   });
