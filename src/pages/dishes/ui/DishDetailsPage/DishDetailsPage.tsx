@@ -1,5 +1,14 @@
 import componentClasses from "./DishDetailsPage.module.css";
-import { Alert, Button, Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Center,
+  Group,
+  Loader,
+  SimpleGrid,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconEdit } from "@tabler/icons-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -21,7 +30,11 @@ export function DishDetailsPage() {
   const [editing, setEditing] = useState(false);
 
   if (isLoading)
-    return <Text p="lg" role="status">Загрузка блюда…</Text>;
+    return (
+      <Center w="100%" h="100%">
+        <Loader />
+      </Center>
+    );
   if (isError)
     return (
       <Alert m="lg" color="red" role="alert">

@@ -28,6 +28,7 @@ export function DishIdentity({ dish }: { dish: Dish }) {
         <Text size="sm" c="dimmed" lineClamp={2}>
           {dish.description}
         </Text>
+        <Text size="sm" c="dimmed">{dish.category || 'Без категории'}</Text>
       </Box>
     </Group>
   );

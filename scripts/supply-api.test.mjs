@@ -67,12 +67,12 @@ test("supply form sends only contract fields, serializes Date expiry and reads c
   t.after(() => { listing.unsubscribe(); store.dispatch(suppliesApi.util.resetApiState()); });
   assert.deepEqual(await listing.unwrap(), []);
   assert.equal(requests[0].search, "П-2026");
-  const draft = { supplyNumber: "  П-2026-0042  ", receivedAt: "2026-10-12T08:30:00.000Z", items: [{ id: "local-id", product, unitId: 7, quantity: "1.25", expiresAt: "2026-10-20T15:45:00.000Z", price: 0, pricingMode: "unit" }] };
+  const draft = { supplier: "ООО Молоко", supplyNumber: "  П-2026-0042  ", receivedAt: "2026-10-12T08:30:00.000Z", items: [{ id: "local-id", product, unitId: 7, quantity: "1.25", expiresAt: "2026-10-20T15:45:00.000Z", price: 0, pricingMode: "unit" }] };
   const original = structuredClone(draft);
   const payload = toCreateSupplyRequest(draft);
   assert.ok(payload.items[0].expiresAt instanceof Date);
   assert.equal((await store.dispatch(suppliesApi.endpoints.createSupply.initiate(payload)).unwrap()).id, 48);
-  assert.deepEqual(requests.find(item => item.method === "POST"), { method: "POST", path: "/supplies", search: null, body: { supplyNumber: "П-2026-0042", receivedAt: "2026-10-12T08:30:00.000Z", items: [{ productId: 42, quantity: 1.25, expiresAt: "2026-10-20T15:45:00.000Z" }] } });
+  assert.deepEqual(requests.find(item => item.method === "POST"), { method: "POST", path: "/supplies", search: null, body: { supplier: "ООО Молоко", supplyNumber: "П-2026-0042", receivedAt: "2026-10-12T08:30:00.000Z", items: [{ productId: 42, quantity: 1.25, totalPrice: 0, expiresAt: "2026-10-20T15:45:00.000Z" }] } });
   assert.deepEqual(draft, original);
   await Promise.all(store.dispatch(suppliesApi.util.getRunningQueriesThunk()));
   assert.deepEqual(suppliesApi.endpoints.getSupplies.select({ search: "П-2026" })(store.getState()).data, [supply]);

@@ -13,6 +13,7 @@ import {
   suppliesApi,
   toCreateSupplyRequest,
   validateItem,
+  calculateItemPrices,
   type SupplyItemDraft,
   type Product,
 } from "@/entities/supply";
@@ -37,12 +38,13 @@ export function CreateSupplyPage() {
     dayjs().format("YYYY-MM-DD HH:mm:ss"),
   );
   const [supplyNumber, setSupplyNumber] = useState("");
+  const [supplier, setSupplier] = useState("");
   const [items, setItems] = useState<SupplyItemDraft[]>([]);
   const [unitFor, setUnitFor] = useState<string | null>(null);
   const [productName, setProductName] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const total = 0;
+  const total = Math.round(items.reduce((sum, item) => sum + calculateItemPrices(item).total, 0) * 100) / 100;
   const updateItem = (id: string, patch: Partial<SupplyItemDraft>) =>
     setItems((current) =>
       current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
@@ -75,8 +77,8 @@ export function CreateSupplyPage() {
     if (saving) return;
     setSubmitted(true);
     setFormError(null);
-    if (!receivedAt || !supplyNumber.trim())
-      return setFormError("Заполните номер поставки и дату поступления.");
+    if (!receivedAt || !supplyNumber.trim() || !supplier.trim())
+      return setFormError("Заполните номер поставки, поставщика и дату поступления.");
     if (!items.length)
       return setFormError("Добавьте хотя бы один продукт в поставку.");
     const unknownUnit = items.find(
@@ -101,7 +103,7 @@ export function CreateSupplyPage() {
       return;
     }
     try {
-      const request = toCreateSupplyRequest({ supplyNumber, receivedAt, items });
+      const request = toCreateSupplyRequest({ supplyNumber, supplier, receivedAt, items });
       const supply = await createSupply(request).unwrap();
       dispatch(suppliesApi.util.invalidateTags([{ type: "Store", id: "LIST" }]));
       showSuccess("Поставка создана.");
@@ -132,6 +134,8 @@ export function CreateSupplyPage() {
             <SupplyDeliveryFields
               receivedAt={receivedAt}
               supplyNumber={supplyNumber}
+              supplier={supplier}
+              onSupplierChange={setSupplier}
               submitted={submitted}
               onDateChange={setReceivedAt}
               onSupplyNumberChange={setSupplyNumber}

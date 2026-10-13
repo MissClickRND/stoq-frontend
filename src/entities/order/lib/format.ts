@@ -1,1 +1,2 @@
-export { formatCurrency as formatOrderMoney } from "../../../shared/lib/format.ts";
+import { formatCurrency } from "../../../shared/lib/format.ts";
+export const formatOrderMoney = (value: number | null) => value == null ? "—" : formatCurrency(value);

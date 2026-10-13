@@ -7,14 +7,21 @@ export type IDishIngredient = {
   productId: number;
   dishId: number;
   quantity: number;
+  price: number | null;
+  stock: number;
+  portions: number;
+  expiresAt: string | null;
   product: IProduct;
 };
 
 export type IDish = {
   id: number;
   name: string;
+  category: string | null;
   description: string;
-  salePrice: number;
+  salePrice: number | null;
+  availablePortions: number;
+  costPrice: number | null;
   imageUrl?: string;
 
   recipeItems: IDishIngredient[];
@@ -24,7 +31,9 @@ export type DishDraft = Omit<IDish, "id" | "sales" | "recommendation">;
 
 export type ICreateDishRequest = Pick<
   IDish,
-  "name" | "description" | "imageUrl" | "salePrice"
+  "name" | "description" | "salePrice"
 > & {
-  recipeItems: Pick<IDishIngredient, "productId" | "quantity">;
+  category?: string;
+  imageURL?: string;
+  recipeItems: Pick<IDishIngredient, "productId" | "quantity">[];
 };

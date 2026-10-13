@@ -3,10 +3,18 @@ import { DateTimePicker } from "@mantine/dates";
 import { IconCalendarTime, IconTruckDelivery } from "@tabler/icons-react";
 
 export function SupplyDeliveryFields({
-  receivedAt, supplyNumber, submitted, onDateChange, onSupplyNumberChange,
+  receivedAt,
+  supplyNumber,
+  supplier,
+  submitted,
+  onDateChange,
+  onSupplyNumberChange,
+  onSupplierChange,
 }: {
   receivedAt: string | null;
   supplyNumber: string;
+  supplier: string;
+  onSupplierChange: (value: string) => void;
   submitted: boolean;
   onDateChange: (date: string | null) => void;
   onSupplyNumberChange: (value: string) => void;
@@ -21,7 +29,24 @@ export function SupplyDeliveryFields({
           required
           value={supplyNumber}
           onChange={(event) => onSupplyNumberChange(event.currentTarget.value)}
-          error={submitted && !supplyNumber.trim() ? "Укажите номер поставки" : undefined}
+          error={
+            submitted && !supplyNumber.trim()
+              ? "Укажите номер поставки"
+              : undefined
+          }
+        />
+
+        <TextInput
+          label="Поставщик"
+          size="lg"
+          value={supplier}
+          required
+          onChange={(event) => onSupplierChange(event.currentTarget.value)}
+          error={
+            submitted && !supplier.trim() ? "Укажите поставщика" : undefined
+          }
+          placeholder="ООО Молочный двор"
+          leftSection={<IconTruckDelivery size={20} />}
         />
         <DateTimePicker
           label="Дата и время поступления"
@@ -34,10 +59,13 @@ export function SupplyDeliveryFields({
           clearable
           leftSection={<IconCalendarTime size={20} />}
           error={submitted && !receivedAt ? "Укажите дату и время" : undefined}
-          timePickerProps={{ format: "24h", hoursInputLabel: "Часы", minutesInputLabel: "Минуты" }}
+          timePickerProps={{
+            format: "24h",
+            hoursInputLabel: "Часы",
+            minutesInputLabel: "Минуты",
+          }}
           submitButtonProps={{ "aria-label": "Подтвердить дату поступления" }}
         />
-        <TextInput label="Поставщик" size="lg" value="—" disabled leftSection={<IconTruckDelivery size={20} />} />
       </Stack>
     </Paper>
   );

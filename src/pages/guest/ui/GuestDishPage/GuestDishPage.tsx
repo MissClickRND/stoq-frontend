@@ -1,5 +1,16 @@
 import componentClasses from "./GuestDishPage.module.css";
-import { Alert, Badge, Button, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import {
+  Alert,
+  Badge,
+  Button,
+  Center,
+  Group,
+  Loader,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { IconShoppingCart } from "@tabler/icons-react";
 import { useParams } from "react-router-dom";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
@@ -14,13 +25,21 @@ export function GuestDishPage() {
   const { dishId } = useParams();
   const { dish, isLoading, isError, refetch } = useDish(dishId);
   const { basePath, items, addDish } = useGuestOrder();
-  if (isLoading) return <Text role="status">Загрузка блюда…</Text>;
-  if (isError) return (
-    <Alert color="red" role="alert">
-      Не удалось загрузить блюдо.
-      <Button type="button" variant="subtle" onClick={() => refetch()}>Повторить</Button>
-    </Alert>
-  );
+  if (isLoading)
+    return (
+      <Center w="100%" mih="50svh">
+        <Loader />
+      </Center>
+    );
+  if (isError)
+    return (
+      <Alert color="red" role="alert">
+        Не удалось загрузить блюдо.
+        <Button type="button" variant="subtle" onClick={() => refetch()}>
+          Повторить
+        </Button>
+      </Alert>
+    );
   if (!dish)
     return (
       <Stack>

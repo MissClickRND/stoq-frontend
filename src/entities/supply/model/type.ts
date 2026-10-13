@@ -8,13 +8,17 @@ export type ISupplyItem = {
   product: Product;
   expiresAt: string;
   quantity: number;
+  price: number | null;
+  totalPrice: number | null;
 };
 
 export type ISupply = {
   id: number;
   supplyNumber: string;
+  supplier: string | null;
+  totalPrice: number | null;
   receivedAt: string;
-  acceptedBy: string;
+  acceptedBy?: string;
   items: ISupplyItem[];
 };
 
@@ -32,5 +36,6 @@ export type ICreateSupplyRequest = Pick<
   ISupply,
   "supplyNumber" | "receivedAt"
 > & {
-  items: { productId: number; quantity: number; expiresAt: Date }[];
+  supplier: string;
+  items: { productId: number; quantity: number; totalPrice: number; expiresAt: Date }[];
 };

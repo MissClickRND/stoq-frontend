@@ -6,7 +6,7 @@ import {
 } from "../src/features/inventory/model/inventorySlice.ts";
 
 const product = Object.freeze({
-  id: 27, supplyId: 8, productId: 3, initialQuantity: 50,
+  id: 27, supplyId: 8, productId: 3, Quantity: 12, price: 100, totalPrice: 1200,
   balance: Object.freeze({ availableQuantity: 12, reservedQuantity: 4 }),
   product: { id: 3, name: "Помидоры", unit: { id: 2, name: "Килограмм", shortName: "кг" } },
   expiresAt: "2026-10-30T12:00:00Z", status: "ACTIVE",
@@ -31,12 +31,12 @@ test("inventory starts without data, accepts loaded stock and preserves edits on
   );
   draft = inventoryDraftReducer(
     draft,
-    inventoryDraftActions.initialize([{ ...product, balance: { ...product.balance, availableQuantity: 15 } }]),
+    inventoryDraftActions.initialize([{ ...product, Quantity: 15 }]),
   );
   assert.equal(draft.entries[0].actual, 2.5);
   assert.equal(draft.entries[0].remove, true);
   assert.equal(product.balance.availableQuantity, 12);
-  assert.equal(product.initialQuantity, 50);
+  assert.equal(product.Quantity, 12);
 });
 
 test("a new inventory resets the draft and uses fresh loaded quantities", () => {
@@ -55,7 +55,7 @@ test("a new inventory resets the draft and uses fresh loaded quantities", () => 
   assert.deepEqual(draft.entries, []);
   draft = inventoryDraftReducer(
     draft,
-    inventoryDraftActions.initialize([{ ...product, balance: { ...product.balance, availableQuantity: 15 } }]),
+    inventoryDraftActions.initialize([{ ...product, Quantity: 15 }]),
   );
   assert.equal(draft.entries[0].actual, 15);
 });

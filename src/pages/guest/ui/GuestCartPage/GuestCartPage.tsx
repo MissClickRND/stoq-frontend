@@ -62,7 +62,7 @@ export function GuestCartPage() {
           Корзина
         </Title>
         <Text c="dimmed" mt="xs">
-          Проверьте выбранные блюда и укажите детали заказа
+          Оформите заказ в ресторане самостоятельно
         </Text>
       </div>
       {!items.length ? (
@@ -91,19 +91,14 @@ export function GuestCartPage() {
             noValidate
           >
             <Stack gap="lg">
-              <Group gap="sm" wrap="nowrap">
-                <ThemeIcon size={42} variant="light" color="gray" radius="xl">
-                  <IconUser size={24} />
-                </ThemeIcon>
-                <div>
-                  <Text size="lg" fw={700}>
-                    Ваш заказ
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    Как и куда подать блюда
-                  </Text>
-                </div>
-              </Group>
+              <Stack gap="0">
+                <Text size="lg" fw={700}>
+                  Оформление заказа
+                </Text>
+                <Text size="sm" c="dimmed">
+                  Заполните информацию о заказе
+                </Text>
+              </Stack>
               <div className={componentClasses.checkoutFields}>
                 <OrderGuestFields
                   withIcons={false}
@@ -116,31 +111,7 @@ export function GuestCartPage() {
                   }}
                 />
               </div>
-              <TextInput
-                size="lg"
-                label="Имя гостя"
-                description="Необязательно"
-                placeholder="Как к вам обращаться?"
-                maxLength={80}
-                value={details.guestName}
-                onChange={(event) =>
-                  updateDetails({ guestName: event.currentTarget.value })
-                }
-              />
-              <Textarea
-                size="lg"
-                label="Комментарий к заказу"
-                placeholder="Например, без лука, пожалуйста"
-                minRows={3}
-                maxLength={500}
-                value={details.comment}
-                onChange={(event) =>
-                  updateDetails({ comment: event.currentTarget.value })
-                }
-              />
-              <Text size="xs" c="dimmed" ta="right">
-                {details.comment.length}/500
-              </Text>
+
               <Divider />
               <Group justify="space-between">
                 <Text c="dimmed">Количество позиций</Text>
@@ -154,21 +125,14 @@ export function GuestCartPage() {
                   {formatOrderMoney(total)}
                 </Text>
               </Group>
-              <Alert color="blue" icon={<IconInfoCircle size={20} />}>
-                Демонстрационный режим: заказ не отправляется в ресторан.
-              </Alert>
-              {message && (
-                <Alert color="red" role="alert">
-                  {message}
-                </Alert>
-              )}
+
               <Button
                 type="submit"
                 size="lg"
                 fullWidth
                 leftSection={<IconShoppingCart size={20} />}
               >
-                Создать заказ
+                Оплатить
               </Button>
             </Stack>
           </Paper>

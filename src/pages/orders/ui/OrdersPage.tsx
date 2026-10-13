@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
+import { ActionIcon, Alert, Button, Center, Loader, Group, Tooltip } from "@mantine/core";
+import { apiErrorMessage } from '@/shared/lib/api-error';
 import {
   IconCheck,
   IconClock,
@@ -24,7 +25,13 @@ import { useRestaurant } from "@/entities/restaurant";
 
 export function OrdersPage() {
   const { restaurant: initialRestaurant } = useRestaurant();
-  const { orders, completeOrder } = useOrders();
+  const { orders, completeOrder, isLoading, isError, refetch } = useOrders();
+  const [actionError, setActionError] = useState<string | null>(null);
+  const onComplete = async (id: string) => {
+    setActionError(null);
+    try { await completeOrder(id); }
+    catch (error) { setActionError(apiErrorMessage(error, 'Не удалось завершить заказ')); }
+  };
   const [search, setSearch] = useState("");
   const [sharing, setSharing] = useState(false);
   const today = getTodayOrderStatistics(orders, dayjs().format("YYYY-MM-DD"));
@@ -101,7 +108,9 @@ export function OrdersPage() {
             </Group>
           }
         />
-        <OrdersTable orders={filtered} onComplete={completeOrder} />
+        {isError && <Alert color="red">Не удалось загрузить заказы или меню. <Button variant="subtle" onClick={refetch}>Повторить</Button></Alert>}
+        {actionError && <Alert color="red">{actionError}</Alert>}
+        {isLoading ? <Center p="xl"><Loader /></Center> : !isError && <OrdersTable orders={filtered} onComplete={onComplete} />}
       </DefaultPageLayout>
       <GuestOrderQrModal
         opened={sharing}

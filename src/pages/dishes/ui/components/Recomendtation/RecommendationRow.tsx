@@ -29,7 +29,7 @@ export function RecommendationRow({ dish }: { dish: Dish }) {
               dish.price,
           )}
         </Text>
-        <Text size="lg" fw={600} c={dishProfit(dish) >= 0 ? "green" : "red"}>
+        <Text size="lg" fw={600} c={(dishProfit(dish) ?? 0) >= 0 ? "green" : "red"}>
           Прибыль с порции: {formatMoney(dishProfit(dish))}
         </Text>
       </Table.Td>

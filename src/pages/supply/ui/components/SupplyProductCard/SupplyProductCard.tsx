@@ -141,7 +141,6 @@ export function SupplyProductCard({
         <NumberInput
           size="lg"
           label="Цена за единицу"
-          disabled
           classNames={{ label: componentClasses.fieldLabel }}
           aria-label={"Цена за единицу " + item.product.name}
           placeholder="0"
@@ -165,7 +164,6 @@ export function SupplyProductCard({
         <NumberInput
           size="lg"
           label="Сумма позиции"
-          disabled
           classNames={{ label: componentClasses.fieldLabel }}
           aria-label={"Сумма позиции " + item.product.name}
           placeholder="0"

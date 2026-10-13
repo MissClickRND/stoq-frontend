@@ -7,10 +7,9 @@ import {
   SimpleGrid,
   Stack,
   Text,
-  ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconChefHat, IconSoupFilled } from "@tabler/icons-react";
+import { IconSoupFilled } from "@tabler/icons-react";
 import {
   type Dish,
   dishCost,
@@ -45,6 +44,7 @@ export function DishOverview({ dish }: { dish: Dish }) {
           <Text size="sm" c="dimmed" mt={6}>
             {dish.description}
           </Text>
+          <Text size="sm" c="dimmed">Категория: {dish.category || "—"}</Text>
         </Box>
         <DishStatus dish={dish} />
         <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="md">
@@ -72,7 +72,7 @@ export function DishOverview({ dish }: { dish: Dish }) {
             <Text size="xs" c="dimmed">
               Прибыль с порции
             </Text>
-            <Text fw={700} c={dishProfit(dish) >= 0 ? "green" : "red"}>
+            <Text fw={700} c={(dishProfit(dish) ?? 0) >= 0 ? "green" : "red"}>
               {formatMoney(dishProfit(dish))}
             </Text>
           </Box>

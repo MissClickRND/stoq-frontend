@@ -3,7 +3,9 @@ import { useState } from "react";
 import {
   Alert,
   Button,
+  Center,
   Group,
+  Loader,
   Pagination,
   Paper,
   SimpleGrid,
@@ -59,11 +61,15 @@ export function GuestMenuPage() {
         />
       </Group>
       {isLoading ? (
-        <Text role="status">Загрузка блюд…</Text>
+        <Center w="100%" h="100%">
+          <Loader />
+        </Center>
       ) : isError ? (
         <Alert color="red" role="alert">
           Не удалось загрузить блюда.
-          <Button type="button" variant="subtle" onClick={() => refetch()}>Повторить</Button>
+          <Button type="button" variant="subtle" onClick={() => refetch()}>
+            Повторить
+          </Button>
         </Alert>
       ) : visible.length ? (
         <SimpleGrid cols={{ base: 1, xs: 2, lg: 3 }} spacing="lg">

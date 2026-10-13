@@ -7,7 +7,7 @@ export type DishIngredient = {
   unit: string;
   quantity: number;
   stock: number;
-  costPerUnit: number;
+  costPerUnit: number | null;
   expiresOn: string;
 };
 
@@ -15,6 +15,7 @@ export type Dish = {
   id: string;
   name: string;
   description: string;
+  category?: string;
   price: number;
   imageUrl?: string;
   stopped: boolean;

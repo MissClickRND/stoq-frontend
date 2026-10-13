@@ -2,12 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { saveDish, archiveDish } from "../src/entities/dish/api/commands.ts";
 import {
-  useOrders,
-  createOrder,
-  completeOrder,
-  createGuestOrder,
-} from "../src/entities/order/api/order.ts";
-import {
   useRestaurant,
   getRestaurants,
   saveRestaurant,
@@ -32,7 +26,6 @@ import {
 
 const snapshot = () =>
   JSON.stringify({
-    orders: useOrders().orders,
     restaurant: useRestaurant().restaurant,
     restaurants: getRestaurants(),
     employees: useEmployees().employees,
@@ -42,17 +35,9 @@ const snapshot = () =>
 test("backend command placeholders do not mutate fixtures or manufacture saved results", () => {
   const before = snapshot();
   const dish = { id: "27", name: "Омлет", description: "", price: 520, ingredients: [], stopped: false };
-  const order = useOrders().orders[0];
   const results = [
     saveDish({ ...dish, name: "Changed" }, dish.id),
     archiveDish(dish.id),
-    createOrder(order),
-    completeOrder(order.id),
-    createGuestOrder({
-      ...order,
-      restaurantId: "restaurant-1",
-      source: "guest",
-    }),
     saveRestaurant({ ...useRestaurant().restaurant, name: "Changed" }),
     changeRole("ivan", "WAITER"),
     toggleBlock("ivan"),

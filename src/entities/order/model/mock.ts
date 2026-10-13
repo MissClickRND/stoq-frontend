@@ -48,7 +48,7 @@ export const mockGuestOrder: import("./type").GuestOrderPayload = {
   comment: null,
   items: mockOrders[0].items,
   total: mockOrders[0].items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) => total + (item.price ?? 0) * item.quantity,
     0,
   ),
 };

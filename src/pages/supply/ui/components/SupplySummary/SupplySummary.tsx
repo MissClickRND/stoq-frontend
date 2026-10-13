@@ -18,22 +18,24 @@ export function SupplySummary({
 }) {
   return (
     <Paper withBorder p="lg" className={componentClasses.summary}>
-      <Stack gap="md">
-        <Title order={3} size="h4">
-          Итоги поставки
-        </Title>
-        <Stack gap={4}>
-          <Group justify="space-between" wrap="nowrap">
-            <Group gap="sm" wrap="nowrap" c="dimmed">
-              <IconPackage size={20} />
-              <Text size="lg" fw={600}>
-                Количество позиций
+      <Stack gap="md" h="100%" justify="space-between">
+        <Stack gap="sm">
+          <Title order={3} size="h4">
+            Итоги поставки
+          </Title>
+          <Stack gap={4}>
+            <Group justify="space-between" wrap="nowrap">
+              <Group gap="sm" wrap="nowrap" c="dimmed">
+                <IconPackage size={20} />
+                <Text size="lg" fw={600}>
+                  Количество позиций
+                </Text>
+              </Group>
+              <Text size="lg" fw={700}>
+                {count} шт.
               </Text>
             </Group>
-            <Text size="lg" fw={700}>
-              {count} шт.
-            </Text>
-          </Group>
+          </Stack>
           <Group justify="space-between" wrap="nowrap">
             <Group gap="sm" wrap="nowrap" c="dimmed">
               <IconCoins size={20} />

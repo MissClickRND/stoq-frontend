@@ -1,5 +1,5 @@
 import { createElement, useState } from "react";
-import { Alert, Button, Text } from "@mantine/core";
+import { Alert, Button, Center, Loader, Text } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
@@ -35,8 +35,9 @@ export function DishesPage() {
   const stopList = useStopList();
   const recommendations = useDishRecommendations();
   const source = mode === "stop" ? stopList : recommendations;
-  const visibleDishes = (mode === "all" ? dishes : source.dishes)
-    .filter((dish) => !dish.archived && matchesDish(dish, query));
+  const visibleDishes = (mode === "all" ? dishes : source.dishes).filter(
+    (dish) => !dish.archived && matchesDish(dish, query),
+  );
   //! Подключить статистику отдельно, когда API начнёт отдавать доступность.
   const counts = {
     total: dishes.filter((dish) => !dish.archived).length,
@@ -75,7 +76,11 @@ export function DishesPage() {
               : "Рекомендации пока недоступны."}
           </Text>
         )}
-        {mode === "all" && isLoading && <Text role="status">Загрузка блюд…</Text>}
+        {mode === "all" && isLoading && (
+          <Center w="100%" h="100%">
+            <Loader />
+          </Center>
+        )}
         {mode === "all" && isError && (
           <Alert color="red" role="alert">
             Не удалось загрузить блюда.

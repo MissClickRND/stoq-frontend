@@ -1,12 +1,15 @@
 import type { ICreateSupplyRequest, SupplyItemDraft } from "../model/type.ts";
-import { validateItem } from "./calculations.ts";
+import { validateItem, calculateItemPrices } from "./calculations.ts";
 
 export function toCreateSupplyRequest(draft: {
   supplyNumber: string;
+  supplier: string;
   receivedAt: string | null;
   items: SupplyItemDraft[];
 }): ICreateSupplyRequest {
   const supplyNumber = draft.supplyNumber.trim();
+  const supplier = draft.supplier?.trim();
+  if (!supplier) throw new Error("Укажите поставщика");
   if (!supplyNumber) throw new Error("Укажите номер поставки");
   if (!draft.receivedAt) throw new Error("Укажите дату поступления");
   const receivedAt = new Date(draft.receivedAt.replace(" ", "T"));
@@ -14,6 +17,7 @@ export function toCreateSupplyRequest(draft: {
   if (!draft.items.length) throw new Error("Добавьте хотя бы один продукт в поставку");
   return {
     supplyNumber,
+    supplier,
     receivedAt: receivedAt.toISOString(),
     items: draft.items.map((item) => {
       const error = Object.values(validateItem(item, draft.receivedAt))[0];
@@ -25,6 +29,7 @@ export function toCreateSupplyRequest(draft: {
       return {
         productId: item.product.id,
         quantity: Number(item.quantity),
+        totalPrice: calculateItemPrices(item).total,
         expiresAt: new Date(item.expiresAt!.replace(" ", "T")),
       };
     }),

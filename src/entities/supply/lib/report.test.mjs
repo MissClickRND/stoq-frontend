@@ -19,8 +19,8 @@ test("report preserves supply number, literal product names and quantities and u
   assert.equal(item[1].type, String);
   assert.equal(item[2].value, 1.25);
   assert.equal(item[3].value, "кг");
-  assert.equal(item[4].value, 0);
-  assert.equal(item[5].value, 0);
+  assert.equal(item[4].value, "—");
+  assert.equal(item[5].value, "—");
   assert.equal(rows.at(-1)[5].value, 0);
 });
 

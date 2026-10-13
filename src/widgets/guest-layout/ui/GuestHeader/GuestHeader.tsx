@@ -1,8 +1,9 @@
 import componentClasses from "./GuestHeader.module.css";
-import { Anchor, Button, Group, Text } from "@mantine/core";
+import { Anchor, Button, Group, Text, Image } from "@mantine/core";
 import { IconLeaf, IconShoppingCart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { useGuestOrder } from "@/features/guest-order";
+import { navbarLogo } from "@/widgets/navbar/model/config";
 
 export function GuestHeader() {
   const { restaurant, basePath, quantity } = useGuestOrder();
@@ -15,10 +16,7 @@ export function GuestHeader() {
           className={componentClasses.brand}
           aria-label="STOQ — меню"
         >
-          <Group gap={8} wrap="nowrap">
-            <IconLeaf size={36} color="var(--mantine-color-primary-6)" />
-            <Text className={componentClasses.brandText}>STOQ</Text>
-          </Group>
+          <Image w={150} src={navbarLogo.src} alt={navbarLogo.alt} />
         </Anchor>
         <div className={componentClasses.restaurant}>
           <Text size="lg" fw={700}>

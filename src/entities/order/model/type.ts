@@ -3,11 +3,12 @@ export type OrderStatus = "processing" | "preparing" | "completed";
 export type OrderItem = {
   dishId: string;
   name: string;
-  price: number;
+  price: number | null;
   quantity: number;
   imageUrl?: string;
 };
-export type OrderItemDraft = Omit<OrderItem, "quantity"> & {
+export type OrderItemDraft = Omit<OrderItem, "quantity" | "price"> & {
+  price: number;
   quantity: number | string;
 };
 export type Order = {

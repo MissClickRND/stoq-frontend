@@ -3,7 +3,7 @@ export function removeProduct(_id: string): void {
 }
 
 import { baseApi } from "@/shared/api";
-import { IInventoryStoreRequest, IStoreProduct } from "../model/type";
+import type { IInventoryStoreRequest, IStoreProduct } from "../model/type";
 
 export const storeApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -17,7 +17,7 @@ export const storeApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Store", id: "LIST" }],
     }),
 
-    getStoreProductById: build.query<IStoreProduct, { id: number }>({
+    getStoreProductById: build.query<IStoreProduct[], { id: number }>({
       query: ({ id }) => ({
         url: `/inventory/${id}`,
       }),
@@ -30,7 +30,7 @@ export const storeApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: [{ type: "Store", id: "LIST" }],
+      invalidatesTags: ["Store", "Dish"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({

@@ -41,10 +41,10 @@ export function StoreProductModal({
   const navigate = useNavigate();
   const { currentData, isFetching, isError, refetch } =
     useGetStoreProductByIdQuery(
-      productId === null ? skipToken : { id: productId },
+      productId === null ? skipToken : { id: fallbackProduct?.productId ?? productId },
       { refetchOnMountOrArgChange: true },
     );
-  const product = currentData ?? null;
+  const product = currentData?.find((batch) => batch.id === fallbackProduct?.id) ?? currentData?.[0] ?? null;
   const catalogProduct = product?.product ?? fallbackProduct?.product;
   const name =
     catalogProduct?.name ??
@@ -132,13 +132,13 @@ export function StoreProductModal({
               <Text size="xs" c="dimmed">
                 Цена за единицу ({unit})
               </Text>
-              <Text fw={600}>{formatPrice("0")}</Text>
+              <Text fw={600}>{product.price == null ? "—" : formatPrice(String(product.price))}</Text>
             </Box>
             <Box>
               <Text size="xs" c="dimmed">
                 Итоговая цена
               </Text>
-              <Text fw={600}>{formatPrice("0")}</Text>
+              <Text fw={600}>{product.totalPrice == null ? "—" : formatPrice(String(product.totalPrice))}</Text>
             </Box>
           </SimpleGrid>
           <Group justify="end">

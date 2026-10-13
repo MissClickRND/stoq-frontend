@@ -1,14 +1,19 @@
 import type { Dish, DishIngredient } from "../model/view.ts";
 
-export const formatMoney = (value: number) => formatCurrency(value, 0);
+export const formatMoney = (value: number | null) => value == null ? "—" : formatCurrency(value, 2);
 export const dishCost = (dish: Dish) =>
-  dish.ingredients.reduce(
-    (sum, ingredient) => sum + ingredient.quantity * ingredient.costPerUnit,
+  dish.ingredients.some((item) => item.costPerUnit == null) ? null : dish.ingredients.reduce(
+    (sum, ingredient) => sum + ingredient.quantity * ingredient.costPerUnit!,
     0,
   );
-export const dishProfit = (dish: Dish) => dish.price - dishCost(dish);
-export const dishMarkup = (dish: Dish) =>
-  dishCost(dish) > 0 ? (dishProfit(dish) / dishCost(dish)) * 100 : null;
+export const dishProfit = (dish: Dish) => {
+  const cost = dishCost(dish);
+  return cost == null ? null : dish.price - cost;
+};
+export const dishMarkup = (dish: Dish) => {
+  const cost = dishCost(dish);
+  return cost != null && cost > 0 ? ((dish.price - cost) / cost) * 100 : null;
+};
 const today = () =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Moscow",
@@ -17,7 +22,7 @@ const today = () =>
     day: "2-digit",
   }).format(new Date());
 export const isIngredientExpired = (ingredient: DishIngredient) =>
-  ingredient.expiresOn < today();
+  Boolean(ingredient.expiresOn) && ingredient.expiresOn < today();
 export const missingIngredients = (dish: Dish) =>
   dish.ingredients.filter(
     (item) => item.stock < item.quantity || isIngredientExpired(item),
@@ -43,7 +48,7 @@ export const dishPortions = (dish: Dish) =>
     ? Math.min(...dish.ingredients.map((item) => ingredientPortions(item)))
     : 0;
 export const matchesDish = (dish: Dish, query: string) =>
-  `${dish.name} ${dish.description} ${dish.ingredients.map((item) => item.name).join(" ")} ${unavailableReason(dish)} ${dish.recommendation?.reason ?? ""}`
+  `${dish.name} ${dish.category ?? ""} ${dish.description} ${dish.ingredients.map((item) => item.name).join(" ")} ${unavailableReason(dish)} ${dish.recommendation?.reason ?? ""}`
     .toLocaleLowerCase("ru-RU")
     .includes(query.trim().toLocaleLowerCase("ru-RU"));
 

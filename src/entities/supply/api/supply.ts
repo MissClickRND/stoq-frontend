@@ -1,6 +1,6 @@
 import { getSupplyReportData, supplyReportColumns } from "../lib/report.ts";
 import { supplyTotal } from "../lib/calculations.ts";
-import { ICreateSupplyRequest, ISupply } from "../model/type.ts";
+import type { ICreateSupplyRequest, ISupply } from "../model/type.ts";
 import { normalizeArticle } from "@/shared/lib";
 import { baseApi } from "@/shared/api/baseApi.ts";
 
@@ -46,7 +46,7 @@ export const suppliesApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: [{ type: "Supply", id: "LIST" }],
+      invalidatesTags: ["Supply", "Store", "Dish"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({

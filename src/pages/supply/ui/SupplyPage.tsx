@@ -1,7 +1,16 @@
 import { useDebouncedValue } from "@mantine/hooks";
 import { normalizeArticle } from "@/shared/lib/format";
 import { createElement, useState } from "react";
-import { Alert, Avatar, Button, Center, Group, Loader, Table, Text } from "@mantine/core";
+import {
+  Alert,
+  Avatar,
+  Button,
+  Center,
+  Group,
+  Loader,
+  Table,
+  Text,
+} from "@mantine/core";
 import {
   IconChevronRight,
   IconCoins,
@@ -74,7 +83,6 @@ export function SupplyPage() {
     },
   ];
 
-
   return (
     <>
       <DefaultPageLayout
@@ -101,75 +109,85 @@ export function SupplyPage() {
         />
         {listing.isError && (
           <Alert color="red" title="Не удалось загрузить поставки">
-            <Button variant="subtle" onClick={() => listing.refetch()}>Повторить</Button>
+            <Button variant="subtle" onClick={() => listing.refetch()}>
+              Повторить
+            </Button>
           </Alert>
         )}
-        {listing.isFetching && !listing.currentData && <Center p="xl"><Loader /></Center>}
-        {!listing.isError && !(listing.isFetching && !listing.currentData) && <TableLayout
-          columns={supplyColumns}
-          data={filtered}
-          getRowKey={(supply) => supply.id}
-          minWidth={1040}
-          emptyText="Поставки не найдены. Попробуйте изменить поиск."
-          renderRow={(supply) => (
-            <Table.Tr>
-              <Table.Td>
-                <Text fw={600} size="lg" style={{ whiteSpace: "nowrap" }}>
-                  {supply.supplyNumber}
-                </Text>
-                <Text size="sm" c="dimmed">ID {normalizeArticle(supply.id)}</Text>
-              </Table.Td>
-              <Table.Td>
-                <Text fw={600} size="lg">
-                  {"—"}
-                </Text>
-              </Table.Td>
-              <Table.Td>
-                <Text size="lg" fw={500}>
-                  {dayjs(supply.receivedAt).format("DD.MM.YYYY")}
-                </Text>
-                <Text size="sm" c="dimmed">
-                  {dayjs(supply.receivedAt).format("HH:mm")}
-                </Text>
-              </Table.Td>
-              <Table.Td>
-                <Text size="lg" fw={700}>
-                  {(supply.items?.length ?? 0)}
-                </Text>
-              </Table.Td>
-              <Table.Td>
-                <Text fw={700} size="lg" style={{ whiteSpace: "nowrap" }}>
-                  {formatMoney(supplyTotal(supply))}
-                </Text>
-              </Table.Td>
-              <Table.Td>
-                <Group gap="xs" wrap="nowrap">
-                  <Avatar size="md" color="gray" radius="xl">
-                    {(supply.acceptedBy || "Пользователь")
-                      .split(" ")
-                      .map((part) => part[0])
-                      .slice(0, 2)
-                      .join("")}
-                  </Avatar>
-                  <Text size="lg" fw={500}>
-                    {supply.acceptedBy || "Пользователь"}
+        {listing.isFetching && !listing.currentData && (
+          <Center p="xl">
+            <Loader />
+          </Center>
+        )}
+        {!listing.isError && !(listing.isFetching && !listing.currentData) && (
+          <TableLayout
+            columns={supplyColumns}
+            data={filtered}
+            getRowKey={(supply) => supply.id}
+            minWidth={1040}
+            emptyText="Поставки не найдены. Попробуйте изменить поиск."
+            renderRow={(supply) => (
+              <Table.Tr>
+                <Table.Td>
+                  <Text fw={600} size="lg" style={{ whiteSpace: "nowrap" }}>
+                    {supply.supplyNumber}
                   </Text>
-                </Group>
-              </Table.Td>
-              <Table.Td>
-                <Button
-                  component={Link}
-                  to={`/supply/${encodeURIComponent(supply.id)}`}
-                  variant="default"
-                  size="lg"
-                  rightSection={<IconChevronRight size={20} />}
-                >
-                  Подробнее
-                </Button>
-              </Table.Td>
-            </Table.Tr>
-          )}
-        />}
+                  <Text size="sm" c="dimmed">
+                    ID {normalizeArticle(supply.id)}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text fw={600} size="lg">
+                    {supply.supplier || "—"}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="lg" fw={500}>
+                    {dayjs(supply.receivedAt).format("DD.MM.YYYY")}
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {dayjs(supply.receivedAt).format("HH:mm")}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="lg" fw={700}>
+                    {supply.items?.length ?? 0}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text fw={700} size="lg" style={{ whiteSpace: "nowrap" }}>
+                    {formatMoney(supplyTotal(supply))}
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Group gap="xs" wrap="nowrap">
+                    <Avatar size="md" color="gray" radius="xl">
+                      {(supply.acceptedBy || "Пользователь")
+                        .split(" ")
+                        .map((part) => part[0])
+                        .slice(0, 2)
+                        .join("")}
+                    </Avatar>
+                    <Text size="lg" fw={500}>
+                      {supply.acceptedBy || "Пользователь"}
+                    </Text>
+                  </Group>
+                </Table.Td>
+                <Table.Td>
+                  <Button
+                    component={Link}
+                    to={`/supply/${encodeURIComponent(supply.id)}`}
+                    variant="default"
+                    size="lg"
+                    rightSection={<IconChevronRight size={20} />}
+                  >
+                    Подробнее
+                  </Button>
+                </Table.Td>
+              </Table.Tr>
+            )}
+          />
+        )}
       </DefaultPageLayout>
     </>
   );

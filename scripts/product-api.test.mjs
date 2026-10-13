@@ -5,7 +5,7 @@ import path from "node:path";
 import { registerHooks } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { configureStore } from "@reduxjs/toolkit";
-import ts from "typescript";
+import { transformSync } from "rolldown/experimental";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import { MantineProvider } from "@mantine/core";
@@ -30,12 +30,14 @@ registerHooks({
     if (url.endsWith(".module.css"))
       return { format: "module", shortCircuit: true, source: "export default {};" };
     if (url.endsWith(".tsx"))
-      return { format: "module", shortCircuit: true, source: ts.transpileModule(fs.readFileSync(fileURLToPath(url), "utf8"), {
-        compilerOptions: { jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
-      }).outputText };
+      return { format: "module", shortCircuit: true, source: transformSync(fileURLToPath(url), fs.readFileSync(fileURLToPath(url), "utf8"), {
+        jsx: { runtime: "automatic" }, target: "es2022",
+      }).code };
     const loaded = nextLoad(url, context);
-    if (url.endsWith("/shared/api/baseQuery.ts"))
-      return { ...loaded, source: String(loaded.source).replace("import.meta.env.VITE_API_URL", "undefined") };
+    if (url.endsWith("/shared/api/baseQuery.ts") || url.endsWith("/entities/supply/api/supply.ts"))
+      return { ...loaded, source: String(loaded.source)
+        .replace("import.meta.env.VITE_API_URL", "undefined")
+        .replace("import { ICreateSupplyRequest, ISupply }", "import type { ICreateSupplyRequest, ISupply }") };
     return loaded;
   },
 });
@@ -67,6 +69,7 @@ for (const [endpoint, arg, array] of [
     assert.equal(product.unitId, 1);
     assert.deepEqual(product.unit, unit);
     const request = toCreateSupplyRequest({
+      supplier: 'ООО Поставщик',
       supplyNumber: "П-42", receivedAt: "2026-10-13T08:00:00.000Z",
       items: [{ id: "draft-row", product, unitId: product.unitId, quantity: 2,
         expiresAt: "2026-10-20T08:00:00.000Z", price: 0, pricingMode: "unit" }],

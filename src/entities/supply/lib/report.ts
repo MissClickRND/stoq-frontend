@@ -9,7 +9,7 @@ const textCell = (value: string): CellObject => ({
   type: String,
   format: "@",
 });
-const moneyCell = (value: number): CellObject => ({
+const moneyCell = (value: number | null): CellObject => value == null ? textCell("—") : ({
   value,
   type: Number,
   format: currencyFormat,
@@ -55,7 +55,7 @@ export const supplyReportColumns = [
   { width: 26 },
 ];
 
-export function getSupplyReportData(supply: ISupply, total: number): SheetData {
+export function getSupplyReportData(supply: ISupply, total: number | null): SheetData {
   const headings = [
     "ID / артикул",
     "Продукт",
@@ -99,7 +99,7 @@ export function getSupplyReportData(supply: ISupply, total: number): SheetData {
     ],
     [],
     metadataRow("Номер поставки", textCell(supply.supplyNumber)),
-    metadataRow("Поставщик", textCell("—")),
+    metadataRow("Поставщик", textCell(supply.supplier || "—")),
     metadataRow("Дата поступления", dateCell(supply.receivedAt)),
     metadataRow("Принял", textCell(supply.acceptedBy || "Пользователь")),
     metadataRow("Позиций", {
@@ -131,8 +131,8 @@ export function getSupplyReportData(supply: ISupply, total: number): SheetData {
               fontWeight: "bold",
             },
             textCell(item.product?.unit?.shortName ?? "шт."),
-            moneyCell(0),
-            moneyCell(0),
+            moneyCell(item.price),
+            moneyCell(item.totalPrice),
             dateCell(item.expiresAt),
           ] satisfies CellObject[]
         ).map(

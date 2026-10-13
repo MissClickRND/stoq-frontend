@@ -1,4 +1,4 @@
-import { Product } from "@/entities/supply";
+import type { IProduct as Product } from '../../product/@x/store';
 
 export type IStoreStatus = "ACTIVE" | "DEPLETED" | "EXPIRED";
 
@@ -7,6 +7,8 @@ export type IStoreProduct = {
   supplyId: number;
   productId: number;
   Quantity: number;
+  price: number | null;
+  totalPrice: number | null;
   expiresAt: string;
   status: IStoreStatus;
   product: Pick<Product, "id" | "name" | "unit">;

@@ -42,7 +42,7 @@ const { storeApi } = await import("../src/entities/store/api/store.ts");
 const { toInventoryStoreRequest } = await import("../src/entities/inventory/lib/inventory.ts");
 
 const batch = {
-  id: 27, supplyId: 8, productId: 3, initialQuantity: 100, balance: { availableQuantity: 12.5, reservedQuantity: 4 }, status: "ACTIVE",
+  id: 27, supplyId: 8, productId: 3, Quantity: 12.5, price: 100, totalPrice: 1250, status: "ACTIVE",
   product: { id: 3, name: "Помидоры", unit: { id: 2, name: "Килограмм", shortName: "кг" } },
 };
 const createTestStore = () => configureStore({
@@ -57,8 +57,8 @@ test("store endpoints read warehouse and a batch and PUT exact changed quantitie
     const url = new URL(request.url);
     const body = request.method === "PUT" ? await request.json() : undefined;
     requests.push({ method: request.method, path: url.pathname, search: url.searchParams.get("search"), body });
-    if (body) current = { ...current, balance: { ...current.balance, availableQuantity: body.items[0].quantity } };
-    return new Response(JSON.stringify(url.pathname === "/inventory/27" ? current : [current]), {
+    if (body) current = { ...current, Quantity: body.items[0].quantity, totalPrice: body.items[0].quantity * current.price };
+    return new Response(JSON.stringify([current]), {
       headers: { "Content-Type": "application/json" },
     });
   });
@@ -67,23 +67,23 @@ test("store endpoints read warehouse and a batch and PUT exact changed quantitie
   t.after(() => { listing.unsubscribe(); store.dispatch(storeApi.util.resetApiState()); });
   assert.deepEqual(await listing.unwrap(), [batch]);
   assert.equal(requests[0].search, "Помидоры");
-  const detail = store.dispatch(storeApi.endpoints.getStoreProductById.initiate({ id: 27 }));
+  const detail = store.dispatch(storeApi.endpoints.getStoreProductById.initiate({ id: 3 }));
   t.after(() => detail.unsubscribe());
-  assert.deepEqual(await detail.unwrap(), batch);
-  assert.equal(requests.at(-1).path, "/inventory/27");
+  assert.deepEqual(await detail.unwrap(), [batch]);
+  assert.equal(requests.at(-1).path, "/inventory/3");
   const request = toInventoryStoreRequest([{ product: batch, actual: "2.75", remove: false }]);
   const saved = await store.dispatch(storeApi.endpoints.inventoryStore.initiate(request)).unwrap();
-  assert.equal(saved[0].balance.availableQuantity, 2.75);
+  assert.equal(saved[0].Quantity, 2.75);
   assert.deepEqual(requests.find((request) => request.method === "PUT"), {
     method: "PUT", path: "/inventory", search: null,
     body: { items: [{ batchId: 27, quantity: 2.75 }] },
   });
   await Promise.all(store.dispatch(storeApi.util.getRunningQueriesThunk()));
-  assert.equal(storeApi.endpoints.getStore.select({ search: "Помидоры" })(store.getState()).data[0].balance.availableQuantity, 2.75);
+  assert.equal(storeApi.endpoints.getStore.select({ search: "Помидоры" })(store.getState()).data[0].Quantity, 2.75);
   // The UI also invalidates detail tags after a successful save.
-  store.dispatch(storeApi.util.invalidateTags([{ type: "Store", id: 27 }]));
+  store.dispatch(storeApi.util.invalidateTags([{ type: "Store", id: 3 }]));
   await Promise.all(store.dispatch(storeApi.util.getRunningQueriesThunk()));
-  assert.equal(storeApi.endpoints.getStoreProductById.select({ id: 27 })(store.getState()).data.balance.availableQuantity, 2.75);
+  assert.equal(storeApi.endpoints.getStoreProductById.select({ id: 3 })(store.getState()).data[0].Quantity, 2.75);
   const writeOff = toInventoryStoreRequest([{ product: current, actual: "", remove: true }]);
   await store.dispatch(storeApi.endpoints.inventoryStore.initiate(writeOff)).unwrap();
   assert.deepEqual(requests.filter((request) => request.method === "PUT").at(-1).body, { items: [{ batchId: 27, quantity: 0 }] });
@@ -92,7 +92,7 @@ test("store endpoints read warehouse and a batch and PUT exact changed quantitie
 test("server rejects inventory; submitted quantities are preserved and retry can succeed", async (t) => {
   let fail = true;
   t.mock.method(globalThis, "fetch", async () => new Response(
-    JSON.stringify(fail ? { message: "Не удалось сохранить" } : [{ ...batch, balance: { ...batch.balance, availableQuantity: 2 } }]),
+    JSON.stringify(fail ? { message: "Не удалось сохранить" } : [{ ...batch, Quantity: 2 }]),
     { status: fail ? 500 : 200, headers: { "Content-Type": "application/json" } },
   ));
   const store = createTestStore();
@@ -103,7 +103,7 @@ test("server rejects inventory; submitted quantities are preserved and retry can
   await assert.rejects(store.dispatch(storeApi.endpoints.inventoryStore.initiate(request)).unwrap(), { status: 500 });
   assert.deepEqual(entries, original);
   fail = false;
-  assert.equal((await store.dispatch(storeApi.endpoints.inventoryStore.initiate(request)).unwrap())[0].balance.availableQuantity, 2);
+  assert.equal((await store.dispatch(storeApi.endpoints.inventoryStore.initiate(request)).unwrap())[0].Quantity, 2);
 });
 
 
@@ -115,7 +115,7 @@ test("valid inventory always calls the mutation even without a prepared flag and
   const requests = [];
   const report = await saveInventoryDraft(draft, "User", async request => {
     requests.push(request);
-    return [{ ...batch, balance: { ...batch.balance, availableQuantity: 4 } }];
+    return [{ ...batch, Quantity: 4 }];
   });
   assert.deepEqual(requests, [{ items: [{ batchId: 27, quantity: 4 }] }]);
   assert.equal(report.entries[0].actual, 4);

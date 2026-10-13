@@ -50,6 +50,7 @@ export function DishForm({
     initialValues: dish
       ? {
           name: dish.name,
+          category: dish.category ?? "",
           description: dish.description,
           price: dish.price,
           imageUrl: dish.imageUrl ?? "",
@@ -62,6 +63,7 @@ export function DishForm({
     validateInputOnBlur: true,
     validate: {
       name: (value) => (value.trim() ? null : "Укажите название блюда"),
+      category: (value) => (value?.trim() ? null : "Укажите категорию блюда"),
       description: (value) => (value.trim() ? null : "Укажите описание блюда"),
       price: (value) =>
         Number.isFinite(value) && value > 0
@@ -136,6 +138,7 @@ export function DishForm({
           required
           {...form.getInputProps("name")}
         />
+        <TextInput label="Категория" size="lg" placeholder="Например, салаты" required {...form.getInputProps("category")} />
         <Textarea
           label="Описание"
           size="lg"

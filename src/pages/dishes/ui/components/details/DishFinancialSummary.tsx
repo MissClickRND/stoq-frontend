@@ -3,6 +3,8 @@ import { type Dish, dishCost, dishProfit, formatMoney } from "@/entities/dish";
 
 export function DishFinancialSummary({ dish }: { dish: Dish }) {
   const sold = dish.sales.reduce((sum, sale) => sum + sale.quantity, 0);
+  const cost = dishCost(dish);
+  const profit = dishProfit(dish);
   return (
     <Paper withBorder p="md">
       <Title order={3} size="h5" mb="md">
@@ -30,15 +32,15 @@ export function DishFinancialSummary({ dish }: { dish: Dish }) {
             Затрачено на ингредиенты
           </Text>
           <Text fw={700} size="lg">
-            {formatMoney(sold * dishCost(dish))}
+            {formatMoney(cost == null ? null : sold * cost)}
           </Text>
         </Box>
         <Box>
           <Text size="xs" c="dimmed">
             Прибыль до прочих расходов
           </Text>
-          <Text fw={700} size="lg" c={dishProfit(dish) >= 0 ? "green" : "red"}>
-            {formatMoney(sold * dishProfit(dish))}
+          <Text fw={700} size="lg" c={(profit ?? 0) >= 0 ? "green" : "red"}>
+            {formatMoney(profit == null ? null : sold * profit)}
           </Text>
         </Box>
       </SimpleGrid>

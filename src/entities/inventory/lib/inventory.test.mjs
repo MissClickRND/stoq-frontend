@@ -7,7 +7,7 @@ import {
 } from "./inventory.ts";
 
 const product = {
-  id: 27, supplyId: 8, productId: 3, initialQuantity: 50,
+  id: 27, supplyId: 8, productId: 3, Quantity: 12, price: 100, totalPrice: 1200,
   balance: { availableQuantity: 12, reservedQuantity: 4 },
   product: { id: 3, name: "Помидоры", unit: { id: 2, name: "Килограмм", shortName: "кг" } },
   expiresAt: "2026-10-30T12:00:00Z", status: "ACTIVE",

@@ -42,8 +42,8 @@ export function DishStock({ dish }: { dish: Dish }) {
               />
               <Group justify="space-between">
                 <Text size="xs" c="dimmed">
-                  До{" "}
-                  {new Date(`${item.expiresOn}T12:00:00`).toLocaleDateString(
+                  {item.expiresOn ? "До " : "Нет пригодных партий"}
+                  {item.expiresOn && new Date(`${item.expiresOn}T12:00:00`).toLocaleDateString(
                     "ru-RU",
                   )}
                 </Text>

@@ -22,7 +22,7 @@ export function getMonthStatistics(supplies: ISupply[], month: string) {
     dayjs(supply.receivedAt).format("YYYY-MM") === month,
   );
   const total = roundMoney(
-    monthly.reduce((sum, supply) => sum + supplyTotal(supply), 0),
+    monthly.reduce((sum, supply) => sum + (supplyTotal(supply) ?? 0), 0),
   );
   return {
     count: monthly.length,
@@ -32,8 +32,7 @@ export function getMonthStatistics(supplies: ISupply[], month: string) {
   };
 }
 
-// Supply responses contain no prices yet.
-export const supplyTotal = (_supply: ISupply) => 0;
+export const supplyTotal = (supply: ISupply) => supply.totalPrice ?? null;
 
 export function validateItem(
   item: Omit<SupplyItemDraft, "id" | "product">,

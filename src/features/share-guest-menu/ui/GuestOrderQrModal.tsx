@@ -2,7 +2,6 @@ import { getPublicSiteOrigin } from "@/shared/lib/site-origin";
 import { useState } from "react";
 import {
   Accordion,
-  Alert,
   Button,
   Modal,
   Select,
@@ -20,7 +19,6 @@ import {
   IconCheck,
   IconCopy,
   IconDownload,
-  IconInfoCircle,
   IconSettings,
 } from "@tabler/icons-react";
 import { useNotifications } from "@/shared/lib/hooks/useNotifications";

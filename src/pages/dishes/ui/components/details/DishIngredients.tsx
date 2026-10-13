@@ -15,6 +15,7 @@ export function DishIngredients({ dish }: { dish: Dish }) {
               <Table.Th>На порцию</Table.Th>
               <Table.Th>Остаток</Table.Th>
               <Table.Th>Затраты</Table.Th>
+              <Table.Th>Цена за единицу</Table.Th>
               <Table.Th>Статус</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -41,9 +42,10 @@ export function DishIngredients({ dish }: { dish: Dish }) {
                   </Table.Td>
                   <Table.Td>
                     <Text size="lg" fw={700}>
-                      {formatMoney(item.quantity * item.costPerUnit)}
+                      {formatMoney(item.costPerUnit == null ? null : item.quantity * item.costPerUnit)}
                     </Text>
                   </Table.Td>
+                  <Table.Td><Text size="lg">{formatMoney(item.costPerUnit)}</Text></Table.Td>
                   <Table.Td>
                     <Badge
                       size="lg"

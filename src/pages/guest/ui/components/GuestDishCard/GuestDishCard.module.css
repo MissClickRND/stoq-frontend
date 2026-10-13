@@ -9,7 +9,7 @@
 .cardBody {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
   flex: 1;
   padding: 12px 4px 4px;
 }
@@ -19,9 +19,9 @@
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
 }
-.cardName {
+/* .cardName {
   min-height: 56px;
-}
+} */
 @media (max-width: 48em) {
   .cardName {
     min-height: 0;

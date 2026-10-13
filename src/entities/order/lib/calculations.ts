@@ -1,16 +1,18 @@
-import type { Order, OrderDraft, OrderItemDraft } from "../model/type.ts";
+import type { Order, OrderDraft, OrderItem, OrderItemDraft } from "../model/type.ts";
 
-export const orderTotal = (
-  items: Pick<OrderItemDraft, "price" | "quantity">[],
-) =>
-  Math.round(
+export function orderTotal(items: Pick<OrderItemDraft, "price" | "quantity">[]): number;
+export function orderTotal(items: Pick<OrderItem, "price" | "quantity">[]): number | null;
+export function orderTotal(items: { price: number | null; quantity: number | string }[]) {
+  if (items.some((item) => item.price == null)) return null;
+  return Math.round(
     (items.reduce(
-      (sum, item) => sum + item.price * (Number(item.quantity) || 0),
+      (sum, item) => sum + item.price! * (Number(item.quantity) || 0),
       0,
     ) +
       Number.EPSILON) *
       100,
   ) / 100;
+}
 
 export function getTodayOrderStatistics(orders: Order[], day: string) {
   const today = orders.filter((order) => order.createdAt.startsWith(day));
@@ -20,7 +22,7 @@ export function getTodayOrderStatistics(orders: Order[], day: string) {
     completed: completed.length,
     revenue:
       Math.round(
-        completed.reduce((sum, order) => sum + orderTotal(order.items), 0) *
+        completed.reduce((sum, order) => sum + (orderTotal(order.items) ?? 0), 0) *
           100,
       ) / 100,
     processing: today.length - completed.length,

@@ -15,29 +15,56 @@ import { SupplyProductsTable } from "../components/SupplyProductsTable";
 export function SupplyDetailsPage() {
   const { supplyId } = useParams();
   const id = Number(supplyId);
-  const validId = Number.isSafeInteger(id) && id > 0 && /^\d+$/.test(supplyId ?? "");
-  const { currentData: supply, isFetching, isError, error, refetch } = useGetSupplyByIdQuery(
-    validId ? { id } : skipToken,
-  );
+  const validId =
+    Number.isSafeInteger(id) && id > 0 && /^\d+$/.test(supplyId ?? "");
+  const {
+    currentData: supply,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useGetSupplyByIdQuery(validId ? { id } : skipToken);
   const [searchValue, setSearchValue] = useState("");
   const breadcrumbs = (
     <PageBreadcrumbs
       parentLabel="Поставки"
       parentPath="/supply"
-      currentLabel={supply ? `Поставка ${supply.supplyNumber}` : "Поставка не найдена"}
+      currentLabel={
+        supply ? `Поставка ${supply.supplyNumber}` : "Поставка не найдена"
+      }
     />
   );
 
   if (validId && isFetching && !supply)
-    return <DefaultPageLayout title="Загрузка поставки" subtitle="Получаем данные поставки" disableSearch disableStatistics headerTopSection={breadcrumbs}>
-      <Center p="xl"><Loader /></Center>
-    </DefaultPageLayout>;
+    return (
+      <DefaultPageLayout
+        title="Загрузка поставки"
+        subtitle="Получаем данные поставки"
+        disableSearch
+        disableStatistics
+        headerTopSection={breadcrumbs}
+      >
+        <Center p="xl">
+          <Loader />
+        </Center>
+      </DefaultPageLayout>
+    );
   if (isError && !(error && "status" in error && error.status === 404))
-    return <DefaultPageLayout title="Поставка" subtitle="Подробная информация о поступлении" disableSearch disableStatistics headerTopSection={breadcrumbs}>
-      <Alert color="red" title="Не удалось загрузить поставку">
-        <Button variant="subtle" onClick={() => refetch()}>Повторить</Button>
-      </Alert>
-    </DefaultPageLayout>;
+    return (
+      <DefaultPageLayout
+        title="Поставка"
+        subtitle="Подробная информация о поступлении"
+        disableSearch
+        disableStatistics
+        headerTopSection={breadcrumbs}
+      >
+        <Alert color="red" title="Не удалось загрузить поставку">
+          <Button variant="subtle" onClick={() => refetch()}>
+            Повторить
+          </Button>
+        </Alert>
+      </DefaultPageLayout>
+    );
   if (!supply)
     return (
       <DefaultPageLayout
@@ -75,15 +102,24 @@ export function SupplyDetailsPage() {
       }
     >
       <Group justify="space-between" style={{ flexShrink: 0 }}>
+        <Text>Поставщик: {supply.supplier || "—"}</Text>
         <Text fw={600}>Продукты в поставке</Text>
         <Text size="sm" c="dimmed">
           {query
-            ? `Найдено: ${items.length} из ${(supply.items?.length ?? 0)}`
+            ? `Найдено: ${items.length} из ${supply.items?.length ?? 0}`
             : `Позиций: ${supply.items.length}`}
         </Text>
       </Group>
       <SupplyProductsTable items={items} />
-      <Button component={Link} to="/supply" variant="default" size="lg" style={{ alignSelf: "flex-start" }}>Вернуться к поставкам</Button>
+      <Button
+        component={Link}
+        to="/supply"
+        variant="default"
+        size="lg"
+        style={{ alignSelf: "flex-start" }}
+      >
+        Вернуться к поставкам
+      </Button>
     </DefaultPageLayout>
   );
 }

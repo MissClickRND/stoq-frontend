@@ -4,7 +4,7 @@ import * as inventory from "../src/entities/inventory/lib/inventory.ts";
 import { getInventoryReportData } from "../src/entities/inventory/lib/inventory-report.ts";
 
 const product = {
-  id: 27, supplyId: 8, productId: 3, initialQuantity: 100,
+  id: 27, supplyId: 8, productId: 3, Quantity: 12.5, price: 100, totalPrice: 1250,
   balance: { availableQuantity: 12.5, reservedQuantity: 4 }, status: "ACTIVE",
   expiresAt: "2026-10-20T15:30:00Z",
   product: { id: 3, name: "Помидоры", unit: { id: 2, name: "Килограмм", shortName: "кг" } },

@@ -16,10 +16,9 @@ export function toDishIngredient(
     name: product.name ?? `Продукт #${product.id}`,
     unit: product.unit?.shortName ?? "шт.",
     quantity,
-    //! Заменить фиксированные остаток, стоимость и срок данными склада.
-    stock: 1000,
-    costPerUnit: 0,
-    expiresOn: "2099-12-31",
+    stock: 0,
+    costPerUnit: null,
+    expiresOn: "",
   };
 }
 
@@ -28,10 +27,13 @@ export function toDish(source: DishResponse): Dish {
     id: String(source.id),
     name: source.name,
     description: source.description ?? "",
+    category: source.category ?? "",
     price: source.salePrice ?? 0,
     imageUrl: source.imageURL ?? source.imageUrl ?? "",
     ingredients: source.recipeItems?.map((item) =>
-      toDishIngredient({ ...item.product, id: item.productId }, item.quantity),
+      ({ ...toDishIngredient({ ...item.product, id: item.productId }, item.quantity),
+        stock: item.stock ?? 0, costPerUnit: item.price ?? null,
+        expiresOn: item.expiresAt?.slice(0, 10) ?? "" }),
     ) ?? [],
     stopped: false,
     archived: source.isDeleted ?? false,
@@ -43,6 +45,7 @@ export function toCreateDishRequest(draft: DishFormValues): ICreateDishRequest {
   const payload = {
     name: draft.name,
     description: draft.description,
+    ...(draft.category?.trim() ? { category: draft.category.trim() } : {}),
     salePrice: draft.price,
     imageURL: draft.imageUrl,
     recipeItems: draft.ingredients.map((ingredient) => {
@@ -53,7 +56,5 @@ export function toCreateDishRequest(draft: DishFormValues): ICreateDishRequest {
       return { productId, quantity: ingredient.quantity };
     }),
   };
-  // Swagger принимает imageURL и массив recipeItems. Локальный контракт
-  // остаётся без изменений; расхождение изолировано на границе адаптера.
-  return payload as unknown as ICreateDishRequest;
+  return payload;
 }

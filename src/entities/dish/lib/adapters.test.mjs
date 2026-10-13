@@ -26,7 +26,7 @@ test("API dish fields and recipe quantities are preserved without invented recom
   assert.equal(dish.ingredients[0].name, product.name);
   assert.equal(dish.ingredients[0].unit, "г");
   assert.equal(dish.ingredients[0].quantity, 0.75);
-  assert.ok(Number.isFinite(dishCost(dish)));
+  assert.equal(dishCost(dish), null);
   assert.ok(matchesDish(dish, product.name));
   assert.equal(dish.recommendation, undefined);
   assert.deepEqual(dish.sales, []);
@@ -63,7 +63,7 @@ test("a partially populated recipe preserves product ID and quantity with fixed 
   assert.equal(dish.ingredients[0].quantity, 0.75);
   assert.equal(dish.ingredients[0].name, "Продукт #23");
   assert.equal(dish.ingredients[0].unit, "шт.");
-  assert.ok(Number.isFinite(dishCost(dish)));
+  assert.equal(dishCost(dish), null);
 });
 
 test("create payload uses numeric product IDs and excludes mock/UI fields and dish ID", () => {
@@ -79,9 +79,9 @@ test("missing inventory fields have stable defaults independent of product ID", 
   const first = toDishIngredient({ id: 1 });
   const second = toDishIngredient({ id: 99 });
   for (const ingredient of [first, second]) {
-    assert.equal(ingredient.stock, 1000);
-    assert.equal(ingredient.costPerUnit, 0);
-    assert.equal(ingredient.expiresOn, "2099-12-31");
+    assert.equal(ingredient.stock, 0);
+    assert.equal(ingredient.costPerUnit, null);
+    assert.equal(ingredient.expiresOn, "");
   }
 });
 

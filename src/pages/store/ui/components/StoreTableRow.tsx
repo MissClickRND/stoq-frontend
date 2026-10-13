@@ -65,7 +65,7 @@ export function StoreTableRow({
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>
-          {formatPrice("0")}
+          {product.price == null ? "—" : formatPrice(String(product.price))}
         </Text>
       </Table.Td>
       <Table.Td>

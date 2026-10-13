@@ -2,13 +2,15 @@ import componentClasses from "./CreateOrderPage.module.css";
 import { useState, type FormEvent } from "react";
 import { Alert, Button, Group, Paper, Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { apiErrorMessage } from '@/shared/lib/api-error';
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import { useDishes } from "@/entities/dish";
 import {
-  useOrders,
+  useCreateOrderMutation,
+  toCreateOrderRequest,
   addOrderDish,
   orderTotal,
   validateOrderDraft,
@@ -26,8 +28,8 @@ export function CreateOrderPage() {
     isError: dishesError,
     refetch: refetchDishes,
   } = useDishes();
-  const { createOrder } = useOrders();
-  const name = useSelector((state: RootState) => state.user.name);
+  const [createOrder, { isLoading: saving }] = useCreateOrderMutation();
+  const navigate = useNavigate();
   const [draft, setDraft] = useState<OrderDraft>(() => ({
     createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     type: "dine-in",
@@ -42,26 +44,19 @@ export function CreateOrderPage() {
     setDraft((current) => ({ ...current, ...patch }));
     setMessage(null);
   };
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (saving) return;
     setSubmitted(true);
     const validation = validateOrderDraft(draft);
     if (Object.keys(validation).length) {
       setMessage(validation.items ?? "Заполните данные заказа.");
       return;
     }
-    createOrder({
-      createdAt: draft.createdAt!,
-      type: draft.type,
-      table: draft.type === "dine-in" ? Number(draft.table) : null,
-      guests: Number(draft.guests),
-      responsible: name || "Пользователь",
-      items: draft.items.map((item) => ({
-        ...item,
-        quantity: Number(item.quantity),
-      })),
-    });
-    //! Показывать успех и переходить к списку только после ответа сервера.
+    try {
+      await createOrder(toCreateOrderRequest(draft)).unwrap();
+      navigate('/orders');
+    } catch (error) { setMessage(error instanceof Error ? error.message : apiErrorMessage(error, 'Не удалось создать заказ')); }
   };
   return (
     <DefaultPageLayout
@@ -167,7 +162,7 @@ export function CreateOrderPage() {
               </Text>
             </div>
           </Group>
-          <Button size="lg" type="submit" leftSection={<IconCheck size={20} />}>
+          <Button size="lg" type="submit" loading={saving} leftSection={<IconCheck size={20} />}>
             Создать заказ
           </Button>
         </Group>
