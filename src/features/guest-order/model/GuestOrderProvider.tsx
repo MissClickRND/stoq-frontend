@@ -9,7 +9,7 @@ import {
 } from "@/entities/order";
 import { createContext, useContext, useState, type ReactNode } from "react";
 import dayjs from "dayjs";
-import { type Dish, useDishes, dishIsStopped } from "@/entities/dish";
+import { type Dish, useDishes, dishCanBeOrdered } from "@/entities/dish";
 
 import type { Restaurant } from "@/entities/restaurant";
 
@@ -52,7 +52,7 @@ export function GuestOrderProvider({
     comment: "",
   });
   const addDish = (dish: Dish) => {
-    if (dish.archived || dishIsStopped(dish)) return;
+    if (!dishCanBeOrdered(dish)) return;
     setItems((current) =>
       addOrderDish(current, {
         dishId: dish.id,
@@ -76,7 +76,7 @@ export function GuestOrderProvider({
     if (
       items.some((item) => {
         const dish = dishes.find((entry) => entry.id === item.dishId);
-        return !dish || dish.archived || dishIsStopped(dish);
+        return !dish || !dishCanBeOrdered(dish);
       })
     )
       throw new Error(

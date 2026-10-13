@@ -10,6 +10,8 @@ import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import {
   useCreateSupplyMutation,
+  useScanSupplyUpdMutation,
+  toUpdSupplyDrafts,
   suppliesApi,
   toCreateSupplyRequest,
   validateItem,
@@ -23,9 +25,12 @@ import { CreateUnitModal } from "../components/CreateUnitModal";
 import { SupplyDeliveryFields } from "../components/SupplyDeliveryFields";
 import { SupplySummary } from "../components/SupplySummary/SupplySummary";
 import { SupplyProductsSection } from "../components/SupplyProductsSection/SupplyProductsSection";
+import { ScanUpdModal } from "../components/ScanUpdModal";
 
 export function CreateSupplyPage() {
   const [createSupply, { isLoading: saving }] = useCreateSupplyMutation();
+  const [scanSupplyUpd, { isLoading: scanning }] = useScanSupplyUpdMutation();
+  const [scanOpened, setScanOpened] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { showSuccess, showError } = useNotifications("top-right");
@@ -44,7 +49,11 @@ export function CreateSupplyPage() {
   const [productName, setProductName] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const total = Math.round(items.reduce((sum, item) => sum + calculateItemPrices(item).total, 0) * 100) / 100;
+  const total =
+    Math.round(
+      items.reduce((sum, item) => sum + calculateItemPrices(item).total, 0) *
+        100,
+    ) / 100;
   const updateItem = (id: string, patch: Partial<SupplyItemDraft>) =>
     setItems((current) =>
       current.map((item) => (item.id === id ? { ...item, ...patch } : item)),
@@ -74,11 +83,13 @@ export function CreateSupplyPage() {
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (saving) return;
+    if (saving || scanning) return;
     setSubmitted(true);
     setFormError(null);
     if (!receivedAt || !supplyNumber.trim() || !supplier.trim())
-      return setFormError("Заполните номер поставки, поставщика и дату поступления.");
+      return setFormError(
+        "Заполните номер поставки, поставщика и дату поступления.",
+      );
     if (!items.length)
       return setFormError("Добавьте хотя бы один продукт в поставку.");
     const unknownUnit = items.find(
@@ -103,13 +114,27 @@ export function CreateSupplyPage() {
       return;
     }
     try {
-      const request = toCreateSupplyRequest({ supplyNumber, supplier, receivedAt, items });
+      const request = toCreateSupplyRequest({
+        supplyNumber,
+        supplier,
+        receivedAt,
+        items,
+      });
       const supply = await createSupply(request).unwrap();
-      dispatch(suppliesApi.util.invalidateTags([{ type: "Store", id: "LIST" }]));
+      dispatch(
+        suppliesApi.util.invalidateTags([{ type: "Store", id: "LIST" }]),
+      );
       showSuccess("Поставка создана.");
       navigate("/supply/" + supply.id);
     } catch (error) {
-      showError(error instanceof Error ? error.message : apiErrorMessage(error, "Не удалось создать поставку. Повторите попытку."));
+      showError(
+        error instanceof Error
+          ? error.message
+          : apiErrorMessage(
+              error,
+              "Не удалось создать поставку. Повторите попытку.",
+            ),
+      );
     }
   };
 
@@ -129,53 +154,69 @@ export function CreateSupplyPage() {
         }
       >
         <form onSubmit={submit} className={componentClasses.form} noValidate>
-          <fieldset disabled={saving} style={{ display: "contents" }}>
-          <div className={componentClasses.topSections}>
-            <SupplyDeliveryFields
+          <fieldset disabled={saving || scanning} style={{ display: "contents" }}>
+            <div className={componentClasses.topSections}>
+              <SupplyDeliveryFields
+                receivedAt={receivedAt}
+                supplyNumber={supplyNumber}
+                supplier={supplier}
+                onSupplierChange={setSupplier}
+                submitted={submitted}
+                onDateChange={setReceivedAt}
+                onSupplyNumberChange={setSupplyNumber}
+              />
+              <SupplySummary
+                count={items.length}
+                saving={saving}
+                total={total}
+                error={formError}
+                onClearError={() => setFormError(null)}
+              />
+            </div>
+            {unitsError && (
+              <Alert color="red" role="alert">
+                Не удалось загрузить единицы измерения.
+                <Button
+                  type="button"
+                  variant="subtle"
+                  onClick={() => refetchUnits()}
+                >
+                  Повторить
+                </Button>
+              </Alert>
+            )}
+            <SupplyProductsSection
+              items={items}
+              units={units}
               receivedAt={receivedAt}
-              supplyNumber={supplyNumber}
-              supplier={supplier}
-              onSupplierChange={setSupplier}
               submitted={submitted}
-              onDateChange={setReceivedAt}
-              onSupplyNumberChange={setSupplyNumber}
+              onSelect={addProduct}
+              onCreateProduct={setProductName}
+              onChange={updateItem}
+              onRemove={(id) =>
+                setItems((current) => current.filter((item) => item.id !== id))
+              }
+              onAddUnit={setUnitFor}
+              onScanUpd={() => setScanOpened(true)}
             />
-            <SupplySummary
-              count={items.length}
-              saving={saving}
-              total={total}
-              error={formError}
-              onClearError={() => setFormError(null)}
-            />
-          </div>
-          {unitsError && (
-            <Alert color="red" role="alert">
-              Не удалось загрузить единицы измерения.
-              <Button
-                type="button"
-                variant="subtle"
-                onClick={() => refetchUnits()}
-              >
-                Повторить
-              </Button>
-            </Alert>
-          )}
-          <SupplyProductsSection
-            items={items}
-            units={units}
-            receivedAt={receivedAt}
-            submitted={submitted}
-            onSelect={addProduct}
-            onCreateProduct={setProductName}
-            onChange={updateItem}
-            onRemove={(id) =>
-              setItems((current) => current.filter((item) => item.id !== id))
-            }
-            onAddUnit={setUnitFor}
-          />
           </fieldset>
         </form>
       </DefaultPageLayout>
+      <ScanUpdModal
+        opened={scanOpened}
+        loading={scanning}
+        onClose={() => setScanOpened(false)}
+        onSubmit={async (file) => {
+          const result = await scanSupplyUpd(file).unwrap();
+          const drafts = toUpdSupplyDrafts(result.items);
+          setItems((current) => [...current, ...drafts]);
+          if (result.sellerName) setSupplier(result.sellerName);
+          setSubmitted(false);
+          setFormError(null);
+          setScanOpened(false);
+          showSuccess("УПД распознан. Проверьте данные, укажите номер поставки и сроки годности.");
+        }}
+      />
       <CreateProductModal
         opened={productName !== null}
         initialName={productName ?? ""}

@@ -18,6 +18,8 @@ export default function SearchSection({
       aria-label={searchTitle}
       leftSection={<IconSearch />}
       flex={1}
+      miw={0}
+      w="100%"
       maw={1000}
       radius="xl"
       value={searchValue}

@@ -1,0 +1,21 @@
+.summary {
+  flex-shrink: 0;
+  min-width: 0;
+}
+.actions {
+  min-width: 0;
+  max-width: 100%;
+}
+@media (max-width: 48em) {
+  .actions {
+    width: 100%;
+  }
+  .actions :global(.mantine-Group-root) {
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+  .actions :global(.mantine-Button-root) {
+    flex: 1;
+    min-width: 0;
+  }
+}

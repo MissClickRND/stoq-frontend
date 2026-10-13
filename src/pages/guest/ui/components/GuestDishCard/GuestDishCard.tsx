@@ -2,14 +2,14 @@ import componentClasses from "./GuestDishCard.module.css";
 import { Badge, Button, Group, Paper, Text } from "@mantine/core";
 import { IconShoppingCart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import { type Dish, dishIsStopped, DishPhoto } from "@/entities/dish";
+import { type Dish, dishCanBeOrdered, DishPhoto } from "@/entities/dish";
 
 import { formatOrderMoney } from "@/entities/order";
 import { useGuestOrder } from "@/features/guest-order";
 
 export function GuestDishCard({ dish }: { dish: Dish }) {
   const { basePath, items, addDish } = useGuestOrder();
-  const unavailable = dishIsStopped(dish);
+  const unavailable = !dishCanBeOrdered(dish);
   const quantity = items.find((item) => item.dishId === dish.id)?.quantity;
   return (
     <Paper

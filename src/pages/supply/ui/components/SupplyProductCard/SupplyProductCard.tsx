@@ -13,7 +13,6 @@ import { DateTimePicker } from "@mantine/dates";
 import {
   IconPackage,
   IconTrash,
-  IconPlus,
   IconCalendarTime,
 } from "@tabler/icons-react";
 import {
@@ -29,7 +28,6 @@ export function SupplyProductCard({
   submitted,
   onChange,
   onRemove,
-  onAddUnit,
 }: {
   item: SupplyItemDraft;
   units: IUnit[];
@@ -101,7 +99,7 @@ export function SupplyProductCard({
               onChange({ unitId: unitId ? Number(unitId) : null })
             }
           />
-          <Tooltip label="Создать единицу измерения">
+          {/* <Tooltip label="Создать единицу измерения">
             <ActionIcon
               size="lg"
               mt={8}
@@ -112,7 +110,7 @@ export function SupplyProductCard({
             >
               <IconPlus size={20} />
             </ActionIcon>
-          </Tooltip>
+          </Tooltip> */}
         </Group>
       </div>
       <div>

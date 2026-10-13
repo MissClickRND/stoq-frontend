@@ -8,6 +8,18 @@
 .detailPhoto {
   aspect-ratio: 4 / 3;
 }
+.detailGrid > * {
+  min-width: 0;
+}
+@media (max-width: 48em) {
+  .detailGrid {
+    gap: 20px;
+    margin-top: 0;
+  }
+  .detailGrid > :last-child {
+    padding: var(--mantine-spacing-md);
+  }
+}
 
 @media (max-width: 64em) {
   .detailGrid {

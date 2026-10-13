@@ -29,6 +29,9 @@ export function toDish(source: DishResponse): Dish {
     description: source.description ?? "",
     category: source.category ?? "",
     price: source.salePrice ?? 0,
+    priceKnown: typeof source.salePrice === 'number' && Number.isFinite(source.salePrice) && source.salePrice >= 0,
+    availablePortions: typeof source.availablePortions === 'number' && Number.isFinite(source.availablePortions)
+      ? Math.max(0, Math.floor(source.availablePortions)) : undefined,
     imageUrl: source.imageURL ?? source.imageUrl ?? "",
     ingredients: source.recipeItems?.map((item) =>
       ({ ...toDishIngredient({ ...item.product, id: item.productId }, item.quantity),

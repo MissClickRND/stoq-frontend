@@ -14,7 +14,7 @@ import {
 import { IconShoppingCart } from "@tabler/icons-react";
 import { useParams } from "react-router-dom";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
-import { useDish, dishIsStopped, DishPhoto } from "@/entities/dish";
+import { useDish, dishCanBeOrdered, DishPhoto } from "@/entities/dish";
 
 import { formatOrderMoney } from "@/entities/order";
 import { useGuestOrder } from "@/features/guest-order";
@@ -55,7 +55,7 @@ export function GuestDishPage() {
         </Paper>
       </Stack>
     );
-  const unavailable = dishIsStopped(dish);
+  const unavailable = !dishCanBeOrdered(dish);
   const quantity = items.find((item) => item.dishId === dish.id)?.quantity;
   return (
     <Stack gap="lg">

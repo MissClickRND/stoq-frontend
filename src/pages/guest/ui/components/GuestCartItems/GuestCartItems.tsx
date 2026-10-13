@@ -1,17 +1,14 @@
 import componentClasses from "./GuestCartItems.module.css";
 import {
   ActionIcon,
-  Center,
   Group,
   Paper,
   Text,
   Tooltip,
-  Image,
 } from "@mantine/core";
 import {
   IconMinus,
   IconPlus,
-  IconSoupFilled,
   IconTrash,
 } from "@tabler/icons-react";
 import { formatOrderMoney, orderTotal } from "@/entities/order";
@@ -25,28 +22,7 @@ export function GuestCartItems() {
     <Paper withBorder p="lg">
       {items.map((item) => (
         <div className={componentClasses.cartRow} key={item.dishId}>
-          {item.imageUrl ? (
-            <Image
-              src={item.imageUrl}
-              alt={item.name}
-              w={112}
-              h={76}
-              radius="md"
-              fit="cover"
-              style={{ flexShrink: 0 }}
-              fallbackSrc="https://placehold.co/900x400?text=Тут могла быть ваша реклама"
-            />
-          ) : (
-            <Center
-              style={{ flexShrink: 0 }}
-              w={112}
-              h={76}
-              bg="#DDDDDD"
-              bdrs="md"
-            >
-              <IconSoupFilled color="gray" size={48} />
-            </Center>
-          )}
+          <DishPhoto src={item.imageUrl} name={item.name} className={componentClasses.cartPhoto} />
           <div className={componentClasses.cartName}>
             <Text size="lg" fw={700}>
               {item.name}

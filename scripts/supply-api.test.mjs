@@ -49,6 +49,28 @@ const createStore = () => configureStore({
   middleware: defaults => defaults().concat(suppliesApi.middleware),
 });
 
+test("UPD scan uploads multipart file and returns catalog product IDs", async t => {
+  // RTK Query's timeout signal keeps a timer alive in Node; control it in this test.
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const result = { sellerName: "ООО Молочный двор", items: [{ productId: 42, name: "Молоко",
+    quantity: 24, price: 95, totalPrice: 2508, unit: product.unit }] };
+  t.mock.method(globalThis, "fetch", async request => {
+    assert.equal(new URL(request.url).pathname, "/ai/supply");
+    assert.equal(request.method, "POST");
+    assert.match(request.headers.get("content-type"), /^multipart\/form-data; boundary=/);
+    const body = await request.formData();
+    assert.deepEqual([...body.keys()], ["file"]);
+    assert.equal(body.get("file").name, "upd.png");
+    return new Response(JSON.stringify(result), { headers: { "Content-Type": "application/json" } });
+  });
+  const store = createStore();
+  t.after(() => store.dispatch(suppliesApi.util.resetApiState()));
+  assert.ok(suppliesApi.endpoints.scanSupplyUpd, "Scan mutation must exist");
+  assert.deepEqual(await store.dispatch(suppliesApi.endpoints.scanSupplyUpd.initiate(
+    new File(["image"], "upd.png", { type: "image/png" }),
+  )).unwrap(), result);
+});
+
 test("supply form sends only contract fields, serializes Date expiry and reads created supply by numeric ID", async t => {
   const file = new URL("../src/entities/supply/lib/create-request.ts", import.meta.url);
   assert.ok(fs.existsSync(file), "The supply form must build ICreateSupplyRequest");

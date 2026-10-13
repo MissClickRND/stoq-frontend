@@ -1,4 +1,4 @@
-export { useDependencyGraph } from "./api/dependencyGraph";
+export { useDependencyGraph, useGetDependencyGraphQuery, dependencyGraphApi } from "./api/dependencyGraph";
 export type {
   DependencyGraph,
   DependencyNode,

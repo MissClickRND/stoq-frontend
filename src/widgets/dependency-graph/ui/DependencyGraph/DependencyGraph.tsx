@@ -1,5 +1,7 @@
 import {
   ActionIcon,
+  Button,
+  Loader,
   Group,
   Text,
   TextInput,
@@ -13,6 +15,7 @@ import {
   IconSearch,
   IconTopologyStar3,
   IconX,
+  IconRefresh,
 } from "@tabler/icons-react";
 import {
   Background,
@@ -28,16 +31,18 @@ import type { FlowNode } from "../../model/type";
 import { GraphNode } from "../GraphNode/GraphNode";
 import { RecipeConnection } from "../RecipeConnection/RecipeConnection";
 import classes from "./DependencyGraph.module.css";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 
 const nodeTypes = { ingredient: GraphNode, dish: GraphNode };
 const edgeTypes = { recipe: RecipeConnection };
 const legendStatuses = ["available", "low_stock", "unavailable"] as const;
 
 export function DependencyGraph() {
-  const { graph } = useDependencyGraph();
+  const { graph, isLoading, isFetching, isError, error, refetch } = useDependencyGraph();
   const colorMode = useComputedColorScheme("light");
   const flow = useDependencyFlow(graph, colorMode);
   const controls = [
+    { label: "Обновить граф", icon: IconRefresh, action: () => { void refetch(); } },
     {
       label: "Показать весь граф",
       icon: IconArrowsMaximize,
@@ -123,7 +128,8 @@ export function DependencyGraph() {
                 size="lg"
                 variant="default"
                 aria-label={control.label}
-                onClick={control.action}
+                  onClick={control.action}
+                  loading={control.label === "Обновить граф" && isFetching}
               >
                 <control.icon size={20} stroke={1.7} />
               </ActionIcon>
@@ -131,7 +137,7 @@ export function DependencyGraph() {
           ))}
           <span className={classes.zoom}>{Math.round(flow.zoom * 100)}%</span>
         </Group>
-        {flow.query && !flow.matches.size && (
+        {!isLoading && !isError && flow.query && !flow.matches.size && (
           <div className={classes.empty} role="status">
             <IconSearch size={28} />
             <Text fw={600}>Ничего не найдено</Text>
@@ -140,7 +146,20 @@ export function DependencyGraph() {
             </Text>
           </div>
         )}
-        {!graph.nodes.length && (
+        {isLoading && (
+          <div className={classes.empty} role="status" aria-live="polite">
+            <Loader size="md" />
+            <Text fw={600}>Загружаем граф зависимостей…</Text>
+          </div>
+        )}
+        {isError && (
+          <div className={classes.empty} role="alert">
+            <Text fw={600}>Не удалось загрузить граф</Text>
+            <Text size="sm" c="dimmed">{apiErrorMessage(error, "Проверьте подключение и повторите попытку.")}</Text>
+            <Button onClick={() => refetch()} loading={isFetching}>Повторить</Button>
+          </div>
+        )}
+        {!isLoading && !isError && !graph.nodes.length && !flow.query && (
           <div className={classes.empty} role="status">
             <IconTopologyStar3 size={32} />
             <Text fw={600}>Пока нет связей</Text>

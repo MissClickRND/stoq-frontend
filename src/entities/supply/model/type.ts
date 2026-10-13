@@ -32,6 +32,20 @@ export type SupplyItemDraft = {
   pricingMode: "unit" | "total";
 };
 
+export type ScannedSupplyItem = {
+  productId: number;
+  name: string;
+  quantity: number | null;
+  price: number | null;
+  totalPrice: number | null;
+  unit: Product["unit"];
+};
+
+export type ScannedSupplyUpd = {
+  sellerName: string | null;
+  items: ScannedSupplyItem[];
+};
+
 export type ICreateSupplyRequest = Pick<
   ISupply,
   "supplyNumber" | "receivedAt"

@@ -2,7 +2,7 @@ import componentClasses from "./OrderExpandedDetails.module.css";
 import { Button, Group, Paper, Stack, Table, Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import TableLayout from "@/shared/ui/table-layout";
-import { orderTotal, formatOrderMoney, type Order } from "@/entities/order";
+import { formatOrderMoney, type Order } from "@/entities/order";
 
 export function OrderExpandedDetails({
   order,
@@ -40,7 +40,7 @@ export function OrderExpandedDetails({
             </Table.Td>
             <Table.Td>
               <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-                {formatOrderMoney(orderTotal([item]))}
+                {formatOrderMoney(item.totalPrice ?? null)}
               </Text>
             </Table.Td>
           </Table.Tr>
@@ -53,7 +53,7 @@ export function OrderExpandedDetails({
               Сумма заказа
             </Text>
             <Text size="xl" fw={700}>
-              {formatOrderMoney(orderTotal(order.items))}
+              {formatOrderMoney(order.totalPrice)}
             </Text>
           </div>
           <Group justify="space-between">

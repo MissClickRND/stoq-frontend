@@ -108,7 +108,7 @@ export function OrdersPage() {
             </Group>
           }
         />
-        {isError && <Alert color="red">Не удалось загрузить заказы или меню. <Button variant="subtle" onClick={refetch}>Повторить</Button></Alert>}
+        {isError && <Alert color="red">Не удалось загрузить заказы. <Button variant="subtle" onClick={refetch}>Повторить</Button></Alert>}
         {actionError && <Alert color="red">{actionError}</Alert>}
         {isLoading ? <Center p="xl"><Loader /></Center> : !isError && <OrdersTable orders={filtered} onComplete={onComplete} />}
       </DefaultPageLayout>

@@ -5,7 +5,7 @@ import classes from "./DishPhoto.module.css";
 
 export function DishPhoto({
   src,
-
+  name,
   className,
 }: {
   src?: string;
@@ -15,17 +15,16 @@ export function DishPhoto({
   const [failedSource, setFailedSource] = useState<string | undefined>();
   return (
     <div className={`${classes.dishPhoto} ${className ?? ""}`}>
-      {src ? (
+      {src && src !== failedSource ? (
         <Image
           src={src}
-          alt={"Блюдо"}
+          alt={name}
           h="100%"
           w="100%"
           fit="cover"
           style={{ position: "absolute", inset: 0 }}
           loading="lazy"
           onError={() => setFailedSource(src)}
-          fallbackSrc="https://placehold.co/900x400?text=Изображение недоступно"
         />
       ) : (
         <Center

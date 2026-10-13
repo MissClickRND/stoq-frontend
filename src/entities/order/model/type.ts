@@ -4,10 +4,11 @@ export type OrderItem = {
   dishId: string;
   name: string;
   price: number | null;
+  totalPrice?: number | null;
   quantity: number;
   imageUrl?: string;
 };
-export type OrderItemDraft = Omit<OrderItem, "quantity" | "price"> & {
+export type OrderItemDraft = Omit<OrderItem, "quantity" | "price" | "totalPrice"> & {
   price: number;
   quantity: number | string;
 };
@@ -20,6 +21,7 @@ export type Order = {
   responsible: string;
   status: OrderStatus;
   items: OrderItem[];
+  totalPrice: number | null;
 };
 export type OrderDraft = {
   createdAt: string | null;

@@ -21,8 +21,8 @@ export function getTodayOrderStatistics(orders: Order[], day: string) {
     total: today.length,
     completed: completed.length,
     revenue:
-      Math.round(
-        completed.reduce((sum, order) => sum + (orderTotal(order.items) ?? 0), 0) *
+      completed.some(order => order.totalPrice == null) ? null : Math.round(
+        completed.reduce((sum, order) => sum + order.totalPrice!, 0) *
           100,
       ) / 100,
     processing: today.length - completed.length,

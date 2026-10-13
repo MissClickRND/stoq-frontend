@@ -5,6 +5,7 @@
   align-items: start;
   margin-top: 24px;
 }
+
 .checkout {
   position: sticky;
   top: 104px;
@@ -29,5 +30,10 @@
 @media (max-width: 48em) {
   .cartGrid {
     gap: 16px;
+  }
+}
+@media (max-width: 25em) {
+  .checkoutFields {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

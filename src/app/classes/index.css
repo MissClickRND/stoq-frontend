@@ -40,4 +40,23 @@ body,
     flex: none;
     overflow: visible;
   }
+  .mantine-Button-root {
+    max-width: 100%;
+    height: auto;
+    min-height: var(--button-height, 2.625rem);
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .mantine-Button-label {
+    white-space: normal;
+    height: auto;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+}
+
+@media (min-width: 48.01em) and (max-height: 700px) {
+  .appContent {
+    overflow-y: auto;
+  }
 }

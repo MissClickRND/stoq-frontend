@@ -15,7 +15,8 @@ export function PageBreadcrumbs({
     <Box component="nav" aria-label="Хлебные крошки" style={{ minWidth: 0 }}>
       <Breadcrumbs
         separator={<IconChevronRight size={20} />}
-        styles={{ root: { flexWrap: "wrap", rowGap: 4 } }}
+        styles={{ root: { flexWrap: "wrap", rowGap: 4 },
+          breadcrumb: { minWidth: 0, maxWidth: "100%", flexShrink: 1, whiteSpace: "normal" } }}
       >
         <Anchor component={Link} to={parentPath} size="lg" fw={500}>
           {parentLabel}

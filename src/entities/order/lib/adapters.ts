@@ -7,7 +7,9 @@ export interface OrderResponse {
   table: number | null;
   guests: number;
   status: string;
-  items: { dishId: number; quantity: number }[];
+  totalPrice?: number | null;
+  items: { dishId: number; quantity: number; name?: string | null; price?: number | null;
+    totalPrice?: number | null; imageURL?: string | null }[];
 }
 
 export function toCreateOrderRequest(draft: Pick<OrderDraft, 'createdAt' | 'type' | 'table' | 'guests'> & {
@@ -29,13 +31,13 @@ export function toCreateOrderRequest(draft: Pick<OrderDraft, 'createdAt' | 'type
     }) };
 }
 
-export function toOrder(source: OrderResponse, dishes: { id: number; name: string; salePrice: number | null; imageURL?: string }[]): Order {
+export function toOrder(source: OrderResponse): Order {
   return { id: String(source.id), createdAt: source.date, type: source.type, table: source.table,
-    guests: source.guests, responsible: '—',
+    guests: source.guests, responsible: '—', totalPrice: source.totalPrice ?? null,
     status: source.status === 'completed' ? 'completed' : source.status === 'confirmed' ? 'preparing' : 'processing',
     items: source.items.map((item) => {
-      const dish = dishes.find((entry) => entry.id === item.dishId);
       return { dishId: String(item.dishId), quantity: item.quantity,
-        name: dish?.name ?? `Блюдо #${item.dishId}`, price: dish?.salePrice ?? null, imageUrl: dish?.imageURL };
+        name: item.name ?? `Блюдо #${item.dishId}`, price: item.price ?? null,
+        totalPrice: item.totalPrice ?? null, imageUrl: item.imageURL ?? undefined };
     }) };
 }

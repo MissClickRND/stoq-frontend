@@ -1,7 +1,6 @@
 import { mockGuestOrder } from "../model/mock.ts";
 import type { GuestOrderPayload } from "../model/type.ts";
 import { baseApi } from '@/shared/api';
-import { useGetDishesQuery } from '../../dish/@x/order';
 import { toOrder, type OrderResponse } from '../lib/adapters.ts';
 
 export const ordersApi = baseApi.injectEndpoints({
@@ -24,11 +23,9 @@ export function createGuestOrder(_payload: GuestOrderPayload): void {
 }
 export function useOrders() {
   const query = useGetOrdersQuery();
-  const menu = useGetDishesQuery({ search: '' });
   const [complete] = ordersApi.useCompleteOrderMutation();
-  return { ...query, orders: (query.data ?? []).map((order) => toOrder(order, menu.data ?? [])),
-    isLoading: query.isLoading || menu.isLoading, isError: query.isError || menu.isError,
-    refetch: () => { void query.refetch(); void menu.refetch(); },
+  return { ...query, orders: (query.data ?? []).map(toOrder),
+    refetch: () => { void query.refetch(); },
     completeOrder: (id: string) => complete({ id: Number(id) }).unwrap() };
 }
 

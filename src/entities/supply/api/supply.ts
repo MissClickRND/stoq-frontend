@@ -1,6 +1,6 @@
 import { getSupplyReportData, supplyReportColumns } from "../lib/report.ts";
 import { supplyTotal } from "../lib/calculations.ts";
-import type { ICreateSupplyRequest, ISupply } from "../model/type.ts";
+import type { ICreateSupplyRequest, ISupply, ScannedSupplyUpd } from "../model/type.ts";
 import { normalizeArticle } from "@/shared/lib";
 import { baseApi } from "@/shared/api/baseApi.ts";
 
@@ -21,6 +21,14 @@ export async function downloadSupplyReport(supply: ISupply): Promise<void> {
 
 export const suppliesApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    scanSupplyUpd: build.mutation<ScannedSupplyUpd, File>({
+      query: (file) => {
+        const body = new FormData();
+        body.append("file", file);
+        return { url: "/ai/supply", method: "POST", body, timeout: 210_000 };
+      },
+      invalidatesTags: (result) => result ? ["Product", "Unit"] : [],
+    }),
     getSupplies: build.query<ISupply[], { search: string }>({
       query: ({ search }) => ({
         url: "/supplies",
@@ -63,6 +71,7 @@ export const suppliesApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useScanSupplyUpdMutation,
   useCreateSupplyMutation,
   useGetSuppliesQuery,
   useGetSupplyByIdQuery,

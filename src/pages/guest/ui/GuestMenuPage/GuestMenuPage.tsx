@@ -15,23 +15,20 @@ import {
   Title,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useDishes } from "@/entities/dish";
+import { useDishes, dishCanBeOrdered } from "@/entities/dish";
 import { GuestDishCard } from "../components/GuestDishCard/GuestDishCard";
 import classes from "../../classes/Guest.module.css";
+import { useDebouncedValue } from "@mantine/hooks";
 
 const pageSize = 6;
 export function GuestMenuPage() {
-  const { dishes, isLoading, isError, refetch } = useDishes();
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebouncedValue(search, 200);
+
+  const { dishes, isLoading, isError, refetch } = useDishes(debouncedSearch);
+
   const [page, setPage] = useState(1);
-  const query = search.trim().toLocaleLowerCase("ru-RU");
-  const matching = dishes.filter(
-    (dish) =>
-      !dish.archived &&
-      `${dish.name} ${dish.description} ${dish.ingredients.map((ingredient) => ingredient.name).join(" ")}`
-        .toLocaleLowerCase("ru-RU")
-        .includes(query),
-  );
+  const matching = dishes.filter(dishCanBeOrdered);
   const totalPages = Math.max(1, Math.ceil(matching.length / pageSize));
   const activePage = Math.min(page, totalPages);
   const offset = (activePage - 1) * pageSize;
@@ -44,7 +41,7 @@ export function GuestMenuPage() {
             Меню
           </Title>
           <Text c="dimmed" mt="xs">
-            Выберите любимые блюда и добавьте их в корзину
+            Выберите желаемые блюда и добавьте их в корзину
           </Text>
         </div>
         <TextInput

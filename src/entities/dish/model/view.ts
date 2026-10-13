@@ -17,6 +17,8 @@ export type Dish = {
   description: string;
   category?: string;
   price: number;
+  priceKnown?: boolean;
+  availablePortions?: number;
   imageUrl?: string;
   stopped: boolean;
   archived?: boolean;

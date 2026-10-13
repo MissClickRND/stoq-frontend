@@ -4,7 +4,7 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import TableLayout from "@/shared/ui/table-layout";
 import { orderColumns } from "../../model/config";
-import { orderTotal, formatOrderMoney, type Order } from "@/entities/order";
+import { formatOrderMoney, type Order } from "@/entities/order";
 
 import { OrderStatusBadge } from "./OrderStatusBadge";
 import { OrderExpandedDetails } from "./OrderExpandedDetails/OrderExpandedDetails";
@@ -49,7 +49,7 @@ export function OrdersTable({
               </Table.Td>
               <Table.Td>
                 <Text size="lg" fw={700} style={{ whiteSpace: "nowrap" }}>
-                  {formatOrderMoney(orderTotal(order.items))}
+                  {formatOrderMoney(order.totalPrice)}
                 </Text>
               </Table.Td>
               <Table.Td>

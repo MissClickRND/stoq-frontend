@@ -109,7 +109,7 @@ export function GuestOrderQrModal({
               Настроить QR
             </Accordion.Control>
             <Accordion.Panel>
-              <SimpleGrid cols={2}>
+              <SimpleGrid cols={{ base: 1, xs: 2 }}>
                 <Select
                   label="Форма элементов"
                   size="lg"

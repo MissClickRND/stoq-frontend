@@ -1,5 +1,6 @@
 import { Group, Text } from "@mantine/core";
 import type { ReactNode } from "react";
+import classes from "./classes/TableSummary.module.css";
 
 export function TableSummary({
   count,
@@ -11,7 +12,7 @@ export function TableSummary({
   action: ReactNode;
 }) {
   return (
-    <Group justify="space-between" style={{ flexShrink: 0 }}>
+    <Group justify="space-between" className={classes.summary}>
       <div>
         <Text size="lg" fw={600}>
           <Text component="span" inherit fw={700}>
@@ -23,7 +24,7 @@ export function TableSummary({
           {description}
         </Text>
       </div>
-      {action}
+      <div className={classes.actions}>{action}</div>
     </Group>
   );
 }

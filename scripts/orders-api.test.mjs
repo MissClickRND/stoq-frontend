@@ -25,14 +25,15 @@ const { ordersApi } = await import('../src/entities/order/api/order.ts');
 test('orders POST and GET use server metadata and invalidate the listing', async t => {
   assert.ok(ordersApi, 'Orders must use real server API');
   const calls = [];
-  const order = { id: 1, date: '2026-10-13T12:30:00.000Z', type: 'dine-in', table: 3, guests: 4, status: 'created', items: [{ dishId: 2, quantity: 1 }] };
+  const order = { id: 1, date: '2026-10-13T12:30:00.000Z', type: 'dine-in', table: 3, guests: 4, status: 'created', totalPrice: 300,
+    items: [{ dishId: 2, quantity: 1, name: 'Салат', price: 300, totalPrice: 300 }] };
   t.mock.method(globalThis, 'fetch', async request => {
     calls.push({ path: new URL(request.url).pathname, method: request.method, body: request.method === 'POST' ? await request.json() : undefined });
     return new Response(JSON.stringify(request.method === 'POST' || request.url.endsWith('/1') ? order : [order]), { headers: { 'Content-Type': 'application/json' } });
   });
   const store = configureStore({ reducer: { [ordersApi.reducerPath]: ordersApi.reducer }, middleware: g => g().concat(ordersApi.middleware) });
   t.after(() => store.dispatch(ordersApi.util.resetApiState()));
-  const body = { date: order.date, type: order.type, table: 3, guests: 4, items: order.items };
+  const body = { date: order.date, type: order.type, table: 3, guests: 4, items: [{ dishId: 2, quantity: 1 }] };
   assert.deepEqual(await store.dispatch(ordersApi.endpoints.createOrder.initiate(body)).unwrap(), order);
   assert.deepEqual(calls[0], { path: '/orders', method: 'POST', body });
   assert.deepEqual(await store.dispatch(ordersApi.endpoints.getOrders.initiate()).unwrap(), [order]);

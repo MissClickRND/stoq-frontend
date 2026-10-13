@@ -38,7 +38,4 @@ export const colorSchemeOptions: ColorSchemeOption[] = [
   { label: "Тёмная", value: "dark", icon: IconMoon },
 ];
 
-export const navbarLogo = {
-  alt: "STOQ",
-  src: "/main-logo.svg",
-};
+export { appLogo as navbarLogo } from "@/shared/config/brand";

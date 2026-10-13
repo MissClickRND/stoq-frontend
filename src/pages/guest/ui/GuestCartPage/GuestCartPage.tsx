@@ -8,15 +8,11 @@ import {
   Paper,
   Stack,
   Text,
-  Textarea,
-  TextInput,
   ThemeIcon,
   Title,
 } from "@mantine/core";
 import {
-  IconInfoCircle,
   IconShoppingCart,
-  IconUser,
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
@@ -91,6 +87,7 @@ export function GuestCartPage() {
             noValidate
           >
             <Stack gap="lg">
+              {message && <Alert color="red" role="alert">{message}</Alert>}
               <Stack gap="0">
                 <Text size="lg" fw={700}>
                   Оформление заказа

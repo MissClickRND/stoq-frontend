@@ -22,7 +22,7 @@ test("order money uses quantities and rounds to cents", () => {
 
 test("today counters exclude old orders and revenue counts completed orders", () => {
   const orders = [
-    { createdAt: "2026-10-11 09:00:00", status: "completed", items: [item] },
+    { createdAt: "2026-10-11 09:00:00", status: "completed", items: [item], totalPrice: 199.98 },
     { createdAt: "2026-10-11 10:00:00", status: "processing", items: [item] },
     { createdAt: "2026-10-11 11:00:00", status: "preparing", items: [item] },
     { createdAt: "2026-10-10 09:00:00", status: "completed", items: [item] },

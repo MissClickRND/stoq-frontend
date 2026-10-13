@@ -1,6 +1,7 @@
 .section {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   overflow: hidden;
   background: var(--mantine-color-background);
 }
@@ -13,8 +14,23 @@
 @media (max-width: 48em) {
   .section {
     flex: none;
-    height: 800px;
-    min-height: 800px;
+    height: auto;
+    min-height: 0;
+  }
+  .section > :global(.mantine-ScrollArea-root) {
+    height: auto !important;
+    max-height: none;
+  }
+  .section :global(.mantine-ScrollArea-viewport) {
+    max-height: none;
+  }
+}
+
+@media (min-width: 48.01em) and (max-height: 700px) {
+  .section {
+    flex: none;
+    height: min(560px, 75dvh);
+    min-height: 200px;
   }
 }
 

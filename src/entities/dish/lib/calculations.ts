@@ -28,7 +28,8 @@ export const missingIngredients = (dish: Dish) =>
     (item) => item.stock < item.quantity || isIngredientExpired(item),
   );
 export const dishIsStopped = (dish: Dish) =>
-  !dish.archived && (dish.stopped || missingIngredients(dish).length > 0);
+  !dish.archived && (dish.stopped || (dish.availablePortions !== undefined
+    ? dish.availablePortions < 1 : missingIngredients(dish).length > 0));
 export const unavailableReason = (dish: Dish) =>
   dish.stopReason ||
   missingIngredients(dish)
@@ -44,9 +45,13 @@ export const ingredientPortions = (ingredient: DishIngredient) =>
     : 0;
 
 export const dishPortions = (dish: Dish) =>
-  dish.ingredients.length
+  dish.availablePortions ?? (dish.ingredients.length
     ? Math.min(...dish.ingredients.map((item) => ingredientPortions(item)))
-    : 0;
+    : 0);
+
+export const dishCanBeOrdered = (dish: Dish) =>
+  !dish.archived && !dish.stopped && dish.priceKnown !== false &&
+  Number.isFinite(dish.price) && dish.price >= 0 && dishPortions(dish) > 0;
 export const matchesDish = (dish: Dish, query: string) =>
   `${dish.name} ${dish.category ?? ""} ${dish.description} ${dish.ingredients.map((item) => item.name).join(" ")} ${unavailableReason(dish)} ${dish.recommendation?.reason ?? ""}`
     .toLocaleLowerCase("ru-RU")

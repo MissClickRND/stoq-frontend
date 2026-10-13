@@ -25,6 +25,7 @@ export function createMockOrders(): Order[] {
     guests: 1 + (index % 4),
     responsible: names[index % names.length],
     status: statuses[index % statuses.length],
+    totalPrice: null,
     items: orderItemSnapshots
       .slice(index % 3, (index % 3) + 2 + (index % 2))
       .map((item, dishIndex) => ({

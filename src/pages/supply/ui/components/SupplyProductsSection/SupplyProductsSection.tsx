@@ -1,6 +1,7 @@
 import type { IUnit } from "@/entities/unit";
 import componentClasses from "./SupplyProductsSection.module.css";
 import {
+  Button,
   Group,
   Paper,
   ScrollArea,
@@ -9,7 +10,10 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconPackage } from "@tabler/icons-react";
+import {
+  IconCameraSearch,
+  IconPackage,
+} from "@tabler/icons-react";
 import type { SupplyItemDraft, Product } from "@/entities/supply";
 import { SupplyProductCard } from "../SupplyProductCard/SupplyProductCard";
 import { SupplyProductSearch } from "../SupplyProductSearch";
@@ -24,6 +28,7 @@ export function SupplyProductsSection({
   onChange,
   onRemove,
   onAddUnit,
+  onScanUpd,
 }: {
   items: SupplyItemDraft[];
   units: IUnit[];
@@ -34,6 +39,7 @@ export function SupplyProductsSection({
   onChange: (id: string, patch: Partial<SupplyItemDraft>) => void;
   onRemove: (id: string) => void;
   onAddUnit: (id: string) => void;
+  onScanUpd: () => void;
 }) {
   return (
     <Paper withBorder p="lg" className={componentClasses.productsSection}>
@@ -46,6 +52,9 @@ export function SupplyProductsSection({
           <Title order={3} size="h4">
             Продукты в поставке
           </Title>
+          <Button type="button" size="md" leftSection={<IconCameraSearch />} onClick={onScanUpd}>
+            Отсканировать УПД
+          </Button>
         </Group>
         <div className={componentClasses.fixed}>
           <SupplyProductSearch onSelect={onSelect} onCreate={onCreateProduct} />
