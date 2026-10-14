@@ -1,5 +1,14 @@
 import { useState, type FormEvent } from "react";
-import { Alert, Button, FileInput, Group, Loader, Modal, Stack, Text } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  FileInput,
+  Group,
+  Loader,
+  Modal,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconUpload } from "@tabler/icons-react";
 import { apiErrorMessage } from "@/shared/lib/api-error";
 
@@ -19,7 +28,11 @@ function ScanUpdForm({ loading, onClose, onSubmit }: Omit<Props, "opened">) {
     if (loading) return;
     setError(null);
     if (!file) return setError("Выберите фото УПД.");
-    if (!["image/png", "image/jpeg", "image/webp", "application/pdf"].includes(file.type)) {
+    if (
+      !["image/png", "image/jpeg", "image/webp", "application/pdf"].includes(
+        file.type,
+      )
+    ) {
       return setError("Выберите файл PNG, JPEG, WEBP или PDF.");
     }
     if (file.size === 0 || file.size > 20 * 1024 * 1024) {
@@ -28,7 +41,9 @@ function ScanUpdForm({ loading, onClose, onSubmit }: Omit<Props, "opened">) {
     try {
       await onSubmit(file);
     } catch (error) {
-      setError(apiErrorMessage(error, "Не удалось распознать УПД. Повторите попытку."));
+      setError(
+        apiErrorMessage(error, "Не удалось распознать УПД. Повторите попытку."),
+      );
     }
   };
 
@@ -36,7 +51,7 @@ function ScanUpdForm({ loading, onClose, onSubmit }: Omit<Props, "opened">) {
     <form onSubmit={submit} noValidate>
       <Stack gap="md">
         <Text size="sm" c="dimmed">
-          Загрузите чёткое фото с наименованиями товаров, количеством и суммами.
+          Загрузите чёткое фото УПД или накладной.
         </Text>
         <FileInput
           label="Фото или файл УПД"
@@ -45,24 +60,48 @@ function ScanUpdForm({ loading, onClose, onSubmit }: Omit<Props, "opened">) {
           accept="image/png,image/jpeg,image/webp,application/pdf"
           leftSection={<IconUpload size={20} />}
           value={file}
-          onChange={(value) => { setFile(value); setError(null); }}
+          onChange={(value) => {
+            setFile(value);
+            setError(null);
+          }}
           disabled={loading}
           clearable
           required
           size="lg"
           data-autofocus
         />
-        {error && <Alert color="red" role="alert">{error}</Alert>}
+        {error && (
+          <Alert color="red" role="alert">
+            {error}
+          </Alert>
+        )}
         {loading && (
-          <Stack align="center" gap="xs" py="md" role="status" aria-live="polite">
+          <Stack
+            align="center"
+            gap="xs"
+            py="md"
+            role="status"
+            aria-live="polite"
+          >
             <Loader size="md" />
             <Text fw={500}>Распознаём УПД и подготавливаем товары…</Text>
-            <Text size="sm" c="dimmed">Обычно это занимает до 1 минуты</Text>
+            <Text size="sm" c="dimmed">
+              Обычно это занимает до 1 минуты
+            </Text>
           </Stack>
         )}
         <Group justify="flex-end">
-          <Button type="button" variant="default" disabled={loading} onClick={onClose}>Отмена</Button>
-          <Button type="submit" loading={loading} disabled={!file}>Отправить</Button>
+          <Button
+            type="button"
+            variant="default"
+            disabled={loading}
+            onClick={onClose}
+          >
+            Отмена
+          </Button>
+          <Button type="submit" loading={loading} disabled={!file}>
+            Отправить
+          </Button>
         </Group>
       </Stack>
     </form>
@@ -73,7 +112,9 @@ export function ScanUpdModal(props: Props) {
   return (
     <Modal
       opened={props.opened}
-      onClose={() => { if (!props.loading) props.onClose(); }}
+      onClose={() => {
+        if (!props.loading) props.onClose();
+      }}
       title="Отсканировать УПД"
       centered
       size="md"

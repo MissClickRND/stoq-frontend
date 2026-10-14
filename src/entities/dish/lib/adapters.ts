@@ -1,9 +1,8 @@
 import type { IProduct } from "../../product/@x/dish";
 import type { IDish, ICreateDishRequest } from "../model/type.ts";
-import type { Dish, DishFormValues, DishIngredient } from "../model/view.ts";
+import type { Dish, DishFormValues, DishIngredient } from "../model/type.ts";
 
 type DishResponse = Pick<IDish, "id" | "name"> & Partial<IDish> & {
-  imageURL?: string;
   isDeleted?: boolean;
 };
 

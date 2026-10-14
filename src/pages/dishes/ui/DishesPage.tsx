@@ -5,16 +5,15 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import {
-  useDishes,
+  useGetDishesQuery,
   useStopList,
   useDishRecommendations,
-  matchesDish,
 } from "@/entities/dish";
 import { dishModes, dishStatisticItems } from "../model/config";
 
 import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
-import { Recommendation } from "./components/Recomendtation/Recomendtation";
+import { Recommendation } from "./components/recomendtation/Recomendtation";
 import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
@@ -29,21 +28,27 @@ export function DishesPage() {
     requestedMode === "stop" || requestedMode === "recommended"
       ? requestedMode
       : "all";
-  const { dishes, isLoading, isError, refetch } = useDishes("", {
+  const search = query.trim();
+  const allDishes = useGetDishesQuery({ search }, {
     skip: mode !== "all",
   });
-  const stopList = useStopList();
+  const stopList = useStopList(search, { skip: mode !== "stop" });
   const recommendations = useDishRecommendations();
-  const source = mode === "stop" ? stopList : recommendations;
-  const visibleDishes = (mode === "all" ? dishes : source.dishes).filter(
-    (dish) => !dish.archived && matchesDish(dish, query),
+  const activeQuery = mode === "all" ? allDishes : stopList;
+  const isLoading = mode !== "recommended" && (
+    activeQuery.isLoading || (activeQuery.isFetching && !activeQuery.currentData)
   );
-  //! Подключить статистику отдельно, когда API начнёт отдавать доступность.
+  const isError = mode !== "recommended" && activeQuery.isError;
+  const count = mode === "all" ? allDishes.currentData?.length ?? 0
+    : mode === "stop" ? stopList.dishes.length : recommendations.dishes.length;
+  const catalog = mode === "all" && !search && !isError ? allDishes.currentData : undefined;
+  const stopped = mode === "stop" && !search && !isError ? stopList.currentData : undefined;
   const counts = {
-    total: dishes.filter((dish) => !dish.archived).length,
-    active: 0,
-    stopped: 0,
-    missing: 0,
+    total: catalog?.length ?? "—",
+    active: catalog?.filter((dish) => dish.availablePortions > 0).length ?? "—",
+    stopped: stopped?.length ?? catalog?.filter((dish) => dish.availablePortions === 0).length ?? "—",
+    missing: stopped?.filter((dish) => dish.reasons.some((reason) => reason.status === "INSUFFICIENT_STOCK")).length
+      ?? catalog?.filter((dish) => dish.recipeItems.some((item) => item.portions === 0)).length ?? "—",
   };
   const statistics = dishStatisticItems.map((item) => ({
     title: item.title,
@@ -58,9 +63,10 @@ export function DishesPage() {
       <DefaultPageLayout
         title="Блюда"
         subtitle="Управление меню, составами и стоимостью блюд"
-        searchTitle="Поиск блюд по названию или ингридиентам"
+        searchTitle="Поиск блюд по названию"
         searchValue={searchValue}
         setSearchValue={setSearchValue}
+        disableSearch={mode === "recommended"}
         statisticData={statistics}
         topSection={{
           items: dishModes,
@@ -69,28 +75,24 @@ export function DishesPage() {
           ariaLabel: "Режим отображения блюд",
         }}
       >
-        {mode !== "all" && !source.isAvailable && (
-          <Text c="dimmed">
-            {mode === "stop"
-              ? "Стоп-лист пока недоступен."
-              : "Рекомендации пока недоступны."}
-          </Text>
+        {mode === "recommended" && !recommendations.isAvailable && (
+          <Text c="dimmed">Рекомендации пока недоступны.</Text>
         )}
-        {mode === "all" && isLoading && (
-          <Center w="100%" h="100%">
+        {isLoading && (
+          <Center w="100%" h="100%" role="status" aria-label="Загрузка блюд">
             <Loader />
           </Center>
         )}
-        {mode === "all" && isError && (
+        {isError && (
           <Alert color="red" role="alert">
-            Не удалось загрузить блюда.
-            <Button type="button" variant="subtle" onClick={() => refetch()}>
+            {mode === "stop" ? "Не удалось загрузить стоп-лист." : "Не удалось загрузить блюда."}
+            <Button type="button" variant="subtle" onClick={() => activeQuery.refetch()}>
               Повторить
             </Button>
           </Alert>
         )}
         <TableSummary
-          count={visibleDishes.length}
+          count={count}
           description="Блюд в текущей таблице"
           action={
             <Button
@@ -102,13 +104,13 @@ export function DishesPage() {
             </Button>
           }
         />
-        {mode === "all" ? (
-          <AllDishes dishes={visibleDishes} />
+        {!isLoading && !isError && (mode === "all" ? (
+          <AllDishes dishes={allDishes.currentData ?? []} />
         ) : mode === "stop" ? (
-          <StopList dishes={visibleDishes} />
+          <StopList stopListDishes={stopList.dishes} />
         ) : (
-          <Recommendation dishes={visibleDishes} />
-        )}
+          <Recommendation dishes={recommendations.dishes} />
+        ))}
       </DefaultPageLayout>
       <DishFormModal
         opened={adding}

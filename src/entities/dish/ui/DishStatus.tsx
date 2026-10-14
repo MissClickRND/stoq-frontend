@@ -1,20 +1,24 @@
 import { Badge } from "@mantine/core";
-import { dishIsStopped } from "../lib/calculations";
-import type { Dish } from "../model/view";
 
-export function DishStatus({ dish }: { dish: Dish }) {
-  const stopped = dishIsStopped(dish);
+import type { Dish, IDish } from "../model/type";
+import { dishIsStopped, dishPortions } from "../lib/calculations";
+
+export function DishStatus({ dish }: { dish: IDish | Dish }) {
+  const portions = "ingredients" in dish ? dishPortions(dish) : dish.availablePortions;
+  const archived = "archived" in dish && dish.archived;
+  const stopped = "ingredients" in dish ? dishIsStopped(dish) : portions === 0;
+  const lowStock = portions > 0 && portions < 5;
   return (
     <Badge
       w="max-content"
       miw="max-content"
       size="lg"
       fw={600}
-      color={dish.archived ? "gray" : stopped ? "red" : "green"}
+      color={archived ? "gray" : stopped ? "red" : lowStock ? "orange" : "green"}
       variant="light"
       tt="none"
     >
-      {dish.archived ? "В архиве" : stopped ? "В стоп-листе" : "Активен"}
+      {archived ? "В архиве" : stopped ? "В стоп-листе" : lowStock ? "Заканчивается" : "Активен"}
     </Badge>
   );
 }

@@ -1,13 +1,17 @@
 import { Box, Center, Group, Image, Text } from "@mantine/core";
 import { IconSoupFilled } from "@tabler/icons-react";
-import type { Dish } from "../model/view";
+import type { IDish } from "../model/type";
 
-export function DishIdentity({ dish }: { dish: Dish }) {
+type DishIdentityData = Pick<IDish, "name"> &
+  Partial<Pick<IDish, "description" | "imageUrl" | "imageURL">>;
+
+export function DishIdentity({ dish }: { dish: DishIdentityData }) {
+  const imageUrl = dish.imageURL ?? dish.imageUrl;
   return (
     <Group wrap="nowrap" gap="md" miw={360} maw={480}>
-      {dish.imageUrl ? (
+      {imageUrl ? (
         <Image
-          src={dish.imageUrl}
+          src={imageUrl}
           alt={dish.name}
           w={112}
           h={76}
@@ -28,7 +32,6 @@ export function DishIdentity({ dish }: { dish: Dish }) {
         <Text size="sm" c="dimmed" lineClamp={2}>
           {dish.description}
         </Text>
-        <Text size="sm" c="dimmed">{dish.category || 'Без категории'}</Text>
       </Box>
     </Group>
   );

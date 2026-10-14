@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { Alert, Button, Group, Paper, Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { apiErrorMessage } from '@/shared/lib/api-error';
+import { apiErrorMessage } from "@/shared/lib/api-error";
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
@@ -55,8 +55,14 @@ export function CreateOrderPage() {
     }
     try {
       await createOrder(toCreateOrderRequest(draft)).unwrap();
-      navigate('/orders');
-    } catch (error) { setMessage(error instanceof Error ? error.message : apiErrorMessage(error, 'Не удалось создать заказ')); }
+      navigate("/orders");
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : apiErrorMessage(error, "Не удалось создать заказ"),
+      );
+    }
   };
   return (
     <DefaultPageLayout
@@ -99,19 +105,21 @@ export function CreateOrderPage() {
             <OrderDishSearch
               dishes={dishes.filter((dish) => !dish.archived)}
               loading={dishesLoading}
-              queryError={dishesError ? (
-                <>
-                  Не удалось загрузить блюда.
-                  <Button
-                    type="button"
-                    variant="subtle"
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => refetchDishes()}
-                  >
-                    Повторить
-                  </Button>
-                </>
-              ) : undefined}
+              queryError={
+                dishesError ? (
+                  <>
+                    Не удалось загрузить блюда.
+                    <Button
+                      type="button"
+                      variant="subtle"
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => refetchDishes()}
+                    >
+                      Повторить
+                    </Button>
+                  </>
+                ) : undefined
+              }
               onSelect={(dish) => {
                 setDraft((current) => ({
                   ...current,
@@ -162,7 +170,12 @@ export function CreateOrderPage() {
               </Text>
             </div>
           </Group>
-          <Button size="lg" type="submit" loading={saving} leftSection={<IconCheck size={20} />}>
+          <Button
+            size="lg"
+            type="submit"
+            loading={saving}
+            leftSection={<IconCheck size={20} />}
+          >
             Создать заказ
           </Button>
         </Group>

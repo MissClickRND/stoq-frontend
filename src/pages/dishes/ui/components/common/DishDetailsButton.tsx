@@ -1,7 +1,7 @@
 import { Button } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
-export function DishDetailsButton({ id }: { id: string }) {
+export function DishDetailsButton({ id }: { id: number | string }) {
   const navigate = useNavigate();
   return (
     <Button

@@ -1,4 +1,4 @@
-import type { DishFormValues } from "../model/view.ts";
+import type { DishFormValues } from "../model/type.ts";
 
 export function saveDish(_draft: DishFormValues, _id?: string): void {
   //! Подключить обновление блюда, когда соответствующая операция появится в API.

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useGetProductsQuery } from "../../product/@x/dish";
 import { useGetStoreQuery } from "../../store/@x/dish";
 import { toCreateDishRequest, toDish, toDishIngredient } from "../lib/adapters";
-import type { DishFormValues } from "../model/view";
+import type { DishFormValues } from "../model/type";
 import {
   useCreateDishMutation,
   useGetDishByIdQuery,

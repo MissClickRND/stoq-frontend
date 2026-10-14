@@ -1,4 +1,4 @@
-import type { Dish, DishIngredient } from "../model/view.ts";
+import type { Dish, DishIngredient } from "../model/type.ts";
 
 export const formatMoney = (value: number | null) => value == null ? "—" : formatCurrency(value, 2);
 export const dishCost = (dish: Dish) =>

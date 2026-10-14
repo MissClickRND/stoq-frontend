@@ -38,11 +38,18 @@ const edgeTypes = { recipe: RecipeConnection };
 const legendStatuses = ["available", "low_stock", "unavailable"] as const;
 
 export function DependencyGraph() {
-  const { graph, isLoading, isFetching, isError, error, refetch } = useDependencyGraph();
+  const { graph, isLoading, isFetching, isError, error, refetch } =
+    useDependencyGraph();
   const colorMode = useComputedColorScheme("light");
   const flow = useDependencyFlow(graph, colorMode);
   const controls = [
-    { label: "Обновить граф", icon: IconRefresh, action: () => { void refetch(); } },
+    {
+      label: "Обновить граф",
+      icon: IconRefresh,
+      action: () => {
+        void refetch();
+      },
+    },
     {
       label: "Показать весь граф",
       icon: IconArrowsMaximize,
@@ -128,8 +135,8 @@ export function DependencyGraph() {
                 size="lg"
                 variant="default"
                 aria-label={control.label}
-                  onClick={control.action}
-                  loading={control.label === "Обновить граф" && isFetching}
+                onClick={control.action}
+                loading={control.label === "Обновить граф" && isFetching}
               >
                 <control.icon size={20} stroke={1.7} />
               </ActionIcon>
@@ -155,8 +162,15 @@ export function DependencyGraph() {
         {isError && (
           <div className={classes.empty} role="alert">
             <Text fw={600}>Не удалось загрузить граф</Text>
-            <Text size="sm" c="dimmed">{apiErrorMessage(error, "Проверьте подключение и повторите попытку.")}</Text>
-            <Button onClick={() => refetch()} loading={isFetching}>Повторить</Button>
+            <Text size="sm" c="dimmed">
+              {apiErrorMessage(
+                error,
+                "Проверьте подключение и повторите попытку.",
+              )}
+            </Text>
+            <Button onClick={() => refetch()} loading={isFetching}>
+              Повторить
+            </Button>
           </div>
         )}
         {!isLoading && !isError && !graph.nodes.length && !flow.query && (
@@ -178,9 +192,6 @@ export function DependencyGraph() {
             </span>
           ))}
         </Group>
-        <Text size="xs" c="dimmed" className={classes.hint}>
-          Узлы можно перетаскивать · Масштаб — колёсиком
-        </Text>
       </div>
     </section>
   );

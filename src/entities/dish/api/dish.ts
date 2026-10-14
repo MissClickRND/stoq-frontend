@@ -1,5 +1,5 @@
 import { baseApi } from "@/shared/api";
-import type { ICreateDishRequest, IDish } from "../model/type";
+import type { ICreateDishRequest, IDish, IStopListDish } from "../model/type";
 
 export const dishApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -20,6 +20,27 @@ export const dishApi = baseApi.injectEndpoints({
       }),
 
       providesTags: (_result, _error, arg) => [{ type: "Dish", id: arg.id }],
+    }),
+
+    getStopListDishes: build.query<IStopListDish[], { search: string }>({
+      query: ({ search }) => ({
+        url: "/recommendations",
+        params: { search },
+      }),
+
+      providesTags: [
+        { type: "Recommendation", id: "STOP_LIST" },
+        { type: "Dish", id: "LIST" },
+        { type: "Store", id: "LIST" },
+      ],
+    }),
+
+    getRecommendedDishes: build.query<IStopListDish[], void>({
+      query: () => ({
+        url: `/recommendations/dishes`,
+      }),
+
+      providesTags: () => [{ type: "Recommendation", id: "DISHES_LIST" }],
     }),
 
     createDish: build.mutation<IDish, ICreateDishRequest>({
@@ -49,4 +70,5 @@ export const {
   useDeleteDishMutation,
   useGetDishByIdQuery,
   useGetDishesQuery,
+  useGetStopListDishesQuery,
 } = dishApi;

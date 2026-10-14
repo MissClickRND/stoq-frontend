@@ -11,6 +11,7 @@ import { getSupplyStatistics } from "../../model/statistics";
 import { SupplyReceiver } from "../components/SupplyReceiver/SupplyReceiver";
 import { SupplyReportButton } from "@/features/export-report";
 import { SupplyProductsTable } from "../components/SupplyProductsTable";
+import { IconArrowLeft } from "@tabler/icons-react";
 
 export function SupplyDetailsPage() {
   const { supplyId } = useParams();
@@ -117,6 +118,7 @@ export function SupplyDetailsPage() {
         variant="default"
         size="lg"
         style={{ alignSelf: "flex-start" }}
+        leftSection={<IconArrowLeft />}
       >
         Вернуться к поставкам
       </Button>
