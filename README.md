@@ -4,6 +4,8 @@ React, TypeScript, Vite, Mantine, Redux Toolkit и React Router.
 
 Запуск: `npm install`, затем `npm run dev`.
 
+Деплой frontend на VPS Selectel, CI/CD, домен на Beget и инструкция по SSH-туннелю к локальному бэкенду: [deploy/README.md](deploy/README.md). Автодеплой запускается при push в `main`; тесты в CI не выполняются.
+
 Перед `npm run build` автоматически проверяются локальные импорты и регистр путей в Git (`npm run check:imports`). Это ловит несовпадения, которые Windows допускает, а Linux на Vercel отклоняет. Для Vercel используйте Build Command `npm run build`. При переименовании папок только по регистру фиксируйте изменение через промежуточное имя (`git mv old temporary`, затем `git mv temporary New`). Отключение `tsc` не отменяет необходимость разрешать импорты в Vite.
 
 Вкладки «Стоп-лист» и «Горячие предложения» получают данные через Socket.IO namespace `/recommendations`. Адрес задаётся в `VITE_WEBSOCKET_API_URL` (например, `ws://26.130.106.197:3000`); без него используется `VITE_API_URL`. Стоп-лист отправляет `recommendations:getStopList` с `{ requestId: "stopListId", search }`, рекомендации — `recommendations:getDishRecommendations` с `{ requestId: "recommendedListId" }`. Ответы `{ requestId, data }` приходят в `recommendations:stopListResult` и `recommendations:dishRecommendationsResult`. Событие `recommendations:stopListUpdated` обновляет активную вкладку с сохранением поиска. При уходе с вкладки соединение закрывается; ошибки отображаются с кнопкой повтора. Проверка: `node --experimental-strip-types --test scripts/recommendation-socket.test.mjs scripts/desktop-protocol.test.mjs`.
