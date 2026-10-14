@@ -1,7 +1,0 @@
-.placeholder {
-  flex: 1;
-  min-height: 320px;
-  padding: 32px;
-  border: 1px dashed var(--mantine-color-default-border);
-  border-radius: 20px;
-}

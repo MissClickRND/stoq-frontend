@@ -3,7 +3,7 @@ import type { TopSectionProps } from "../ui/components/TopSection/type";
 
 export interface IStatisticCardData {
   title: string;
-  value: string | number;
+  value?: string | number;
   valueFontSize?: number;
   description?: string;
   icon: ReactNode;

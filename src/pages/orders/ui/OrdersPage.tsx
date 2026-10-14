@@ -1,6 +1,14 @@
 import { useState } from "react";
-import { ActionIcon, Alert, Button, Center, Loader, Group, Tooltip } from "@mantine/core";
-import { apiErrorMessage } from '@/shared/lib/api-error';
+import {
+  ActionIcon,
+  Alert,
+  Button,
+  Center,
+  Loader,
+  Group,
+  Tooltip,
+} from "@mantine/core";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 import {
   IconCheck,
   IconClock,
@@ -8,6 +16,7 @@ import {
   IconPlus,
   IconShoppingCart,
   IconQrcode,
+  IconCancel,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
@@ -22,47 +31,52 @@ import {
 import { OrdersTable } from "./components/OrdersTable";
 import { GuestOrderQrModal } from "@/features/share-guest-menu";
 import { useRestaurant } from "@/entities/restaurant";
+import { useGetOrderStatisticQuery } from "@/entities/statistic";
 
 export function OrdersPage() {
+  const { data } = useGetOrderStatisticQuery();
   const { restaurant: initialRestaurant } = useRestaurant();
   const { orders, completeOrder, isLoading, isError, refetch } = useOrders();
   const [actionError, setActionError] = useState<string | null>(null);
   const onComplete = async (id: string) => {
     setActionError(null);
-    try { await completeOrder(id); }
-    catch (error) { setActionError(apiErrorMessage(error, 'Не удалось завершить заказ')); }
+    try {
+      await completeOrder(id);
+    } catch (error) {
+      setActionError(apiErrorMessage(error, "Не удалось завершить заказ"));
+    }
   };
   const [search, setSearch] = useState("");
   const [sharing, setSharing] = useState(false);
-  const today = getTodayOrderStatistics(orders, dayjs().format("YYYY-MM-DD"));
+
   const statistics = [
     {
       title: "Всего заказов",
-      value: today.total,
+      value: data?.total ?? 0,
       description: "За сегодня",
       icon: <IconShoppingCart />,
       color: "#0d5e24",
     },
     {
       title: "Выполнено",
-      value: today.completed,
+      value: data?.completed ?? 0,
       description: "За сегодня",
       icon: <IconCheck />,
       color: "#0f8c14",
     },
     {
       title: "Выручка за сегодня",
-      value: formatOrderMoney(today.revenue),
+      value: data?.revenue ?? 0,
       valueFontSize: 24,
       description: "По выполненным заказам",
       icon: <IconCoins />,
       color: "#a15d10",
     },
     {
-      title: "В обработке",
-      value: today.processing,
-      description: "Активных заказов за сегодня",
-      icon: <IconClock />,
+      title: "Отмененные",
+      value: data?.cancelled ?? 0,
+      description: "Отмененных заказов за сегодня",
+      icon: <IconCancel />,
       color: "#526877",
     },
   ];
@@ -108,9 +122,22 @@ export function OrdersPage() {
             </Group>
           }
         />
-        {isError && <Alert color="red">Не удалось загрузить заказы. <Button variant="subtle" onClick={refetch}>Повторить</Button></Alert>}
+        {isError && (
+          <Alert color="red">
+            Не удалось загрузить заказы.{" "}
+            <Button variant="subtle" onClick={refetch}>
+              Повторить
+            </Button>
+          </Alert>
+        )}
         {actionError && <Alert color="red">{actionError}</Alert>}
-        {isLoading ? <Center p="xl"><Loader /></Center> : !isError && <OrdersTable orders={filtered} onComplete={onComplete} />}
+        {isLoading ? (
+          <Center p="xl">
+            <Loader />
+          </Center>
+        ) : (
+          !isError && <OrdersTable orders={filtered} onComplete={onComplete} />
+        )}
       </DefaultPageLayout>
       <GuestOrderQrModal
         opened={sharing}

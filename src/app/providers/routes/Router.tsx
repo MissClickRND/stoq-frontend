@@ -6,12 +6,7 @@ import {
 import { Error404 } from "@/pages/errors/Error404";
 import { LoginPage } from "@/pages/login";
 import { RegisterPage, RestaurantRegisterPage } from "@/pages/register";
-import {
-  AnalyticsLayout,
-  AnalyticsDashboardPage,
-  IngredientAnalysisPage,
-  DependencyMapPage,
-} from "@/pages/analytics";
+import { AnalyticsLayout, DependencyMapPage } from "@/pages/analytics";
 import {
   SupplyPage,
   CreateSupplyPage,
@@ -51,7 +46,7 @@ const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
-      { path: "/", element: <Navigate to="/analytics/dependencies" replace /> },
+      { path: "/", element: <Navigate to="/analytics/dashboard" replace /> },
       {
         path: "/dashboard",
         element: <Navigate to="/analytics/dashboard" replace />,
@@ -64,8 +59,7 @@ const router = createBrowserRouter([
             index: true,
             element: <Navigate to="/analytics/dashboard" replace />,
           },
-          { path: "dashboard", element: <AnalyticsDashboardPage /> },
-          { path: "ingredients", element: <IngredientAnalysisPage /> },
+          { path: "dashboard", element: <DashboardPage /> },
           { path: "dependencies", element: <DependencyMapPage /> },
         ],
       },
@@ -130,3 +124,4 @@ export function Router() {
 }
 
 import { GuestRoutesLayout } from "@/widgets/guest-layout";
+import DashboardPage from "@/pages/dashboard/ui/DashboardPage";

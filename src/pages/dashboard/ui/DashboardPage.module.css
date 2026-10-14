@@ -1,0 +1,25 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(320px, 1fr);
+  gap: 20px;
+  flex: 1;
+  min-height: 420px;
+  min-width: 0;
+}
+
+@media (max-width: 74em) {
+  .dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-y: auto;
+    min-height: 0;
+    flex-shrink: 1;
+  }
+}
+
+@media (max-width: 48em) {
+  .dashboard {
+    flex: none;
+    overflow: visible;
+    gap: 16px;
+  }
+}

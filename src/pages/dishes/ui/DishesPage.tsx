@@ -17,9 +17,12 @@ import { Recommendation } from "./components/recomendtation/Recomendtation";
 import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
+import { useGetDishStatisticQuery } from "@/entities/statistic";
 
 export function DishesPage() {
   const [searchValue, setSearchValue] = useState("");
+  const { data } = useGetDishStatisticQuery();
+
   const [query] = useDebouncedValue(searchValue, 200);
   const [adding, setAdding] = useState(false);
   const [params, setParams] = useSearchParams();
@@ -29,26 +32,32 @@ export function DishesPage() {
       ? requestedMode
       : "all";
   const search = query.trim();
-  const allDishes = useGetDishesQuery({ search }, {
-    skip: mode !== "all",
-  });
+  const allDishes = useGetDishesQuery(
+    { search },
+    {
+      skip: mode !== "all",
+    },
+  );
   const stopList = useStopList(search, { skip: mode !== "stop" });
   const recommendations = useDishRecommendations();
   const activeQuery = mode === "all" ? allDishes : stopList;
-  const isLoading = mode !== "recommended" && (
-    activeQuery.isLoading || (activeQuery.isFetching && !activeQuery.currentData)
-  );
+  const isLoading =
+    mode !== "recommended" &&
+    (activeQuery.isLoading ||
+      (activeQuery.isFetching && !activeQuery.currentData));
   const isError = mode !== "recommended" && activeQuery.isError;
-  const count = mode === "all" ? allDishes.currentData?.length ?? 0
-    : mode === "stop" ? stopList.dishes.length : recommendations.dishes.length;
-  const catalog = mode === "all" && !search && !isError ? allDishes.currentData : undefined;
-  const stopped = mode === "stop" && !search && !isError ? stopList.currentData : undefined;
+  const count =
+    mode === "all"
+      ? (allDishes.currentData?.length ?? 0)
+      : mode === "stop"
+        ? stopList.dishes.length
+        : recommendations.dishes.length;
+
   const counts = {
-    total: catalog?.length ?? "—",
-    active: catalog?.filter((dish) => dish.availablePortions > 0).length ?? "—",
-    stopped: stopped?.length ?? catalog?.filter((dish) => dish.availablePortions === 0).length ?? "—",
-    missing: stopped?.filter((dish) => dish.reasons.some((reason) => reason.status === "INSUFFICIENT_STOCK")).length
-      ?? catalog?.filter((dish) => dish.recipeItems.some((item) => item.portions === 0)).length ?? "—",
+    total: data?.total,
+    active: data?.active,
+    stopped: data?.stopList,
+    missing: data?.lowStock,
   };
   const statistics = dishStatisticItems.map((item) => ({
     title: item.title,
@@ -85,8 +94,14 @@ export function DishesPage() {
         )}
         {isError && (
           <Alert color="red" role="alert">
-            {mode === "stop" ? "Не удалось загрузить стоп-лист." : "Не удалось загрузить блюда."}
-            <Button type="button" variant="subtle" onClick={() => activeQuery.refetch()}>
+            {mode === "stop"
+              ? "Не удалось загрузить стоп-лист."
+              : "Не удалось загрузить блюда."}
+            <Button
+              type="button"
+              variant="subtle"
+              onClick={() => activeQuery.refetch()}
+            >
               Повторить
             </Button>
           </Alert>
@@ -104,13 +119,15 @@ export function DishesPage() {
             </Button>
           }
         />
-        {!isLoading && !isError && (mode === "all" ? (
-          <AllDishes dishes={allDishes.currentData ?? []} />
-        ) : mode === "stop" ? (
-          <StopList stopListDishes={stopList.dishes} />
-        ) : (
-          <Recommendation dishes={recommendations.dishes} />
-        ))}
+        {!isLoading &&
+          !isError &&
+          (mode === "all" ? (
+            <AllDishes dishes={allDishes.currentData ?? []} />
+          ) : mode === "stop" ? (
+            <StopList stopListDishes={stopList.dishes} />
+          ) : (
+            <Recommendation dishes={recommendations.dishes} />
+          ))}
       </DefaultPageLayout>
       <DishFormModal
         opened={adding}
