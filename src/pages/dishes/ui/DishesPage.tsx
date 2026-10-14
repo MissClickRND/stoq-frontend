@@ -13,7 +13,7 @@ import { dishModes, dishStatisticItems } from "../model/config";
 
 import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
-import { Recommendation } from "./components/Recomendtation/Recomendtation";
+import { RecommendationPage } from "./components/recommendation/Recommendation";
 import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
@@ -148,7 +148,7 @@ export function DishesPage() {
               ) : mode === "stop" ? (
                 <StopList stopListDishes={stopList.dishes} />
               ) : (
-                <Recommendation dishes={recommendations.dishes} />
+                <RecommendationPage dishes={recommendations.dishes} />
               ))}
           </>
         )}

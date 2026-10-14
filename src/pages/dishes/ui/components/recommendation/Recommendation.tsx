@@ -3,7 +3,11 @@ import type { IRecommendedDishes } from "@/entities/dish";
 import { dishColumns } from "../../../model/config";
 import { RecommendationRow } from "./RecommendationRow";
 
-export function Recommendation({ dishes }: { dishes: IRecommendedDishes[] }) {
+export function RecommendationPage({
+  dishes,
+}: {
+  dishes: IRecommendedDishes[];
+}) {
   return (
     <TableLayout
       columns={dishColumns.recommended}
