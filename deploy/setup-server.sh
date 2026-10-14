@@ -18,7 +18,9 @@ for account in stoq-deploy stoq-tunnel; do
 done
 install -d -m 755 -o stoq-deploy -g stoq-deploy /var/www/stoq /var/www/stoq/releases /var/www/stoq/incoming /var/www/stoq/shared /var/www/stoq/shared/assets
 install -m 755 stoq-deploy.sh /usr/local/bin/stoq-deploy
-install -m 644 nginx.conf /etc/nginx/sites-available/stoq
+if [[ ! -f /etc/letsencrypt/live/lyaguh.site/fullchain.pem ]]; then
+    install -m 644 nginx.conf /etc/nginx/sites-available/stoq
+fi
 if [[ -L /etc/nginx/sites-enabled/default ]]; then unlink /etc/nginx/sites-enabled/default; fi
 ln -sfn /etc/nginx/sites-available/stoq /etc/nginx/sites-enabled/stoq
 
