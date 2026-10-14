@@ -11,10 +11,10 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import {
-  IconShoppingCart,
-} from "@tabler/icons-react";
+import { IconShoppingCart } from "@tabler/icons-react";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import { validateOrderDraft, formatOrderMoney } from "@/entities/order";
 
@@ -23,8 +23,16 @@ import { GuestCartItems } from "../components/GuestCartItems/GuestCartItems";
 import classes from "../../classes/Guest.module.css";
 
 export function GuestCartPage() {
-  const { basePath, items, total, details, updateDetails, submitOrder } =
-    useGuestOrder();
+  const {
+    basePath,
+    items,
+    total,
+    details,
+    updateDetails,
+    submitOrder,
+    isSubmitting,
+  } = useGuestOrder();
+  const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const errors = submitted
@@ -34,15 +42,22 @@ export function GuestCartPage() {
         items,
       })
     : {};
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (isSubmitting) return;
     setSubmitted(true);
+    setMessage(null);
     try {
-      submitOrder();
-      //! Перейти к подтверждению только после получения созданного заказа от сервера.
+      const order = await submitOrder();
+      navigate(`${basePath}/complete?orderId=${encodeURIComponent(order.id)}`);
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Проверьте данные заказа",
+        error instanceof Error
+          ? error.message
+          : apiErrorMessage(
+              error,
+              "Не удалось создать заказ. Попробуйте ещё раз.",
+            ),
       );
     }
   };
@@ -84,10 +99,15 @@ export function GuestCartPage() {
             p="lg"
             className={componentClasses.checkout}
             onSubmit={submit}
+            aria-busy={isSubmitting}
             noValidate
           >
             <Stack gap="lg">
-              {message && <Alert color="red" role="alert">{message}</Alert>}
+              {message && (
+                <Alert color="red" role="alert">
+                  {message}
+                </Alert>
+              )}
               <Stack gap="0">
                 <Text size="lg" fw={700}>
                   Оформление заказа
@@ -96,7 +116,11 @@ export function GuestCartPage() {
                   Заполните информацию о заказе
                 </Text>
               </Stack>
-              <div className={componentClasses.checkoutFields}>
+              <fieldset
+                className={componentClasses.checkoutFields}
+                disabled={isSubmitting}
+                style={{ border: 0, padding: 0, margin: 0, minWidth: 0 }}
+              >
                 <OrderGuestFields
                   withIcons={false}
                   value={details}
@@ -107,7 +131,7 @@ export function GuestCartPage() {
                     setMessage(null);
                   }}
                 />
-              </div>
+              </fieldset>
 
               <Divider />
               <Group justify="space-between">
@@ -127,9 +151,10 @@ export function GuestCartPage() {
                 type="submit"
                 size="lg"
                 fullWidth
+                loading={isSubmitting}
                 leftSection={<IconShoppingCart size={20} />}
               >
-                Оплатить
+                Оформить заказ
               </Button>
             </Stack>
           </Paper>

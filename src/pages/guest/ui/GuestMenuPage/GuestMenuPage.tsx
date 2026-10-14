@@ -15,20 +15,32 @@ import {
   Title,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useDishes, dishCanBeOrdered } from "@/entities/dish";
+import {
+  useDishes,
+  useDishRecommendations,
+  getGuestMenuDishes,
+  GUEST_MENU_PAGE_SIZE,
+} from "@/entities/dish";
 import { GuestDishCard } from "../components/GuestDishCard/GuestDishCard";
 import classes from "../../classes/Guest.module.css";
 import { useDebouncedValue } from "@mantine/hooks";
 
-const pageSize = 6;
+const pageSize = GUEST_MENU_PAGE_SIZE;
 export function GuestMenuPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebouncedValue(search, 200);
 
-  const { dishes, isLoading, isError, refetch } = useDishes(debouncedSearch);
+  const {
+    dishes,
+    isLoading: dishesLoading,
+    isError,
+    refetch,
+  } = useDishes(debouncedSearch);
+  const recommendations = useDishRecommendations();
+  const isLoading = dishesLoading || recommendations.isLoading;
 
   const [page, setPage] = useState(1);
-  const matching = dishes.filter(dishCanBeOrdered);
+  const matching = getGuestMenuDishes(dishes, recommendations.dishes);
   const totalPages = Math.max(1, Math.ceil(matching.length / pageSize));
   const activePage = Math.min(page, totalPages);
   const offset = (activePage - 1) * pageSize;
@@ -57,6 +69,18 @@ export function GuestMenuPage() {
           }}
         />
       </Group>
+      {recommendations.isError && (
+        <Alert color="orange" role="alert">
+          Не удалось загрузить рекомендации. Показываем обычное меню.
+          <Button
+            type="button"
+            variant="subtle"
+            onClick={recommendations.refetch}
+          >
+            Повторить
+          </Button>
+        </Alert>
+      )}
       {isLoading ? (
         <Center w="100%" h="100%">
           <Loader />

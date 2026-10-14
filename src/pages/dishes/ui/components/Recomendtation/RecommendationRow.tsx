@@ -1,62 +1,68 @@
 import { Table, Text } from "@mantine/core";
 import {
-  type Dish,
-  dishMarkup,
-  dishProfit,
+  type IRecommendedDishes,
   formatMoney,
   DishIdentity,
-  DishStatus,
 } from "@/entities/dish";
 
 import { DishDetailsButton } from "../common/DishDetailsButton";
-import { RecommendationPriority } from "./RecommendationPriority";
-
-export function RecommendationRow({ dish }: { dish: Dish }) {
-  const markup = dishMarkup(dish);
+export function RecommendationRow({ dish }: { dish: IRecommendedDishes }) {
+  const markup =
+    dish.costPrice !== null && dish.costPrice > 0
+      ? ((dish.salePrice - dish.costPrice) / dish.costPrice) * 100
+      : null;
   return (
     <Table.Tr>
       <Table.Td>
-        <DishIdentity dish={dish} />
+        <DishIdentity dish={{ name: dish.dishName }} />
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>
-          {formatMoney(dish.price)}
+          {formatMoney(dish.salePrice)}
         </Text>
         <Text size="sm" c="dimmed">
-          Выручка за неделю:{" "}
-          {formatMoney(
-            dish.sales.reduce((sum, sale) => sum + sale.quantity, 0) *
-              dish.price,
-          )}
+          Себестоимость: {formatMoney(dish.costPrice)}
         </Text>
-        <Text size="lg" fw={600} c={(dishProfit(dish) ?? 0) >= 0 ? "green" : "red"}>
-          Прибыль с порции: {formatMoney(dishProfit(dish))}
+        <Text
+          size="lg"
+          fw={600}
+          c={
+            dish.profit === null ? "dimmed" : dish.profit >= 0 ? "green" : "red"
+          }
+        >
+          Прибыль с порции: {formatMoney(dish.profit)}
         </Text>
       </Table.Td>
       <Table.Td>
         <Text
           size="lg"
           fw={700}
-          c={markup !== null && markup >= 0 ? "green" : "red"}
+          c={markup === null ? "dimmed" : markup >= 0 ? "green" : "red"}
         >
           {markup === null ? "—" : `${markup.toFixed(1)}%`}
         </Text>
       </Table.Td>
       <Table.Td>
-        <DishStatus dish={dish} />
-      </Table.Td>
-      <Table.Td>
-        <Text size="lg" fw={500} maw={280}>
-          {dish.recommendation?.reason}
+        <Text size="lg" fw={700}>
+          {dish.maxPortions}
         </Text>
       </Table.Td>
       <Table.Td>
-        {dish.recommendation && (
-          <RecommendationPriority priority={dish.recommendation.priority} />
-        )}
+        <Text size="lg" fw={500} maw={280}>
+          {dish.expiringProducts.length
+            ? dish.expiringProducts.join(", ")
+            : "Нет продуктов с близким сроком годности"}
+        </Text>
       </Table.Td>
       <Table.Td>
-        <DishDetailsButton id={dish.id} />
+        <Text size="lg" fw={700}>
+          {new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(
+            dish.recommendationScore,
+          )}
+        </Text>
+      </Table.Td>
+      <Table.Td>
+        <DishDetailsButton id={dish.dishId} />
       </Table.Td>
     </Table.Tr>
   );

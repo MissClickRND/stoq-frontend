@@ -1,5 +1,3 @@
-import { mockGuestOrder } from "../model/mock.ts";
-import type { GuestOrderPayload } from "../model/type.ts";
 import { baseApi } from "@/shared/api";
 import { toOrder, type OrderResponse } from "../lib/adapters.ts";
 
@@ -24,7 +22,11 @@ export const ordersApi = baseApi.injectEndpoints({
       }
     >({
       query: (body) => ({ url: "/orders", method: "POST", body }),
-      invalidatesTags: ["Order"],
+      invalidatesTags: [
+        "Order",
+        { type: "Dish", id: "LIST" },
+        { type: "Store", id: "LIST" },
+      ],
     }),
     completeOrder: build.mutation<OrderResponse, { id: number }>({
       query: ({ id }) => ({
@@ -41,9 +43,6 @@ export const {
   useGetOrdersQuery,
   useGetOrderByIdQuery,
 } = ordersApi;
-export function createGuestOrder(_payload: GuestOrderPayload): void {
-  //! Подключить гостевое создание заказа; очистить корзину и открыть подтверждение после ответа сервера.
-}
 export function useOrders() {
   const query = useGetOrdersQuery();
   const [complete] = ordersApi.useCompleteOrderMutation();
@@ -57,7 +56,19 @@ export function useOrders() {
   };
 }
 
-export function useGuestOrderResult(_restaurantId: string) {
-  //! Подключить запрос результата гостевого заказа по ID, полученному при создании.
-  return { order: mockGuestOrder };
+export function useGuestOrderResult(
+  id?: string | null,
+  options?: { skip?: boolean },
+) {
+  const numericId = Number(id);
+  const query = useGetOrderByIdQuery(
+    { id: numericId },
+    {
+      skip: options?.skip || !Number.isSafeInteger(numericId) || numericId <= 0,
+    },
+  );
+  return {
+    ...query,
+    order: query.currentData ? toOrder(query.currentData) : undefined,
+  };
 }

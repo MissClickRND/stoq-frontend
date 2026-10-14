@@ -67,4 +67,5 @@ test("production CSP permits the existing theme bootstrap by hash, without unres
     /unsafe-inline|unsafe-eval/,
   );
   assert.match(policy, /object-src 'none'/);
+  assert.match(policy, /connect-src 'self' http: https: ws: wss:/);
 });

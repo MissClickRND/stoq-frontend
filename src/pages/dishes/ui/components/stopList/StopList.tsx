@@ -3,7 +3,11 @@ import type { IStopListDish } from "@/entities/dish";
 import { dishColumns } from "../../../model/config";
 import { StopListRow } from "./StopListRow";
 
-export function StopList({ stopListDishes }: { stopListDishes: IStopListDish[] }) {
+export function StopList({
+  stopListDishes,
+}: {
+  stopListDishes: IStopListDish[];
+}) {
   return (
     <TableLayout
       columns={dishColumns.stop}

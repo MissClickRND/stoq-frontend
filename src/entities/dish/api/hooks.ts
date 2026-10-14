@@ -53,22 +53,50 @@ export function useDish(id?: string) {
 
 export function useIngredients() {
   const query = useGetProductsQuery({ search: "" });
-  const warehouse = useGetStoreQuery({ search: "" }, { refetchOnMountOrArgChange: true });
+  const warehouse = useGetStoreQuery(
+    { search: "" },
+    { refetchOnMountOrArgChange: true },
+  );
   const ingredients = useMemo(
     () =>
       query.data
         ?.filter((product) => !product.isDeleted)
         .map((product) => {
-          const batches = (warehouse.data ?? []).filter((batch) => batch.productId === product.id && batch.status === 'ACTIVE'
-            && new Date(batch.expiresAt).getTime() > Date.now() && batch.Quantity > 0);
+          const batches = (warehouse.data ?? []).filter(
+            (batch) =>
+              batch.productId === product.id &&
+              batch.status === "ACTIVE" &&
+              new Date(batch.expiresAt).getTime() > Date.now() &&
+              batch.Quantity > 0,
+          );
           const stock = batches.reduce((sum, batch) => sum + batch.Quantity, 0);
-          return { ...toDishIngredient(product), stock,
-            costPerUnit: stock > 0 && batches.every((batch) => batch.price != null)
-              ? batches.reduce((sum, batch) => sum + batch.Quantity * batch.price!, 0) / stock : null,
-            expiresOn: batches.map((batch) => batch.expiresAt).sort()[0]?.slice(0, 10) ?? '' };
+          return {
+            ...toDishIngredient(product),
+            stock,
+            costPerUnit:
+              stock > 0 && batches.every((batch) => batch.price != null)
+                ? batches.reduce(
+                    (sum, batch) => sum + batch.Quantity * batch.price!,
+                    0,
+                  ) / stock
+                : null,
+            expiresOn:
+              batches
+                .map((batch) => batch.expiresAt)
+                .sort()[0]
+                ?.slice(0, 10) ?? "",
+          };
         }) ?? [],
     [query.data, warehouse.data],
   );
-  return { ...query, ingredients, isLoading: query.isLoading || warehouse.isLoading,
-    isError: query.isError || warehouse.isError, refetch: () => { void query.refetch(); void warehouse.refetch(); } };
+  return {
+    ...query,
+    ingredients,
+    isLoading: query.isLoading || warehouse.isLoading,
+    isError: query.isError || warehouse.isError,
+    refetch: () => {
+      void query.refetch();
+      void warehouse.refetch();
+    },
+  };
 }

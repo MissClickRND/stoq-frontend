@@ -2,9 +2,7 @@ import type { IProduct } from "../../product/@x/dish";
 
 export type DishPriority = "high" | "medium" | "low";
 export type DishStopListStatus =
-  | "INSUFFICIENT_STOCK"
-  | "ACTIVE"
-  | "EXPIRED_INGREDIENT";
+  "INSUFFICIENT_STOCK" | "ACTIVE" | "EXPIRED_INGREDIENT";
 
 export type IDishIngredient = {
   id: number;
@@ -42,7 +40,16 @@ export type IStopListDish = {
   reasons: { status: DishStopListStatus; name: string }[];
 };
 
-export type IRecommendedDishes = {};
+export type IRecommendedDishes = {
+  dishId: number;
+  dishName: string;
+  salePrice: number;
+  costPrice: number | null;
+  profit: number | null;
+  maxPortions: number;
+  expiringProducts: string[];
+  recommendationScore: number;
+};
 
 export type DishDraft = Omit<IDish, "id" | "sales" | "recommendation">;
 

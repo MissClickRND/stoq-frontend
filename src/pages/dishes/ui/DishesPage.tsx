@@ -1,5 +1,5 @@
 import { createElement, useState } from "react";
-import { Alert, Button, Center, Loader, Text } from "@mantine/core";
+import { Alert, Button, Center, Loader } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useDebouncedValue } from "@mantine/hooks";
 import { useSearchParams } from "react-router-dom";
@@ -41,10 +41,14 @@ export function DishesPage() {
       skip: mode !== "all",
     },
   );
+
   const stopList = useStopList(search, { skip: mode !== "stop" });
-  const recommendations = useDishRecommendations();
-  const activeQuery = mode === "all" ? allDishes : stopList;
-  const isDishTable = mode === "all" || mode === "stop";
+  const recommendations = useDishRecommendations({
+    skip: mode !== "recommended",
+  });
+  const activeQuery =
+    mode === "all" ? allDishes : mode === "stop" ? stopList : recommendations;
+  const isDishTable = mode !== "graph";
   const isLoading =
     isDishTable &&
     (activeQuery.isLoading ||
@@ -89,15 +93,18 @@ export function DishesPage() {
           ariaLabel: "Режим отображения блюд",
         }}
       >
-        {mode === "recommended" && !recommendations.isAvailable && (
-          <Text c="dimmed">Рекомендации пока недоступны.</Text>
-        )}
-
         {isError && (
           <Alert color="red" role="alert">
             {mode === "stop"
               ? "Не удалось загрузить стоп-лист."
-              : "Не удалось загрузить блюда."}
+              : mode === "recommended"
+                ? "Не удалось загрузить рекомендации."
+                : "Не удалось загрузить блюда."}
+            {mode !== "all" &&
+              activeQuery.error &&
+              typeof activeQuery.error === "string" && (
+                <div>{activeQuery.error}</div>
+              )}
             <Button
               type="button"
               variant="subtle"

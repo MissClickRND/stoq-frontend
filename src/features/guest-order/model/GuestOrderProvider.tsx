@@ -1,14 +1,21 @@
 import {
-  createGuestOrder,
+  useCreateOrderMutation,
+  toCreateOrderRequest,
+  toOrder,
   addOrderDish,
   orderTotal,
   type OrderItemDraft,
   type OrderType,
-  buildGuestOrderPayload,
+  type Order,
   guestMenuPath,
 } from "@/entities/order";
-import { createContext, useContext, useState, type ReactNode } from "react";
-import dayjs from "dayjs";
+import {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { type Dish, useDishes, dishCanBeOrdered } from "@/entities/dish";
 
 import type { Restaurant } from "@/entities/restaurant";
@@ -31,7 +38,9 @@ type GuestOrderContextValue = {
   addDish: (dish: Dish) => void;
   setQuantity: (id: string, quantity: number) => void;
   removeDish: (id: string) => void;
-  submitOrder: () => void;
+  submitOrder: () => Promise<Order>;
+  isSubmitting: boolean;
+  lastOrder: Order | null;
 };
 const GuestOrderContext = createContext<GuestOrderContextValue | null>(null);
 
@@ -43,6 +52,9 @@ export function GuestOrderProvider({
   children: ReactNode;
 }) {
   const { dishes } = useDishes();
+  const [createOrder, { isLoading: isSubmitting }] = useCreateOrderMutation();
+  const submitting = useRef(false);
+  const [lastOrder, setLastOrder] = useState<Order | null>(null);
   const [items, setItems] = useState<OrderItemDraft[]>([]);
   const [details, setDetails] = useState<GuestCheckoutDetails>({
     type: "dine-in",
@@ -52,6 +64,7 @@ export function GuestOrderProvider({
     comment: "",
   });
   const addDish = (dish: Dish) => {
+    if (submitting.current) return;
     if (!dishCanBeOrdered(dish)) return;
     setItems((current) =>
       addOrderDish(current, {
@@ -63,6 +76,7 @@ export function GuestOrderProvider({
     );
   };
   const setQuantity = (id: string, quantity: number) => {
+    if (submitting.current) return;
     if (!Number.isInteger(quantity) || quantity < 1) return;
     setItems((current) =>
       current.map((item) =>
@@ -70,9 +84,12 @@ export function GuestOrderProvider({
       ),
     );
   };
-  const removeDish = (id: string) =>
+  const removeDish = (id: string) => {
+    if (submitting.current) return;
     setItems((current) => current.filter((item) => item.dishId !== id));
-  const submitOrder = () => {
+  };
+  const submitOrder = async () => {
+    if (submitting.current) throw new Error("Заказ уже отправляется.");
     if (
       items.some((item) => {
         const dish = dishes.find((entry) => entry.id === item.dishId);
@@ -82,20 +99,23 @@ export function GuestOrderProvider({
       throw new Error(
         "Одно из блюд временно недоступно. Удалите его из корзины и выберите другое.",
       );
-    const payload = buildGuestOrderPayload(
-      restaurant.id,
-      {
-        createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        type: details.type,
-        table: details.table,
-        guests: details.guests,
-        items,
-      },
-      details.guestName,
-      details.comment,
-    );
-    createGuestOrder(payload);
-    //! Очистить корзину и показать подтверждение после ответа сервера.
+    const payload = toCreateOrderRequest({
+      createdAt: new Date().toISOString(),
+      type: details.type,
+      table: details.table,
+      guests: details.guests,
+      items,
+    });
+    submitting.current = true;
+    try {
+      const response = await createOrder(payload).unwrap();
+      const order = toOrder(response);
+      setLastOrder(order);
+      setItems([]);
+      return order;
+    } finally {
+      submitting.current = false;
+    }
   };
   return (
     <GuestOrderContext.Provider
@@ -106,12 +126,16 @@ export function GuestOrderProvider({
         total: orderTotal(items),
         quantity: items.reduce((sum, item) => sum + Number(item.quantity), 0),
         details,
-        updateDetails: (patch) =>
-          setDetails((current) => ({ ...current, ...patch })),
+        updateDetails: (patch) => {
+          if (!submitting.current)
+            setDetails((current) => ({ ...current, ...patch }));
+        },
         addDish,
         setQuantity,
         removeDish,
         submitOrder,
+        isSubmitting,
+        lastOrder,
       }}
     >
       {children}
