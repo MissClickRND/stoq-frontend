@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "prebuild": "node scripts/check-imports.mjs",
     "build": "vite build",
+    "check:imports": "node scripts/check-imports.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test:supply": "node --test src/entities/supply/lib/calculations.test.mjs src/entities/supply/lib/report.test.mjs",

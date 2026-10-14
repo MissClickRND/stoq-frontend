@@ -13,7 +13,7 @@ import { dishModes, dishStatisticItems } from "../model/config";
 
 import { AllDishes } from "./components/allDishes/AllDishes";
 import { StopList } from "./components/stopList/StopList";
-import { Recommendation } from "./components/recomendtation/Recomendtation";
+import { Recommendation } from "./components/Recomendtation/Recomendtation";
 import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
