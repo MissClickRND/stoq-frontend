@@ -1,0 +1,83 @@
+.composition {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.header {
+  padding: 16px 18px 10px;
+  flex-shrink: 0;
+}
+
+.title {
+  margin-top: 5px;
+  font-size: 15px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  margin-top: 6px;
+}
+
+.rows {
+  padding: 0 18px 16px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.rows:focus-visible {
+  outline: 2px solid var(--mantine-color-primary-6);
+  outline-offset: -2px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.table th {
+  padding: 8px 0;
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+}
+
+.table td {
+  padding: 10px 0;
+  border-top: 1px solid var(--mantine-color-default-border);
+  vertical-align: top;
+}
+
+.table td:first-child {
+  width: 46%;
+  padding-right: 8px;
+  overflow-wrap: anywhere;
+}
+
+.table td:not(:first-child),
+.table th:not(:first-child) {
+  text-align: right;
+}
+
+.table td:last-child,
+.table th:last-child {
+  padding-left: 10px;
+}
+
+.rowStatus {
+  font-size: 10px;
+  line-height: 1.3;
+  margin-top: 3px;
+}
+
+@media (max-width: 48em) {
+  .composition {
+    flex: none;
+    max-height: 260px;
+  }
+}

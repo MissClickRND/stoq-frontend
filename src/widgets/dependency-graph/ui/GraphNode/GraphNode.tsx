@@ -8,7 +8,7 @@ import classes from "./GraphNode.module.css";
 export const GraphNode = memo(function GraphNode({
   data,
 }: NodeProps<FlowNode>) {
-  const { node, dimmed, emphasized } = data;
+  const { node, dimmed, emphasized, detailed } = data;
   const status = statusPresentation[node.data.status];
   const isIngredient = node.type === "ingredient";
   const quantity =
@@ -17,9 +17,17 @@ export const GraphNode = memo(function GraphNode({
       : "";
   return (
     <div
-      className={`${isIngredient ? classes.ingredient : classes.dish} ${dimmed ? classes.dimmed : ""} ${emphasized ? classes.emphasized : ""}`}
+      className={`${isIngredient ? classes.ingredient : classes.dish} ${detailed ? classes.detailed : ""} ${dimmed ? classes.dimmed : ""} ${emphasized ? classes.emphasized : ""}`}
       style={{ "--node-color": status.color } as CSSProperties}
       tabIndex={0}
+      role={!isIngredient ? "button" : undefined}
+      onKeyDown={(event) => {
+        if (!isIngredient && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault();
+          event.stopPropagation();
+          data.onSelectDish?.(node.id);
+        }
+      }}
       onFocus={() => data.onInspect(node.id)}
       onBlur={() => data.onInspect(null)}
       aria-label={`${isIngredient ? "Ингредиент" : "Блюдо"}: ${node.data.name}, ${isIngredient ? `${quantity}, ${status.label}` : status.dishLabel}`}
@@ -32,10 +40,10 @@ export const GraphNode = memo(function GraphNode({
         </span>
       )}
       <span className={classes.content}>
-        <span className={classes.name}>{node.data.name}</span>
-        {/* <span className={classes.caption}>
-          {isIngredient ? quantity : status.dishLabel}
-        </span> */}
+        <span className={classes.name} title={node.data.name}>{node.data.name}</span>
+        {detailed && <span className={classes.caption}>
+          {isIngredient ? `В наличии: ${quantity}` : status.dishLabel}
+        </span>}
       </span>
       {[Position.Left, Position.Right, Position.Top, Position.Bottom].map(
         (position) => (

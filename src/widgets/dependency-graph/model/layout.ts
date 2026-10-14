@@ -12,8 +12,10 @@ import type {
 } from "@/entities/dependency-graph";
 import { reduceEdgeCrossings } from "./crossings.ts";
 
-export const getNodeSize = (type: DependencyNode["type"]) =>
-  type === "dish" ? { width: 216, height: 76 } : { width: 172, height: 44 };
+export const getNodeSize = (type: DependencyNode["type"], detailed = false) =>
+  type === "dish"
+    ? { width: detailed ? 232 : 216, height: detailed ? 96 : 76 }
+    : { width: detailed ? 208 : 172, height: detailed ? 70 : 44 };
 
 type LayoutNode = SimulationNodeDatum & {
   id: string;

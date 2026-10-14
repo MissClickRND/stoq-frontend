@@ -7,6 +7,8 @@ export type FlowNode = Node<
     dimmed: boolean;
     emphasized: boolean;
     onInspect: (id: string | null) => void;
+    detailed: boolean;
+    onSelectDish?: (id: string) => void;
   },
   "ingredient" | "dish"
 >;

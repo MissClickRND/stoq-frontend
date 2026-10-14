@@ -9,6 +9,7 @@ import type { DependencyGraph } from "@/entities/dependency-graph";
 import { getNodeSize, layoutGraph } from "./layout";
 import { statusPresentation } from "./config";
 import type { FlowNode } from "./type";
+import { layoutDishGraph } from "./explorer";
 
 function getNeighbors(graph: DependencyGraph, ids: Set<string>) {
   const related = new Set(ids);
@@ -24,6 +25,7 @@ function getNeighbors(graph: DependencyGraph, ids: Set<string>) {
 export function useDependencyFlow(
   graph: DependencyGraph,
   colorMode: "light" | "dark",
+  { detailed = false, onSelectDish }: { detailed?: boolean; onSelectDish?: (id: string) => void } = {},
 ) {
   const [search, setSearch] = useState("");
   const [query] = useDebouncedValue(
@@ -37,22 +39,23 @@ export function useDependencyFlow(
   > | null>(null);
   const [zoom, setZoom] = useState(1);
   const initialNodes = useMemo<FlowNode[]>(() => {
-    const positions = layoutGraph(graph);
+    const positions = detailed ? layoutDishGraph(graph) : layoutGraph(graph);
     return graph.nodes.map((node) => ({
       id: node.id,
       type: node.type,
       position: positions.get(node.id)!,
-      data: { node, dimmed: false, emphasized: false, onInspect: setHovered },
-      ...getNodeSize(node.type),
+      data: { node, dimmed: false, emphasized: false, onInspect: setHovered, detailed, onSelectDish },
+      ...getNodeSize(node.type, detailed),
       draggable: true,
       selectable: false,
       connectable: false,
     }));
-  }, [graph]);
+  }, [graph, detailed, onSelectDish]);
   const [localNodes, setLocalNodes, onNodesChange] =
     useNodesState<FlowNode>(initialNodes);
   useEffect(() => {
     setLocalNodes(initialNodes);
+    setHovered(null);
   }, [initialNodes, setLocalNodes]);
 
   const matches = useMemo(
@@ -76,7 +79,7 @@ export function useDependencyFlow(
     () => (hovered ? getNeighbors(graph, new Set([hovered])) : searchFocus),
     [graph, hovered, searchFocus],
   );
-  const hasFocus = Boolean(hovered || query);
+  const hasFocus = !detailed && Boolean(hovered || query);
   const nodes = useMemo(
     () =>
       localNodes.map((node) => ({
@@ -95,7 +98,7 @@ export function useDependencyFlow(
     const positions = new Map(
       localNodes.map((node) => [node.id, node.position]),
     );
-    const dishSize = getNodeSize("dish");
+    const dishSize = getNodeSize("dish", detailed);
     return graph.edges
       .filter(
         (edge) => positions.has(edge.source) && positions.has(edge.target),
@@ -111,11 +114,12 @@ export function useDependencyFlow(
           focused.has(edge.source) && focused.has(edge.target);
         return {
           ...edge,
+          data: { ...edge.data, showLabel: detailed || (hasFocus && highlighted) },
           type: "recipe",
           selectable: false,
           focusable: false,
           reconnectable: false,
-          sourceHandle:
+          sourceHandle: detailed ? "right" :
             Math.abs(dx) > Math.abs(dy)
               ? dx > 0
                 ? "right"
@@ -123,7 +127,7 @@ export function useDependencyFlow(
               : dy > 0
                 ? "bottom"
                 : "top",
-          targetHandle:
+          targetHandle: detailed ? "left" :
             Math.abs(dx) / halfWidth > Math.abs(dy) / halfHeight
               ? dx > 0
                 ? "left"
@@ -145,17 +149,23 @@ export function useDependencyFlow(
           ariaLabel: `Требуется ${edge.data.required} ${edge.data.unit}: ${statusPresentation[edge.data.status].label}`,
         };
       });
-  }, [graph, localNodes, focused, hasFocus, colorMode]);
+  }, [graph, localNodes, focused, hasFocus, colorMode, detailed]);
 
   useEffect(() => {
     if (!instance || (query && !matches.size)) return;
-    void instance.fitView({
-      nodes: query ? [...searchFocus].map((id) => ({ id })) : undefined,
-      padding: 0.12,
-      maxZoom: query ? 1.2 : 1,
-      duration: 250,
+    let secondFrame = 0;
+    const frame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => {
+        void instance.fitView({
+          nodes: query ? [...searchFocus].map((id) => ({ id })) : undefined,
+          padding: detailed ? 0.2 : 0.12,
+          maxZoom: query ? 1.2 : 1,
+          duration: 250,
+        });
+      });
     });
-  }, [instance, query, matches, searchFocus]);
+    return () => { cancelAnimationFrame(frame); cancelAnimationFrame(secondFrame); };
+  }, [instance, query, matches, searchFocus, initialNodes, detailed]);
 
   return {
     search,

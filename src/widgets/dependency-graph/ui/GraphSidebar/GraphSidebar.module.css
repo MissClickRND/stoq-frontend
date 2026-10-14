@@ -1,0 +1,98 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  min-height: 0;
+  flex-shrink: 0;
+  border-right: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-body);
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 18px 10px;
+  flex-shrink: 0;
+}
+
+.dishList {
+  flex: 0 1 25%;
+  min-height: 100px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  padding: 0 10px 10px;
+}
+
+.dishList.expanded {
+  flex: 1;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dish {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 10px;
+  border-radius: 10px;
+}
+
+.dish:hover {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7));
+}
+
+.dish[data-selected] {
+  background: var(--mantine-color-primary-light);
+}
+
+.dish:focus-visible {
+  outline: 2px solid var(--mantine-color-primary-6);
+  outline-offset: -2px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  margin-top: 6px;
+}
+
+.dishInfo {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.empty,
+.hint {
+  padding: 12px 18px;
+}
+
+.hint {
+  flex-shrink: 0;
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
+@media (max-width: 64em) {
+  .sidebar { width: 260px; }
+}
+
+@media (max-width: 48em) {
+  .sidebar {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--mantine-color-default-border);
+  }
+
+  .dishList,
+  .dishList.expanded {
+    flex: none;
+    max-height: 200px;
+  }
+}

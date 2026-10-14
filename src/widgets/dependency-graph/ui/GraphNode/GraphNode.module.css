@@ -10,6 +10,23 @@
     box-shadow 150ms ease;
   cursor: grab;
 }
+.dish { cursor: pointer; }
+.ingredient.detailed {
+  width: 208px;
+  height: 70px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--node-color) 35%, transparent);
+  border-radius: 12px;
+  background: light-dark(#fff, var(--mantine-color-dark-7));
+}
+.dish.detailed { width: 232px; height: 96px; }
+.detailed .name { font-size: 14px; }
+.detailed .ingredientHandle {
+  left: auto;
+  right: -1px;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
 
 .ingredient {
   width: 172px;
@@ -51,6 +68,10 @@
   min-width: 0;
 }
 .name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   font-size: 16px;
   font-weight: 600;
   line-height: 1.25;
