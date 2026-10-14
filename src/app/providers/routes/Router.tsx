@@ -1,3 +1,6 @@
+import { GuestRoutesLayout } from "@/widgets/guest-layout";
+import DashboardPage from "@/pages/dashboard/ui/DashboardPage";
+import { TestPanel } from "@/features/test-panel";
 import {
   createBrowserRouter,
   Navigate,
@@ -6,7 +9,6 @@ import {
 import { Error404 } from "@/pages/errors/Error404";
 import { LoginPage } from "@/pages/login";
 import { RegisterPage, RestaurantRegisterPage } from "@/pages/register";
-import { AnalyticsLayout, DependencyMapPage } from "@/pages/analytics";
 import {
   SupplyPage,
   CreateSupplyPage,
@@ -53,15 +55,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/analytics",
-        element: <AnalyticsLayout />,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="/analytics/dashboard" replace />,
-          },
-          { path: "dashboard", element: <DashboardPage /> },
-          { path: "dependencies", element: <DependencyMapPage /> },
-        ],
+        element: <Navigate to="/analytics/dashboard" replace />,
+      },
+      { path: "/analytics/dashboard", element: <DashboardPage /> },
+      {
+        path: "/analytics/dependencies",
+        element: <Navigate to="/dishes?mode=graph" replace />,
       },
       {
         path: "/supply",
@@ -116,12 +115,10 @@ const router = createBrowserRouter([
       { path: "/register/restaurant", element: <RestaurantRegisterPage /> },
     ],
   },
+  { path: "/test", element: <TestPanel /> },
   { path: "*", element: <Error404 /> },
 ]);
 
 export function Router() {
   return <RouterProvider router={router} />;
 }
-
-import { GuestRoutesLayout } from "@/widgets/guest-layout";
-import DashboardPage from "@/pages/dashboard/ui/DashboardPage";

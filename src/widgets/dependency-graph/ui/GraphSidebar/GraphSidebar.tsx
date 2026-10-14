@@ -1,8 +1,8 @@
 import {
   Badge,
   Group,
+  ScrollArea,
   SegmentedControl,
-  Switch,
   Text,
   TextInput,
   UnstyledButton,
@@ -73,7 +73,8 @@ export function GraphSidebar({
         </Group>
       </div>
 
-      <div
+      <ScrollArea
+        type="always"
         className={`${classes.dishList} ${mode === "all" || !selectedDish ? classes.expanded : ""}`}
       >
         {dishes.length ? (
@@ -113,7 +114,7 @@ export function GraphSidebar({
             {search || "Блюд пока нет"}
           </Text>
         )}
-      </div>
+      </ScrollArea>
 
       {mode === "dish" && selectedDish && (
         <DishComposition graph={graph} dish={selectedDish} />

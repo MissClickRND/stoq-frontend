@@ -7,6 +7,7 @@ import {
   IconChartBar,
   IconCrown,
   IconPackage,
+  IconTopologyStar3,
   type TablerIcon,
 } from "@tabler/icons-react";
 import type { DishPriority } from "@/entities/dish";
@@ -16,6 +17,7 @@ export const dishModes: { value: DishMode; label: string; icon: TablerIcon }[] =
     { value: "all", label: "Все блюда", icon: IconSoup },
     { value: "stop", label: "Стоп-лист", icon: IconPlayerPauseFilled },
     { value: "recommended", label: "Горячие предложения", icon: IconCrown },
+    { value: "graph", label: "Граф связей", icon: IconTopologyStar3 },
   ];
 
 export const dishColumns = {

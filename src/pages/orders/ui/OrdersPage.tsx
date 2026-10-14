@@ -11,7 +11,6 @@ import {
 import { apiErrorMessage } from "@/shared/lib/api-error";
 import {
   IconCheck,
-  IconClock,
   IconCoins,
   IconPlus,
   IconShoppingCart,
@@ -19,14 +18,9 @@ import {
   IconCancel,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { TableSummary } from "@/shared/ui/table-summary/index";
-import {
-  useOrders,
-  getTodayOrderStatistics,
-  formatOrderMoney,
-} from "@/entities/order";
+import { useOrders } from "@/entities/order";
 
 import { OrdersTable } from "./components/OrdersTable";
 import { GuestOrderQrModal } from "@/features/share-guest-menu";

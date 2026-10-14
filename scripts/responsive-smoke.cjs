@@ -22,8 +22,8 @@ const dependencyGraph = { nodes: [
   { id: 'product:1', type: 'ingredient', data: { name: product.name, quantity: 10, unit: 'кг', status: 'available' } },
   { id: 'dish:1', type: 'dish', data: { name: dish.name, status: 'available' } },
 ], edges: [{ id: 'recipe:1', source: 'product:1', target: 'dish:1', data: { required: 0.5, unit: 'кг', status: 'available' } }] };
-const routes = ['/analytics/dashboard', '/analytics/ingredients', '/analytics/dependencies', '/store', '/store/inventory',
-  '/supply', '/supply/new', '/supply/1', '/dishes', '/dishes/1', '/dishes?mode=stop', '/dishes?mode=recommended',
+const routes = ['/analytics/dashboard', '/analytics/ingredients', '/store', '/store/inventory',
+  '/supply', '/supply/new', '/supply/1', '/dishes', '/dishes/1', '/dishes?mode=stop', '/dishes?mode=recommended', '/dishes?mode=graph',
   '/orders', '/orders/new', '/logs', '/admin-panel', '/admin-panel?tab=establishment', '/admin-panel?tab=invitations',
   '/login', '/register/employee', '/register/restaurant', '/order/new/guest/restaurant-1',
   '/order/new/guest/restaurant-1/dish/1', '/order/new/guest/restaurant-1/dish/2',

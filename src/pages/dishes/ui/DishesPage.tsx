@@ -18,6 +18,7 @@ import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
 import { useGetDishStatisticQuery } from "@/entities/statistic";
+import { DependencyGraph } from "@/widgets/dependency-graph";
 
 export function DishesPage() {
   const [searchValue, setSearchValue] = useState("");
@@ -28,7 +29,9 @@ export function DishesPage() {
   const [params, setParams] = useSearchParams();
   const requestedMode = params.get("mode");
   const mode =
-    requestedMode === "stop" || requestedMode === "recommended"
+    requestedMode === "stop" ||
+    requestedMode === "recommended" ||
+    requestedMode === "graph"
       ? requestedMode
       : "all";
   const search = query.trim();
@@ -41,11 +44,12 @@ export function DishesPage() {
   const stopList = useStopList(search, { skip: mode !== "stop" });
   const recommendations = useDishRecommendations();
   const activeQuery = mode === "all" ? allDishes : stopList;
+  const isDishTable = mode === "all" || mode === "stop";
   const isLoading =
-    mode !== "recommended" &&
+    isDishTable &&
     (activeQuery.isLoading ||
       (activeQuery.isFetching && !activeQuery.currentData));
-  const isError = mode !== "recommended" && activeQuery.isError;
+  const isError = isDishTable && activeQuery.isError;
   const count =
     mode === "all"
       ? (allDishes.currentData?.length ?? 0)
@@ -75,7 +79,8 @@ export function DishesPage() {
         searchTitle="Поиск блюд по названию"
         searchValue={searchValue}
         setSearchValue={setSearchValue}
-        disableSearch={mode === "recommended"}
+        disableSearch={mode === "recommended" || mode === "graph"}
+        disableStatistics={mode === "graph"}
         statisticData={statistics}
         topSection={{
           items: dishModes,
@@ -87,11 +92,7 @@ export function DishesPage() {
         {mode === "recommended" && !recommendations.isAvailable && (
           <Text c="dimmed">Рекомендации пока недоступны.</Text>
         )}
-        {isLoading && (
-          <Center w="100%" h="100%" role="status" aria-label="Загрузка блюд">
-            <Loader />
-          </Center>
-        )}
+
         {isError && (
           <Alert color="red" role="alert">
             {mode === "stop"
@@ -106,28 +107,44 @@ export function DishesPage() {
             </Button>
           </Alert>
         )}
-        <TableSummary
-          count={count}
-          description="Блюд в текущей таблице"
-          action={
-            <Button
-              size="lg"
-              leftSection={<IconPlus size={20} />}
-              onClick={() => setAdding(true)}
-            >
-              Добавить блюдо
-            </Button>
-          }
-        />
-        {!isLoading &&
-          !isError &&
-          (mode === "all" ? (
-            <AllDishes dishes={allDishes.currentData ?? []} />
-          ) : mode === "stop" ? (
-            <StopList stopListDishes={stopList.dishes} />
-          ) : (
-            <Recommendation dishes={recommendations.dishes} />
-          ))}
+        {mode === "graph" ? (
+          <DependencyGraph />
+        ) : (
+          <>
+            <TableSummary
+              count={count}
+              description="Блюд в текущей таблице"
+              action={
+                <Button
+                  size="lg"
+                  leftSection={<IconPlus size={20} />}
+                  onClick={() => setAdding(true)}
+                >
+                  Добавить блюдо
+                </Button>
+              }
+            />
+            {isLoading && (
+              <Center
+                w="100%"
+                h="100%"
+                role="status"
+                aria-label="Загрузка блюд"
+              >
+                <Loader />
+              </Center>
+            )}
+            {!isLoading &&
+              !isError &&
+              (mode === "all" ? (
+                <AllDishes dishes={allDishes.currentData ?? []} />
+              ) : mode === "stop" ? (
+                <StopList stopListDishes={stopList.dishes} />
+              ) : (
+                <Recommendation dishes={recommendations.dishes} />
+              ))}
+          </>
+        )}
       </DefaultPageLayout>
       <DishFormModal
         opened={adding}

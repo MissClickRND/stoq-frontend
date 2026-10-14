@@ -16,9 +16,13 @@ export function LowStockSection({ products }: { products: LowStockProduct[] }) {
           <Title order={2} id="dashboard-stock-title" className={classes.title}>
             Скоро закончатся
           </Title>
-          <Text size="sm" c="dimmed">Продукты с низким остатком</Text>
+          <Text size="sm" c="dimmed">
+            Продукты с низким остатком
+          </Text>
         </div>
-        <Badge variant="light" color="orange">{products.length}</Badge>
+        <Badge variant="light" color="orange">
+          {products.length}
+        </Badge>
       </Group>
 
       <div
@@ -29,13 +33,16 @@ export function LowStockSection({ products }: { products: LowStockProduct[] }) {
       >
         {products.length ? (
           <ul className={classes.list}>
-            {products.map((item) => <LowStockProductCard key={item.product.id} item={item} />)}
+            {products.map((item) => (
+              <LowStockProductCard key={item.product.id} item={item} />
+            ))}
           </ul>
         ) : (
-          <Text size="sm" c="dimmed" className={classes.empty}>Продуктов с низким остатком нет</Text>
+          <Text size="sm" c="dimmed" className={classes.empty}>
+            Продуктов с низким остатком нет
+          </Text>
         )}
       </div>
-      <Text size="xs" c="dimmed" className={classes.footer}>Демо-данные об остатках</Text>
     </Paper>
   );
 }

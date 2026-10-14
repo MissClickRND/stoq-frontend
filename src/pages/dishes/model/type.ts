@@ -1,1 +1,1 @@
-export type DishMode = "all" | "stop" | "recommended";
+export type DishMode = "all" | "stop" | "recommended" | "graph";

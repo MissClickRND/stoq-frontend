@@ -44,7 +44,11 @@ const nodeTypes = { ingredient: GraphNode, dish: GraphNode };
 const edgeTypes = { recipe: RecipeConnection };
 const legendStatuses = ["available", "low_stock", "unavailable"] as const;
 
-export function DependencyGraph() {
+export function DependencyGraph({
+  initialDishId,
+}: {
+  initialDishId?: string;
+}) {
   const { graph, isLoading, isFetching, isError, error, refetch } =
     useDependencyGraph();
   const colorMode = useComputedColorScheme("light");
@@ -52,8 +56,13 @@ export function DependencyGraph() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const dishes = useMemo(() => getExplorerDishes(graph), [graph]);
   useEffect(() => {
-    if (selectedId === null && dishes[0]) setSelectedId(dishes[0].id);
-  }, [selectedId, dishes]);
+    if (selectedId !== null || !dishes.length) return;
+    setSelectedId(
+      dishes.some((dish) => dish.id === initialDishId)
+        ? initialDishId!
+        : dishes[0].id,
+    );
+  }, [initialDishId, selectedId, dishes]);
   const selectedDish =
     selectedId === null
       ? dishes[0]
