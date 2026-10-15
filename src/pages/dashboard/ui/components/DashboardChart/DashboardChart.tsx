@@ -1,7 +1,7 @@
 import { Center, Loader, Paper, SegmentedControl, Text } from "@mantine/core";
 import { LineChart } from "@mantine/charts";
 import { useState } from "react";
-import type { DashboardPoint } from "../../../model/calculations";
+import type { DashboardPoint, DashboardStatistic } from "@/entities/statistic";
 import classes from "./DashboardChart.module.css";
 
 const metrics = {
@@ -20,24 +20,21 @@ const numberFormat = new Intl.NumberFormat("ru-RU", {
 });
 
 export function DashboardChart({
-  points,
+  points, summary,
   loading,
   unavailable,
 }: {
-  points: DashboardPoint[];
+  points: DashboardPoint[]; summary?: DashboardStatistic["summary"];
   loading: boolean;
   unavailable: boolean;
 }) {
   const [selectedTab, setSelectedTab] = useState<Metric>("revenue");
   const metric = metrics[selectedTab];
   const data = points.map((point) => ({
-    date: point.date,
+    date: point.label,
     value: point[selectedTab],
   }));
-  const total =
-    unavailable || data.some((point) => point.value === null)
-      ? null
-      : data.reduce((sum, point) => sum + point.value!, 0);
+  const total = unavailable ? null : summary?.[selectedTab] ?? null;
   const formatValue = (value: number) =>
     `${numberFormat.format(value)}${metric.unit ? ` ${metric.unit}` : ""}`;
 

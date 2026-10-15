@@ -7,6 +7,7 @@ export type IStoreProduct = {
   supplyId: number;
   productId: number;
   Quantity: number;
+  productQuantity?: number;
   availableQuantity?: number | string;
   price: number | null;
   totalPrice: number | null;
@@ -29,5 +30,8 @@ export type IInventoryStoreRequest = {
   items: {
     batchId: number;
     quantity: number;
+    remove?: boolean;
   }[];
 };
+
+export type IInventoryStoreReport = { batches: IStoreProduct[]; statistics: { checked: number; updated: number; deleted: number; unchanged: number }; completedAt: string };

@@ -20,11 +20,11 @@ export const employeesApi = baseApi.injectEndpoints({
     }),
     changeEmployeeRole: build.mutation<unknown, { id: string; role: Exclude<UserRole, "WAIT_CONFIRM"> }>({
       query: ({ id, role }) => ({ url: `/auth/admin/users/${id}/role`, method: "PATCH", body: { role } }),
-      invalidatesTags: [{ type: "User", id: "EMPLOYEES" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "EMPLOYEES" }],
     }),
     setEmployeeBlocked: build.mutation<unknown, { id: string; blocked: boolean }>({
       query: ({ id, blocked }) => ({ url: `/auth/admin/users/${id}/block`, method: "PATCH", body: { blocked } }),
-      invalidatesTags: [{ type: "User", id: "EMPLOYEES" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "EMPLOYEES" }],
     }),
   }),
 });

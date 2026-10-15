@@ -1,3 +1,5 @@
+import { useGetAdminStatisticQuery, statisticsQueryOptions } from "@/entities/statistic";
+import { StatisticsFeedback } from "@/shared/ui/statistics-feedback";
 import { createElement, useState } from "react";
 import { Alert, Button, Group, Loader, Stack } from "@mantine/core";
 import { IconUserPlus } from "@tabler/icons-react";
@@ -28,17 +30,12 @@ export function AdminPanelPage() {
       .toLocaleLowerCase("ru-RU")
       .includes(query),
   );
-  const counts = {
-    employees: admin.employees.length,
-    invitations: admin.invitations.length,
-    requests: admin.employees.filter((item) => item.status === "pending")
-      .length,
-    admins: admin.employees.filter((item) => item.role === "ADMIN").length,
-  };
+  const statistic = useGetAdminStatisticQuery(undefined, statisticsQueryOptions);
+  const counts = statistic.isError ? undefined : statistic.currentData;
   const statisticData = adminStatistics.map((item) => ({
     title: item.title,
     description: item.description,
-    value: (item.key === "invitations" ? admin.invitationsQuery.isError || admin.invitationsQuery.isLoading : admin.employeesQuery.isError || admin.employeesQuery.isLoading) ? "—" : counts[item.key],
+    value: counts?.[item.key] ?? "—",
     color: item.color,
     icon: createElement(item.icon),
   }));
@@ -70,6 +67,7 @@ export function AdminPanelPage() {
       }}
     >
       <Stack>
+      <StatisticsFeedback query={statistic} />
       {admin.actionError && <Alert color="red" role="alert">{admin.actionError}</Alert>}
       {currentQuery.isError &&
         <Alert color="red" role="alert"><Group justify="space-between">

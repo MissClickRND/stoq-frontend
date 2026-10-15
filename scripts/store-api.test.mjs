@@ -160,12 +160,13 @@ test("valid inventory always calls the mutation even without a prepared flag and
   const requests = [];
   const report = await saveInventoryDraft(draft, "User", async request => {
     requests.push(request);
-    return [{ ...batch, Quantity: 4 }];
+    return { batches: [{ ...batch, Quantity: 4 }], statistics: { checked: 12, updated: 7, deleted: 2, unchanged: 3 }, completedAt: "2026-10-15T12:00:00.000Z" };
   });
-  assert.deepEqual(requests, [{ items: [{ batchId: 27, quantity: 4 }] }]);
+  assert.deepEqual(requests, [{ items: [{ batchId: 27, quantity: 4, remove: false }], includeReport: true }]);
   assert.equal(report.entries[0].actual, 4);
   assert.equal(report.completedBy, "User");
-  assert.equal(report.counts.updated, 1);
+  assert.deepEqual(report.counts, { checked: 12, updated: 7, deleted: 2, unchanged: 3 });
+  assert.equal(report.completedAt, "2026-10-15T12:00:00.000Z");
   await assert.rejects(saveInventoryDraft(draft, "User", async () => { throw new Error("Server failure"); }), /Server failure/);
   let called = false;
   for (const invalid of [{ ...draft, date: null }, { ...draft, entries: [] }, { ...draft, entries: [{ product: batch, actual: "", remove: false }] }]) {

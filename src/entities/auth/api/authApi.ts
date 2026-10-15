@@ -26,11 +26,11 @@ export const authApi = baseApi.injectEndpoints({
     }),
     approveUser: build.mutation<unknown, { id: number; role: EmployeeRole }>({
       query: ({ id, role }) => ({ url: "/auth/admin/users/" + id + "/approve", method: "PATCH", body: { role } }),
-      invalidatesTags: [{ type: "User", id: "PENDING" }, { type: "User", id: "EMPLOYEES" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "PENDING" }, { type: "User", id: "EMPLOYEES" }],
     }),
     deleteEmployee: build.mutation<{ message: string }, number>({
       query: id => ({ url: "/auth/admin/users/" + id, method: "DELETE" }),
-      invalidatesTags: [{ type: "User", id: "PENDING" }, { type: "User", id: "EMPLOYEES" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "PENDING" }, { type: "User", id: "EMPLOYEES" }],
     }),
     updateRestaurant: build.mutation<RestaurantResponse, Partial<Pick<RestaurantResponse, "name" | "address" | "email" | "phone">>>({
       query: body => ({ url: "/auth/admin/restaurant", method: "PATCH", body }),

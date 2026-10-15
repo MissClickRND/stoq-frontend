@@ -7,7 +7,7 @@ import { inventorySocketCache } from "./socket-cache";
 import { matchesStoreProduct } from "../lib/search";
 import type {
   IExpiringStoreProduct,
-  IInventoryStoreRequest,
+  IInventoryStoreRequest, IInventoryStoreReport,
   IStoreProduct,
 } from "../model/type";
 
@@ -40,13 +40,21 @@ export const storeApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Store", id: "LIST" }],
     }),
 
+    previewInventory: build.query<IInventoryStoreReport["statistics"], IInventoryStoreRequest>({
+      query: body => ({ url: "/inventory/preview", method: "POST", body }),
+      providesTags: ["Store"],
+    }),
+    inventoryStoreReport: build.mutation<IInventoryStoreReport, IInventoryStoreRequest & { includeReport: true }>({
+      query: body => ({ url: "/inventory", method: "PUT", body }),
+      invalidatesTags: ["Store", "Dish", "Statistic"],
+    }),
     inventoryStore: build.mutation<IStoreProduct[], IInventoryStoreRequest>({
       query: (data) => ({
         url: "/inventory",
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Store", "Dish"],
+      invalidatesTags: ["Store", "Dish", "Statistic"],
     }),
 
     writeOffStoreBatch: build.mutation<
@@ -61,7 +69,7 @@ export const storeApi = baseApi.injectEndpoints({
         url: `/inventory/${batchId}/write-off`,
         method: "POST",
       }),
-      invalidatesTags: ["Store", "Dish", "Supply"],
+      invalidatesTags: ["Store", "Dish", "Supply", "Statistic"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({
@@ -81,6 +89,6 @@ export const {
   useGetStoreProductByIdQuery,
   useGetStoreQuery,
   useGetExpiringStoreQuery,
-  useInventoryStoreMutation,
+  useInventoryStoreMutation, useInventoryStoreReportMutation, usePreviewInventoryQuery,
   useWriteOffStoreBatchMutation,
 } = storeApi;

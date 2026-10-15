@@ -1,3 +1,7 @@
+import { skipToken } from "@reduxjs/toolkit/query";
+import { usePreviewInventoryQuery } from "@/entities/store";
+import { toInventoryPreviewRequest } from "@/entities/inventory";
+import { StatisticsFeedback } from "@/shared/ui/statistics-feedback";
 import { Button, Group, Text } from "@mantine/core";
 import { IconArrowLeft, IconCheck } from "@tabler/icons-react";
 import { useSelector } from "react-redux";
@@ -15,6 +19,7 @@ import classes from "../../classes/Inventory.module.css";
 
 export function InventoryConfirmationPage() {
   const { entries, ready, date, save, isSaving } = useInventory();
+  const preview = usePreviewInventoryQuery(ready && entries.length ? toInventoryPreviewRequest(entries) : skipToken, { refetchOnMountOrArgChange: true, pollingInterval: 30000 });
   const navigate = useNavigate();
   const { showSuccess, showError } = useNotifications("top-right");
   const name = useSelector((state: RootState) => state.user.name);
@@ -29,7 +34,7 @@ export function InventoryConfirmationPage() {
       title="Подтверждение инвентаризации"
       subtitle={`Проверьте изменения перед сохранением · ${dayjs(date).format("DD.MM.YYYY")}`}
       disableSearch
-      statisticData={getInventoryConfirmationStatistics(entries)}
+      statisticData={getInventoryConfirmationStatistics(preview.isError ? undefined : preview.currentData)}
       beforeStatistics={<InventorySteps active={1} />}
       headerTopSection={
         <PageBreadcrumbs
@@ -39,6 +44,7 @@ export function InventoryConfirmationPage() {
         />
       }
     >
+      <StatisticsFeedback query={preview} />
       <Text size="sm" c="dimmed" className={classes.fixed}>
         Остатки и списания будут применены после нажатия «Сохранить». Для
         исправления вернитесь к проверке через хлебные крошки.
@@ -57,6 +63,7 @@ export function InventoryConfirmationPage() {
         </Button>
         <Button
           loading={isSaving}
+          disabled={!preview.currentData || preview.isError || preview.isFetching}
           size="lg"
           leftSection={<IconCheck size={20} />}
           onClick={async () => {

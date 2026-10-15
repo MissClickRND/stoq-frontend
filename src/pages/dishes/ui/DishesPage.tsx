@@ -1,3 +1,4 @@
+import { StatisticsFeedback } from "@/shared/ui/statistics-feedback";
 import { createElement, useState } from "react";
 import { Alert, Button, Center, Loader } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
@@ -17,7 +18,7 @@ import { RecommendationPage } from "./components/recommendation/Recommendation";
 import { DishFormModal } from "@/features/dish-form";
 import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
-import { useGetDishStatisticQuery } from "@/entities/statistic";
+import { useGetDishStatisticQuery, statisticsQueryOptions } from "@/entities/statistic";
 import { DependencyGraph } from "@/widgets/dependency-graph";
 import { selectUser, fullAccessRoles } from "@/entities/user";
 import { useAppSelector } from "@/shared/lib";
@@ -26,7 +27,8 @@ export function DishesPage() {
   const [searchValue, setSearchValue] = useState("");
   const user = useAppSelector(selectUser);
   const canViewStatistics = Boolean(user.role && fullAccessRoles.includes(user.role));
-  const { data } = useGetDishStatisticQuery(undefined, { skip: !canViewStatistics });
+  const statistic = useGetDishStatisticQuery(undefined, { ...statisticsQueryOptions, skip: !canViewStatistics });
+  const data = statistic.isError ? undefined : statistic.currentData;
 
   const [query] = useDebouncedValue(searchValue, 200);
   const [adding, setAdding] = useState(false);
@@ -74,7 +76,7 @@ export function DishesPage() {
   const statistics = dishStatisticItems.map((item) => ({
     title: item.title,
     description: item.description,
-    value: counts[item.key],
+    value: counts[item.key] ?? "—",
     color: item.color,
     icon: createElement(item.icon),
   }));
@@ -97,6 +99,7 @@ export function DishesPage() {
           ariaLabel: "Режим отображения блюд",
         }}
       >
+        {canViewStatistics && <StatisticsFeedback query={statistic} />}
         {isError && (
           <Alert color="red" role="alert">
             {mode === "stop"

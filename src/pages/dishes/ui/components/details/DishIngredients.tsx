@@ -22,7 +22,7 @@ export function DishIngredients({ dish }: { dish: Dish }) {
           <Table.Tbody>
             {dish.ingredients.map((item) => {
               const expired = isIngredientExpired(item);
-              const available = !expired && item.stock >= item.quantity;
+              const available = !expired && item.portions != null && item.portions > 0;
               return (
                 <Table.Tr key={item.id}>
                   <Table.Td>
@@ -42,11 +42,7 @@ export function DishIngredients({ dish }: { dish: Dish }) {
                   </Table.Td>
                   <Table.Td>
                     <Text size="lg" fw={700}>
-                      {formatMoney(
-                        item.costPerUnit == null
-                          ? null
-                          : item.quantity * item.costPerUnit,
-                      )}
+                      {formatMoney(item.cost ?? null)}
                     </Text>
                   </Table.Td>
                   <Table.Td>

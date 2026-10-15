@@ -10,7 +10,7 @@ const numberFormat = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }
 export function LowStockProductCard({ item }: { item: LowStockProduct }) {
   const { product, quantity, imageUrl } = item;
   const [failedSource, setFailedSource] = useState<string>();
-  const unit = product.unit.shortName;
+  const unit = product.unit?.shortName ?? "";
 
   return (
     <li className={classes.card}>

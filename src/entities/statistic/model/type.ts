@@ -1,14 +1,13 @@
-export type IDishStatisticResponse = {
-  total: number;
-  active: number;
-  lowStock: number;
-  stopList: number;
-};
-
-export type IOrderStatisticResponse = {
-  total: number;
-  completed: number;
-  cancelled: number;
-  active: number;
-  revenue: string;
-};
+export type IDishStatisticResponse = { total: number; active: number; lowStock: number; stopList: number };
+export type IOrderStatisticResponse = { total: number; completed: number; cancelled: number; active: number; revenue: number | string | null };
+export type StatisticUnit = { id: number; name: string; shortName: string };
+export type StatisticProduct = { id: number; name: string; unit: StatisticUnit | null };
+export type DashboardPoint = { date: string; label: string; revenue: number | null; earning: number | null; orders: number };
+export type DashboardStatistic = { days: number; timezone: string; from: string; to: string; summary: { revenue: number | null; earning: number | null; averageCheck: number | null; orders: number; completed: number }; points: DashboardPoint[] };
+export type DishDetailsStatistic = { costPrice: number | null; profit: number | null; markup: number | null; dishId: number; today: number; week: number; popularity: number | null; sales: { date: string; label: string; quantity: number; revenue: number | null }[]; revenue: number | null; ingredientCost: number | null; earning: number | null; availablePortions: number; status: string };
+export type ShortageStatistic = { trackingStartedAt: string | null; items: { productId: number; name: string; unit: StatisticUnit | null; incidents: number; affectedDishes: number; lastOccurredAt: string }[] };
+export type InventoryStatistic = { totalProducts: number; depletedProducts: number; expiringProducts: number; spoiledProducts: number; lowStockProducts: { product: StatisticProduct; quantity: number }[] };
+export type WriteOff = { batchId: number; productId: number; product: StatisticProduct; writtenOffQuantity: number | null; writtenOffAt: string | null; expiresAt: string; reason: 'EXPIRED' };
+export type SupplyStatistic = { month: string; count: number; products: number; total: number | null; average: number | null };
+export type SupplyDetailsStatistic = { id: number; supplyNumber: string; receivedAt: string; positions: number; total: number | null };
+export type AdminStatistic = { employees: number; invitations: number; requests: number; admins: number };

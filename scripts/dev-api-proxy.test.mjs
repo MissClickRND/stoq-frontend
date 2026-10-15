@@ -49,3 +49,10 @@ test('proxy strips the API prefix only and forwards WebSocket with the same targ
   assert.equal(proxy['/socket.io'].ws, true);
   assert.throws(() => createDevApiProxy('/api'), /HTTP/);
 });
+
+test('public HTTPS deployment keeps its /api prefix and sockets use the origin', () => {
+  const proxy = createDevApiProxy('https://lyaguh.site/api');
+  const api = proxy['^/api(?:/|$)'];
+  assert.equal(new URL(api.target + api.rewrite('/api/auth/status')).pathname, '/api/auth/status');
+  assert.equal(proxy['/socket.io'].target, 'https://lyaguh.site');
+});

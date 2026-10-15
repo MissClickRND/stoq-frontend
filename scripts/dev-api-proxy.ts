@@ -34,6 +34,6 @@ export function createDevApiProxy(target: string): Record<string, ProxyOptions> 
         });
       },
     },
-    "/socket.io": { target, changeOrigin: true, ws: true },
+    "/socket.io": { target: url.origin, changeOrigin: true, ws: true },
   };
 }

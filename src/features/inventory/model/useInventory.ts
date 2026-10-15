@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import {
   storeApi,
   useGetStoreQuery,
-  useInventoryStoreMutation,
+  useInventoryStoreReportMutation,
 } from "@/entities/store";
 import {
   inventoryEntryError,
@@ -21,7 +21,7 @@ export function useInventory() {
     { search: "" },
     { refetchOnMountOrArgChange: true },
   );
-  const [inventoryStore, { isLoading: isSaving }] = useInventoryStoreMutation();
+  const [inventoryStore, { isLoading: isSaving }] = useInventoryStoreReportMutation();
 
   useEffect(() => {
     if (!draft.initialized && isSuccess && !isFetching && currentData)

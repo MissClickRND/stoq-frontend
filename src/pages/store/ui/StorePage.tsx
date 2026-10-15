@@ -1,3 +1,6 @@
+import { useGetInventoryStatisticQuery, statisticsQueryOptions } from "@/entities/statistic";
+import { StatisticsFeedback } from "@/shared/ui/statistics-feedback";
+import { WriteOffsModal } from "./components/WriteOffsModal";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
@@ -5,7 +8,7 @@ import StoreTableSection from "./components/StoreTableSection";
 import { storeStatisticData } from "../model/config";
 import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import { TableSummary } from "@/shared/ui/table-summary";
-import { useGetStoreQuery, getShelfLifeDays, soonExpiredDays } from "@/entities/store";
+import { useGetStoreQuery } from "@/entities/store";
 import { IconClipboardCheck, IconCubePlus } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import { useStartInventory } from "@/features/inventory";
@@ -13,6 +16,8 @@ import { CreateProductModal } from "@/widgets/create-product-modal";
 
 export default function StorePage() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [writeOffsOpened, writeOffs] = useDisclosure(false);
+  const statistic = useGetInventoryStatisticQuery(undefined, statisticsQueryOptions);
   const startInventory = useStartInventory();
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearchValue] = useDebouncedValue(searchValue, 200);
@@ -21,18 +26,12 @@ export default function StorePage() {
   const filtered = useGetStoreQuery({ search }, { skip: !search });
   const listing = search ? filtered : all;
   const products = listing.currentData ?? [];
-  const counts = [
-    all.currentData?.length ?? 0,
-    all.currentData?.filter((product) => product.status === "DEPLETED").length ?? 0,
-    all.currentData?.filter((product) => {
-      const days = getShelfLifeDays(product.expiresAt);
-      return Date.parse(product.expiresAt) > Date.now() && days !== null && days < soonExpiredDays;
-    }).length ?? 0,
-    all.currentData?.filter((product) => Date.parse(product.expiresAt) <= Date.now()).length ?? 0,
-  ];
+  const data = statistic.isError ? undefined : statistic.currentData;
+  const counts = [data?.totalProducts, data?.depletedProducts, data?.expiringProducts, data?.spoiledProducts];
 
   return (
     <>
+      <WriteOffsModal opened={writeOffsOpened} onClose={writeOffs.close} />
       <CreateProductModal opened={opened} onClose={close} />
       <DefaultPageLayout
         title="Склад"
@@ -42,9 +41,10 @@ export default function StorePage() {
         setSearchValue={setSearchValue}
         statisticData={storeStatisticData.map((item, index) => ({
           ...item,
-          value: counts[index],
+          value: counts[index] ?? "—",
         }))}
       >
+        <StatisticsFeedback query={statistic} />
         <TableSummary
           count={products.length}
           description="На текущий момент"
@@ -69,6 +69,7 @@ export default function StorePage() {
               >
                 Провести инвентаризацию
               </Button>
+              <Button variant="default" size="lg" onClick={writeOffs.open}>Просмотреть список продуктов для списания</Button>
             </Group>
           }
         />

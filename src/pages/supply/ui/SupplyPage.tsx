@@ -1,3 +1,5 @@
+import { useGetSupplyStatisticQuery, statisticsQueryOptions } from "@/entities/statistic";
+import { StatisticsFeedback } from "@/shared/ui/statistics-feedback";
 import { useDebouncedValue } from "@mantine/hooks";
 import { normalizeArticle } from "@/shared/lib/format";
 import { createElement, useState } from "react";
@@ -28,8 +30,8 @@ import DefaultPageLayout from "@/widgets/default-page-layout";
 import TableLayout from "@/shared/ui/table-layout";
 import dayjs from "dayjs";
 import {
-  getMonthStatistics,
-  supplyTotal,
+
+
   formatMoney,
   useGetSuppliesQuery,
 } from "@/entities/supply";
@@ -47,20 +49,14 @@ export function SupplyPage() {
   const all = useGetSuppliesQuery({ search: "" });
   const searched = useGetSuppliesQuery({ search }, { skip: !search });
   const listing = search ? searched : all;
-  const supplies = all.currentData ?? [];
+  const statistic = useGetSupplyStatisticQuery(undefined, statisticsQueryOptions);
   const filtered = listing.currentData ?? [];
-  const now = dayjs();
-  const monthly = getMonthStatistics(supplies, now.format("YYYY-MM"));
-  const period = new Intl.DateTimeFormat("ru-RU", {
-    month: "long",
-    year: "numeric",
-  })
-    .format(now.toDate())
-    .replace(/\s*г\.$/u, "");
+  const monthly = statistic.isError ? undefined : statistic.currentData;
+  const period = monthly?.month ?? "текущий месяц (Москва)";
   const statistics = [
     {
       title: "Всего поставок",
-      value: monthly.count,
+      value: monthly?.count ?? "—",
       description: "В этом месяце",
       icon: createElement(IconTruckDelivery),
       color: "#0d5e24",
@@ -68,14 +64,14 @@ export function SupplyPage() {
 
     {
       title: "Получено продуктов",
-      value: monthly.products,
+      value: monthly?.products ?? "—",
       description: "Позиций за месяц",
       icon: createElement(IconPackage),
       color: "#0b7c86",
     },
     {
       title: "Общая сумма",
-      value: formatMoney(monthly.total),
+      value: formatMoney(monthly?.total ?? null),
       valueFontSize: 24,
       description: "Стоимость продуктов за месяц",
       icon: createElement(IconCoins),
@@ -83,7 +79,7 @@ export function SupplyPage() {
     },
     {
       title: "Средняя стоимость",
-      value: formatMoney(monthly.average),
+      value: formatMoney(monthly?.average ?? null),
       valueFontSize: 24,
       description: "Поставки в этом месяце",
       icon: createElement(IconReceipt),
@@ -101,6 +97,7 @@ export function SupplyPage() {
         setSearchValue={setSearchValue}
         statisticData={statistics}
       >
+        <StatisticsFeedback query={statistic} />
         <TableSummary
           count={filtered.length}
           description={`Статистика за ${period}`}
@@ -159,12 +156,12 @@ export function SupplyPage() {
                 </Table.Td>
                 <Table.Td>
                   <Text size="lg" fw={700}>
-                    {supply.items?.length ?? 0}
+                    {supply.positions ?? "—"}
                   </Text>
                 </Table.Td>
                 <Table.Td>
                   <Text fw={700} size="lg" style={{ whiteSpace: "nowrap" }}>
-                    {formatMoney(supplyTotal(supply))}
+                    {formatMoney(supply.total ?? null)}
                   </Text>
                 </Table.Td>
                 <Table.Td>

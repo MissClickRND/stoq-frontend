@@ -13,6 +13,8 @@ export type ISupplyItem = {
 };
 
 export type ISupply = {
+  total?: number | null;
+  positions?: number;
   id: number;
   supplyNumber: string;
   supplier: string | null;

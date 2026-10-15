@@ -12,6 +12,7 @@ export type IDishIngredient = {
   price: number | null;
   stock: number;
   portions: number;
+  cost?: number | null;
   expiresAt: string | null;
   product: IProduct;
 };
@@ -74,6 +75,8 @@ export type DishIngredient = {
   quantity: number;
   stock: number;
   costPerUnit: number | null;
+  portions?: number;
+  cost?: number | null;
   expiresOn: string;
 };
 

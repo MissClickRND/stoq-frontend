@@ -50,6 +50,7 @@ export function useInventoryLiveUpdates() {
             value: data.filter((batch) => batch.productId === arg.id),
           })),
         ));
+        if (!changed) dispatch(storeApi.util.invalidateTags(["Statistic"]));
         if (changed) dispatch(storeApi.util.invalidateTags(["Dish", "Supply", "Statistic"]));
       },
       async onExpiring(daysThreshold, data) {

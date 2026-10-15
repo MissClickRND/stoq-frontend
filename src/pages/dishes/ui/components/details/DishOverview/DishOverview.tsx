@@ -12,15 +12,16 @@ import {
 import { IconSoupFilled } from "@tabler/icons-react";
 import {
   type Dish,
-  dishCost,
-  dishMarkup,
-  dishProfit,
+
+
+
   formatMoney,
   DishStatus,
 } from "@/entities/dish";
 
-export function DishOverview({ dish }: { dish: Dish }) {
-  const markup = dishMarkup(dish);
+import type { DishDetailsStatistic } from "@/entities/statistic";
+export function DishOverview({ dish, statistic, canViewFinancials }: { dish: Dish; statistic?: DishDetailsStatistic; canViewFinancials: boolean }) {
+  const markup = statistic?.markup ?? null;
   return (
     <Paper withBorder p="lg" className={componentClasses.overview}>
       {dish.imageUrl ? (
@@ -49,18 +50,18 @@ export function DishOverview({ dish }: { dish: Dish }) {
           </Text>
         </Box>
         <DishStatus dish={dish} />
-        <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="md">
+        {canViewFinancials && <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="md">
           <Box>
             <Text size="xs" c="dimmed">
               Цена продажи
             </Text>
-            <Text fw={700}>{formatMoney(dish.price)}</Text>
+            <Text fw={700}>{formatMoney(dish.priceKnown === false ? null : dish.price)}</Text>
           </Box>
           <Box>
             <Text size="xs" c="dimmed">
               Себестоимость порции
             </Text>
-            <Text fw={700}>{formatMoney(dishCost(dish))}</Text>
+            <Text fw={700}>{formatMoney(statistic?.costPrice ?? null)}</Text>
           </Box>
           <Box>
             <Text size="xs" c="dimmed">
@@ -74,11 +75,11 @@ export function DishOverview({ dish }: { dish: Dish }) {
             <Text size="xs" c="dimmed">
               Прибыль с порции
             </Text>
-            <Text fw={700} c={(dishProfit(dish) ?? 0) >= 0 ? "green" : "red"}>
-              {formatMoney(dishProfit(dish))}
+            <Text fw={700} c={(statistic?.profit ?? 0) >= 0 ? "green" : "red"}>
+              {formatMoney(statistic?.profit ?? null)}
             </Text>
           </Box>
-        </SimpleGrid>
+        </SimpleGrid>}
       </Stack>
     </Paper>
   );

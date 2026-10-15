@@ -19,15 +19,15 @@ export const invitationsApi = baseApi.injectEndpoints({
     createInvitation: build.mutation<Invitation, { role: InvitationRole; hours: number }>({
       query: body => ({ url: "/auth/admin/invitations", method: "POST", body }),
       transformResponse: toInvitation,
-      invalidatesTags: [{ type: "User", id: "INVITATIONS" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "INVITATIONS" }],
     }),
     revokeInvitation: build.mutation<unknown, string>({
       query: id => ({ url: `/auth/admin/invitations/${id}/revoke`, method: "PATCH" }),
-      invalidatesTags: [{ type: "User", id: "INVITATIONS" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "INVITATIONS" }],
     }),
     deleteInvitation: build.mutation<unknown, string>({
       query: id => ({ url: `/auth/admin/invitations/${id}`, method: "DELETE" }),
-      invalidatesTags: [{ type: "User", id: "INVITATIONS" }],
+      invalidatesTags: ["Statistic", { type: "User", id: "INVITATIONS" }],
     }),
   }),
 });

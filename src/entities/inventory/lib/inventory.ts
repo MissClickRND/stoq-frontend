@@ -47,3 +47,11 @@ export function toInventoryStoreRequest(
     }),
   };
 }
+
+export function toInventoryPreviewRequest(entries: InventoryEntry[]): IInventoryStoreRequest {
+  return { items: entries.map(entry => {
+    const error = inventoryEntryError(entry);
+    if (error) throw new Error(error);
+    return { batchId: entry.product.id, quantity: entry.remove ? 0 : Number(entry.actual), remove: entry.remove };
+  }) };
+}

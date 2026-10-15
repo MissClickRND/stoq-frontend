@@ -88,7 +88,7 @@ export function StoreTableRow({
               size={50}
               variant="light"
               color="red"
-              disabled={getStoreQuantity(product) <= 0}
+              disabled={getStoreQuantity(product) <= 0 || Date.parse(product.expiresAt) <= Date.now()}
               aria-label={`Списать ${(product.product?.name ?? "Продукт #" + product.productId)}, артикул ${normalizeArticle(product.productId)}, поставка ${normalizeArticle(product.supplyId)}`}
               onClick={() => onWriteOff(product)}
             >

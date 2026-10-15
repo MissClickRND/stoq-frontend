@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import {
   type Dish,
-  ingredientPortions,
+
   isIngredientExpired,
 } from "@/entities/dish";
 
@@ -21,11 +21,11 @@ export function DishStock({ dish }: { dish: Dish }) {
       </Title>
       <Stack gap="md">
         {dish.ingredients.map((item) => {
-          const portions = ingredientPortions(item);
+          const portions = item.portions;
           const color =
-            isIngredientExpired(item) || portions === 0
+            isIngredientExpired(item) || portions == null || portions === 0
               ? "red"
-              : portions < 5
+              : (portions ?? 0) < 5
                 ? "orange"
                 : "var(--mantine-primary-color-5)";
           return (
@@ -37,7 +37,7 @@ export function DishStock({ dish }: { dish: Dish }) {
                 </Text>
               </Group>
               <Progress
-                value={Math.min(100, (portions / 20) * 100)}
+                value={Math.min(100, ((portions ?? 0) / 20) * 100)}
                 color={color}
               />
               <Group justify="space-between">
@@ -54,7 +54,7 @@ export function DishStock({ dish }: { dish: Dish }) {
                   </Badge>
                 ) : (
                   <Text size="xs" c="dimmed">
-                    На {portions} порций
+                    На {portions ?? "—"} порций
                   </Text>
                 )}
               </Group>

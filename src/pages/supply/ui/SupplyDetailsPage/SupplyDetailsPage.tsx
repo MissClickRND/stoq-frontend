@@ -1,3 +1,5 @@
+import { useGetSupplyDetailsStatisticQuery, statisticsQueryOptions } from "@/entities/statistic";
+import { StatisticsFeedback } from "@/shared/ui/statistics-feedback";
 import { supplyProductName, supplyProductReference } from "@/entities/supply";
 import componentClasses from "./SupplyDetailsPage.module.css";
 import { useState } from "react";
@@ -25,6 +27,7 @@ export function SupplyDetailsPage() {
     error,
     refetch,
   } = useGetSupplyByIdQuery(validId ? { id } : skipToken);
+  const statistic = useGetSupplyDetailsStatisticQuery(validId ? id : skipToken, statisticsQueryOptions);
   const [searchValue, setSearchValue] = useState("");
   const breadcrumbs = (
     <PageBreadcrumbs
@@ -91,7 +94,7 @@ export function SupplyDetailsPage() {
       searchTitle="Поиск продуктов в поставке"
       searchValue={searchValue}
       setSearchValue={setSearchValue}
-      statisticData={getSupplyStatistics(supply)}
+      statisticData={getSupplyStatistics(statistic.isError ? undefined : statistic.currentData)}
       headerTopSection={
         <Group justify="space-between">
           {breadcrumbs}
@@ -102,6 +105,7 @@ export function SupplyDetailsPage() {
         </Group>
       }
     >
+      <StatisticsFeedback query={statistic} />
       <Group justify="space-between" style={{ flexShrink: 0 }}>
         <Text>Поставщик: {supply.supplier || "—"}</Text>
         <Text fw={600}>Продукты в поставке</Text>

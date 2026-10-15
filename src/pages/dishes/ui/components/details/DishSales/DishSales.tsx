@@ -1,9 +1,9 @@
 import componentClasses from "./DishSales.module.css";
 import { Box, Group, Paper, Stack, Text, Title } from "@mantine/core";
-import type { Dish } from "@/entities/dish";
+import type { DishDetailsStatistic } from "@/entities/statistic";
 
-export function DishSales({ dish }: { dish: Dish }) {
-  const max = Math.max(1, ...dish.sales.map((sale) => sale.quantity));
+export function DishSales({ sales }: { sales: DishDetailsStatistic["sales"] }) {
+  const max = Math.max(1, ...sales.map((sale) => sale.quantity));
   return (
     <Paper withBorder p="md">
       <Group justify="space-between">
@@ -14,15 +14,15 @@ export function DishSales({ dish }: { dish: Dish }) {
           Последние 7 дней
         </Text>
       </Group>
-      {dish.sales.length ? (
+      {sales.length ? (
         <Box
           className={componentClasses.chart}
           role="img"
-          aria-label={dish.sales
+          aria-label={sales
             .map((sale) => `${sale.date}: ${sale.quantity} порций`)
             .join(", ")}
         >
-          {dish.sales.map((sale) => (
+          {sales.map((sale) => (
             <Stack
               key={sale.date}
               className={componentClasses.chartColumn}

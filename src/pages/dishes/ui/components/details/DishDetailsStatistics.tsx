@@ -1,37 +1,8 @@
 import { createElement } from "react";
 import { StatisticSection } from "@/widgets/default-page-layout";
-import { type Dish, dishIsStopped, dishPortions } from "@/entities/dish";
-
+import type { DishDetailsStatistic } from "@/entities/statistic";
 import { detailStatisticItems } from "../../../model/config";
-
-export function DishDetailsStatistics({
-  dish,
-  dishes,
-}: {
-  dish: Dish;
-  dishes: Dish[];
-}) {
-  const sold = (item: Dish) =>
-    item.sales.reduce((sum, sale) => sum + sale.quantity, 0);
-  const rank = 1 + dishes.filter((item) => sold(item) > sold(dish)).length;
-  const values = {
-    today: dish.sales.at(-1)?.quantity ?? 0,
-    week: sold(dish),
-    popularity: `#${rank}`,
-    stock: dish.archived
-      ? "В архиве"
-      : dishIsStopped(dish)
-        ? "Недоступно"
-        : `${dishPortions(dish)} порций`,
-  };
-  return (
-    <StatisticSection
-      statisticData={detailStatisticItems.map((item) => ({
-        title: item.title,
-        value: values[item.key],
-        color: item.color,
-        icon: createElement(item.icon),
-      }))}
-    />
-  );
+export function DishDetailsStatistics({ statistic }: { statistic?: DishDetailsStatistic }) {
+  const values = { today: statistic?.today ?? "—", week: statistic?.week ?? "—", popularity: statistic?.popularity == null ? "—" : `#${statistic.popularity}`, stock: statistic ? `${statistic.availablePortions} порций` : "—" };
+  return <StatisticSection statisticData={detailStatisticItems.map(item => ({ title: item.title, value: values[item.key], color: item.color, icon: createElement(item.icon) }))} />;
 }

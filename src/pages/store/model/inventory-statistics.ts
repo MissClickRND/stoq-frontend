@@ -8,38 +8,38 @@ import {
 } from "@tabler/icons-react";
 import dayjs from "dayjs";
 import {
-  inventoryCounts,
-  type InventoryEntry,
+
+  type InventoryCounts,
   type InventoryReport,
 } from "@/entities/inventory";
 
-export function getInventoryConfirmationStatistics(entries: InventoryEntry[]) {
-  const counts = inventoryCounts(entries);
+export function getInventoryConfirmationStatistics(counts?: InventoryCounts) {
+
   return [
     {
       title: "Будет обновлено",
-      value: counts.updated,
+      value: counts?.updated ?? "—",
       description: "Изменён фактический остаток",
       icon: createElement(IconRefresh),
       color: "#0d5e24",
     },
     {
       title: "К списанию",
-      value: counts.deleted,
+      value: counts?.deleted ?? "—",
       description: "Остатки позиций будут обнулены",
       icon: createElement(IconTrash),
       color: "#730a17",
     },
     {
       title: "Без изменений",
-      value: counts.unchanged,
+      value: counts?.unchanged ?? "—",
       description: "Остатки совпадают",
       icon: createElement(IconCheck),
       color: "#526877",
     },
     {
       title: "Проверено",
-      value: counts.checked,
+      value: counts?.checked ?? "—",
       description: "Всего позиций",
       icon: createElement(IconPackage),
       color: "#0b7c86",

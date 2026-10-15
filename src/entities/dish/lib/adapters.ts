@@ -34,7 +34,7 @@ export function toDish(source: DishResponse): Dish {
     imageUrl: source.imageURL ?? source.imageUrl ?? "",
     ingredients: source.recipeItems?.map((item) =>
       ({ ...toDishIngredient({ ...item.product, id: item.productId }, item.quantity),
-        stock: item.stock ?? 0, costPerUnit: item.price ?? null,
+        stock: item.stock ?? 0, costPerUnit: item.price ?? null, portions: item.portions, cost: item.cost ?? null,
         expiresOn: item.expiresAt?.slice(0, 10) ?? "" }),
     ) ?? [],
     stopped: false,

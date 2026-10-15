@@ -28,7 +28,7 @@ export const ordersApi = baseApi.injectEndpoints({
     >({
       query: (body) => ({ url: "/orders", method: "POST", body }),
       invalidatesTags: [
-        "Order",
+        "Order", "Statistic",
         { type: "Dish", id: "LIST" },
         { type: "Store", id: "LIST" },
       ],

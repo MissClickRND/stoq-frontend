@@ -1,5 +1,5 @@
 import { getSupplyReportData, supplyReportColumns } from "../lib/report.ts";
-import { supplyTotal } from "../lib/calculations.ts";
+
 import type {
   ICreateSupplyRequest,
   ISupply,
@@ -11,7 +11,7 @@ import { baseApi } from "@/shared/api/baseApi.ts";
 export async function downloadSupplyReport(supply: ISupply): Promise<void> {
   const { default: writeExcelFile } = await import("write-excel-file/browser");
   await writeExcelFile(
-    getSupplyReportData(supply, supplyTotal(supply)),
+    getSupplyReportData(supply, supply.total ?? null),
     {
       sheet: "Поставка",
       columns: supplyReportColumns,
@@ -58,7 +58,7 @@ export const suppliesApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Supply", "Store", "Dish"],
+      invalidatesTags: ["Supply", "Store", "Dish", "Statistic"],
     }),
 
     updateSupply: build.mutation<
@@ -70,7 +70,7 @@ export const suppliesApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Supply", "Store", "Dish"],
+      invalidatesTags: ["Supply", "Store", "Dish", "Statistic"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({

@@ -25,7 +25,7 @@ export function WriteOffStockButton({
       <Button
         color="red"
         variant="light"
-        disabled={getStoreQuantity(batch) <= 0}
+        disabled={getStoreQuantity(batch) <= 0 || Date.parse(batch.expiresAt) <= Date.now()}
         leftSection={<IconTrash size={18} />}
         onClick={() => setOpened(true)}
       >
@@ -43,7 +43,7 @@ export function WriteOffStockButton({
           if (!isLoading) setOpened(false);
         }}
         onConfirm={async () => {
-          if (isLoading) return;
+          if (isLoading || Date.parse(batch.expiresAt) <= Date.now()) return;
           try {
             await writeOff({ batchId: batch.id }).unwrap();
             setOpened(false);

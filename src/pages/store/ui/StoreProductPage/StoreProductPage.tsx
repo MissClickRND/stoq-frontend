@@ -19,7 +19,7 @@ import {
   formatPrice,
   getProductBatches,
   getStoreQuantity,
-  getTotalStoreQuantity,
+
   useGetStoreQuery,
   type IStoreProduct,
 } from "@/entities/store";
@@ -212,9 +212,9 @@ export function StoreProductPage({
                   <Loader size="sm" aria-label="Загрузка общего остатка" />
                 ) : (
                   <Text size="xl" fw={700} c="primary">
-                    {isError || !products
+                    {isError || !products || batch.productQuantity == null
                       ? "—"
-                      : `${quantityFormat.format(getTotalStoreQuantity(batches))} ${unit}`}
+                      : `${quantityFormat.format(batch.productQuantity!)} ${unit}`}
                   </Text>
                 )}
               </Group>
