@@ -3,5 +3,5 @@ export {
   useStartInventory,
   useInventoryReport,
 } from "./model/useInventory";
-export { inventoryDraftReducer } from "./model/inventorySlice";
+export { inventoryDraftReducer, inventoryDraftActions } from "./model/inventorySlice";
 export { InventorySteps } from "./ui/InventorySteps/InventorySteps";

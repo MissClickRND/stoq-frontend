@@ -4,7 +4,7 @@ export const mockEmployees: Employee[] = [
     id: "owner",
     name: "Алиса Зарева",
     email: "alisa@lamaison.ru",
-    role: "OWNER",
+    role: "MANAGER",
     status: "active",
     joinedAt: "2026-08-12",
     avatarColor: "primary",

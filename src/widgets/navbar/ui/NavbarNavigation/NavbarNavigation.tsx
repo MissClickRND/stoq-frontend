@@ -3,16 +3,20 @@ import { Group, SegmentedControl, Text } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { navigationItems } from "../../model/config";
+import { canAccessPath, selectUser } from "@/entities/user";
+import { useAppSelector } from "@/shared/lib";
 
 export function NavbarNavigation() {
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useAppSelector(selectUser);
+  const items = navigationItems.filter(item => canAccessPath(user.role, item.path));
   const activePath =
-    navigationItems.find(
+    items.find(
       (item) =>
         item.path === location.pathname ||
         location.pathname.startsWith(`${item.path}/`),
-    )?.path ?? navigationItems[0].path;
+    )?.path ?? items[0]?.path;
 
   return (
     <SegmentedControl<string>
@@ -27,7 +31,7 @@ export function NavbarNavigation() {
       value={activePath}
       withItemsBorders={false}
       onChange={navigate}
-      data={navigationItems.map((item) => ({
+      data={items.map((item) => ({
         value: item.path,
         label: (
           <Group gap="sm" wrap="nowrap">

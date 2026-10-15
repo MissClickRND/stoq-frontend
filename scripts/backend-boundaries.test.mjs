@@ -18,11 +18,6 @@ import {
   revokeInvitation,
   deleteInvitation,
 } from "../src/entities/invitation/api/invitation.ts";
-import {
-  submitLogin,
-  submitEmployeeRegistration,
-  submitRestaurantRegistration,
-} from "../src/entities/auth/api/commands.ts";
 
 const snapshot = () =>
   JSON.stringify({
@@ -45,18 +40,6 @@ test("backend command placeholders do not mutate fixtures or manufacture saved r
     createInvitation("WAITER", 24),
     revokeInvitation("invite-active"),
     deleteInvitation("invite-active"),
-    submitLogin({ email: "user@example.com", password: "password" }),
-    submitEmployeeRegistration({
-      name: "User",
-      email: "user@example.com",
-      restaurantId: "restaurant-1",
-    }),
-    submitRestaurantRegistration({
-      name: "New",
-      city: "Москва",
-      email: "user@example.com",
-      password: "password",
-    }),
   ];
   assert.ok(results.every((result) => result === undefined));
   assert.equal(snapshot(), before);

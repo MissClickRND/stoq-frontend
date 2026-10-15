@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import { selectUser } from "../../user/@x/dish";
+import { useAppSelector } from "@/shared/lib/store";
 import type { IRecommendedDishes, IStopListDish } from "../model/type";
 import {
   createSocketCollection,
@@ -22,6 +24,7 @@ function useSocketCollection<T>(
   search: string | undefined,
   skip: boolean,
 ) {
+  const sessionRevision = useAppSelector(selectUser).sessionRevision;
   const [state, setState] = useState<SocketCollectionState<T>>({
     data: undefined,
     isFetching: true,
@@ -51,6 +54,7 @@ function useSocketCollection<T>(
     const socket = io(url.toString(), {
       transports: ["websocket"],
       autoConnect: false,
+      withCredentials: true,
     });
     const subscription = createSocketCollection<T>({
       socket,
@@ -63,7 +67,7 @@ function useSocketCollection<T>(
       collection.current = null;
       subscription.dispose();
     };
-  }, [events, skip]);
+  }, [events, skip, sessionRevision]);
 
   const refetch = useCallback(() => collection.current?.refetch(), []);
   return {

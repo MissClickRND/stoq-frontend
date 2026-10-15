@@ -1,5 +1,6 @@
 import {
   Button,
+  Alert,
   Divider,
   PasswordInput,
   Stack,
@@ -10,10 +11,16 @@ import { IconLock, IconMail } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
 import { isValidEmail, isValidPassword } from "@/shared/lib/auth-validation";
 import { loginCopy, loginInitialValues } from "../../model/config";
-import { submitLogin } from "@/entities/auth";
+import { useLoginMutation } from "@/entities/auth";
+import { canAccessPath, roleHome } from "@/entities/user";
+import { useNavigate, useLocation } from "react-router-dom";
+import { apiErrorMessage } from "@/shared/lib/api-error";
 import classes from "@/shared/ui/auth-fields/classes/AuthFields.module.css";
 
 export function LoginForm() {
+  const [login, { isLoading, error }] = useLoginMutation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [values, setValues] = useState(loginInitialValues);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {},
@@ -22,8 +29,9 @@ export function LoginForm() {
     setValues((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (isLoading) return;
     const nextErrors = {
       email: isValidEmail(values.email) ? undefined : loginCopy.emailError,
       password: isValidPassword(values.password)
@@ -32,16 +40,19 @@ export function LoginForm() {
     };
     setErrors(nextErrors);
     if (nextErrors.email || nextErrors.password) return;
-    submitLogin({
-      email: values.email.trim(),
-      password: values.password,
-    });
-    //! Обработать ошибки и показать результат только после ответа сервера.
+    try {
+      const { user } = await login({ email: values.email.trim().toLowerCase(), password: values.password }).unwrap();
+      const from: unknown = location.state?.from;
+      const destination = typeof from === "string" && from.startsWith("/") && !from.startsWith("//")
+        && canAccessPath(user.role, from.split("?")[0]) ? from : roleHome(user.role);
+      navigate(destination, { replace: true });
+    } catch { /* Render server validation and connection errors below. */ }
   };
 
   return (
     <form onSubmit={submit} noValidate>
       <Stack gap="md">
+        {error && <Alert color="red" role="alert">{apiErrorMessage(error, loginCopy.requestError)}</Alert>}
         <TextInput
           size="lg"
           placeholder={loginCopy.email}
@@ -78,6 +89,7 @@ export function LoginForm() {
         <Button
           className={classes.submit}
           type="submit"
+          loading={isLoading}
           size="lg"
           fullWidth
           mt="sm"

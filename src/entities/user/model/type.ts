@@ -1,4 +1,12 @@
-export type UserRole = "OWNER" | "ADMIN" | "WAITER" | "STOREKEEPER";
+export type UserRole = "ADMIN" | "MANAGER" | "WAITER" | "STOREKEEPER" | "WAIT_CONFIRM";
+
+export interface SessionUser {
+  id: number;
+  fullName: string;
+  email: string;
+  role: UserRole;
+  restaurantId: number;
+}
 
 export interface Allergen {
   id: number;
@@ -6,6 +14,10 @@ export interface Allergen {
 }
 
 export interface IUserState {
+  sessionStatus?: "unknown" | "authenticated" | "anonymous";
+  sessionRevision?: number;
+  fullName?: string;
+  restaurantId?: number;
   id?: number;
   name?: string;
   email?: string;

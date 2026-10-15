@@ -15,7 +15,8 @@ export const adminTabs = [
 ] as const;
 
 export const roleLabels: Record<UserRole, string> = {
-  OWNER: "Управляющий",
+  MANAGER: "Менеджер",
+  WAIT_CONFIRM: "Ожидает подтверждения",
   ADMIN: "Администратор",
   WAITER: "Официант",
   STOREKEEPER: "Кладовщик",
@@ -23,10 +24,10 @@ export const roleLabels: Record<UserRole, string> = {
 export const roleOptions = Object.entries(roleLabels).map(([value, label]) => ({
   value,
   label,
-  disabled: value === "OWNER",
+  disabled: value === "ADMIN" || value === "WAIT_CONFIRM",
 }));
 export const invitationRoleOptions = roleOptions.filter(
-  (item) => item.value !== "OWNER",
+  (item) => item.value !== "ADMIN" && item.value !== "WAIT_CONFIRM",
 );
 export const employeeStatusLabels = {
   active: { label: "Активен", color: "green" },

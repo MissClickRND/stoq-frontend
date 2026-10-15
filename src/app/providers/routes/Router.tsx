@@ -28,6 +28,8 @@ import { OrdersPage, CreateOrderPage } from "@/pages/orders";
 import { LogsPage } from "@/pages/logs";
 import { AdminPanelPage } from "@/pages/admin-panel";
 import MainLayout from "../layouts/MainLayout";
+import { AuthGuard } from "../guards/AuthGuard";
+import { RoleGuard } from "../guards/RoleGuard";
 import { AuthLayout } from "@/widgets/auth-layout";
 import {
   GuestMenuPage,
@@ -48,7 +50,8 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <MainLayout />,
+    element: <AuthGuard><MainLayout /></AuthGuard>,
+    children: [{ element: <RoleGuard />,
     children: [
       { path: "/", element: <Navigate to="/analytics/dashboard" replace /> },
       {
@@ -105,7 +108,7 @@ const router = createBrowserRouter([
       },
       { path: "/logs", element: <LogsPage /> },
       { path: "/admin-panel", element: <AdminPanelPage /> },
-    ],
+    ] }],
   },
   {
     element: <AuthLayout />,
@@ -119,7 +122,7 @@ const router = createBrowserRouter([
       { path: "/register/restaurant", element: <RestaurantRegisterPage /> },
     ],
   },
-  { path: "/test", element: <TestPanel /> },
+  { element: <AuthGuard><RoleGuard /></AuthGuard>, children: [{ path: "/test", element: <TestPanel /> }] },
   { path: "*", element: <Error404 /> },
 ]);
 

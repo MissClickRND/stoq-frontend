@@ -1,25 +1,10 @@
-import { selectUser } from "@/entities/user";
+import { canAccessPath, roleHome, selectUser } from "@/entities/user";
 import { useAppSelector } from "@/shared/lib";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-export function RoleGuard({
-  roles,
-  children,
-}: {
-  roles: string[];
-  children: React.ReactNode;
-}) {
-  const navigate = useNavigate();
+export function RoleGuard() {
   const user = useAppSelector(selectUser);
-
-  useEffect(() => {
-    if (user.id === undefined) return;
-
-    if (!roles.includes(user.role)) {
-      navigate("/");
-    }
-  }, [user.id, user.role]);
-
-  return children;
+  const { pathname } = useLocation();
+  if (!canAccessPath(user.role, pathname)) return <Navigate to={roleHome(user.role)} replace />;
+  return <Outlet />;
 }

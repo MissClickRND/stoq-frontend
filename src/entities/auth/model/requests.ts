@@ -1,13 +1,10 @@
 export type LoginRequest = { email: string; password: string };
-export type RestaurantRegistrationRequest = {
-  name: string;
-  city: string;
-  email: string;
-  password: string;
+export type RestaurantRegistrationRequest = LoginRequest & {
+  fullName: string;
+  restaurantName: string;
+  restaurantAddress?: string;
 };
-export type EmployeeRegistrationRequest = {
-  name: string;
-  email: string;
-  restaurantId: string;
-  invitationId?: string;
+export type EmployeeRegistrationRequest = LoginRequest & {
+  fullName: string;
+  restaurantId: number;
 };

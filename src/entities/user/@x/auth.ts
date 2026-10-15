@@ -1,1 +1,1 @@
-export type { IUserState, UserRole } from "../model/type.ts";
+export type { IUserState, UserRole, SessionUser } from "../model/type.ts";

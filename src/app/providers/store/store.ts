@@ -3,6 +3,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { listenerMiddleware, registerListeners } from "./listenersMiddleware";
 import { userReducer } from "@/entities/user";
 import { baseApi } from "@/shared/api";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 export const store = configureStore({
   //? Подключение слайсов
@@ -26,5 +27,6 @@ declare global {
   type AppDispatch = _AppDispatch;
 }
 registerListeners();
+setupListeners(store.dispatch);
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

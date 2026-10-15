@@ -1,48 +1,31 @@
-import { sessionExpired } from "@/shared/lib/session-events";
-import { createSlice } from "@reduxjs/toolkit";
-import { IUserState } from "./type.ts";
+import { sessionExpired, sessionReceived } from "@/shared/lib/session-events";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { authApi } from "../../auth/@x/user.ts";
+import type { IUserState, SessionUser } from "./type.ts";
+import { staffRoles } from "./access.ts";
 
-const initialState: IUserState = {
-  id: undefined,
-  name: undefined,
-  email: undefined,
-  phone: undefined,
-  role: undefined,
-  createdAt: undefined,
-  updatedAt: undefined,
-  userAllergens: [],
-};
-
+const initialState: IUserState = { userAllergens: [], sessionStatus: "unknown", sessionRevision: 0 };
+const anonymous: IUserState = { ...initialState, sessionStatus: "anonymous" };
+function fromSession(user: SessionUser, previous: IUserState, rotated = false): IUserState {
+  if (!staffRoles.includes(user.role)) return anonymous;
+  const changed = rotated || previous.id !== user.id || previous.role !== user.role;
+  return { ...initialState, ...user, name: user.fullName, sessionStatus: "authenticated",
+    sessionRevision: (previous.sessionRevision ?? 0) + Number(changed) };
+}
 export const userSlice = createSlice({
   name: "user",
-  extraReducers: (builder) => {
-    builder.addCase(sessionExpired, () => initialState);
-  },
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      state.id = action.payload.id;
-      state.name = action.payload.name;
-      state.email = action.payload.email;
-      state.phone = action.payload.phone;
-      state.role = action.payload.role;
-      state.createdAt = action.payload.createdAt;
-      state.updatedAt = action.payload.updatedAt;
-      state.userAllergens = action.payload.userAllergens;
-    },
-
-    userLogout: (state) => {
-      state.id = undefined;
-      state.name = undefined;
-      state.email = undefined;
-      state.phone = undefined;
-      state.role = undefined;
-      state.createdAt = undefined;
-      state.updatedAt = undefined;
-      state.userAllergens = [];
-    },
+    setUser: (state, action: PayloadAction<SessionUser>) => fromSession(action.payload, state),
+    userLogout: () => anonymous,
+  },
+  extraReducers: builder => {
+    builder.addCase(sessionExpired, () => anonymous);
+    builder.addCase(sessionReceived, (state, action) => fromSession(action.payload, state, true));
+    builder.addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => fromSession(action.payload.user, state, true));
+    builder.addMatcher(authApi.endpoints.status.matchFulfilled, (state, action) => action.payload.authenticated ? fromSession(action.payload.user, state) : anonymous);
+    builder.addMatcher(authApi.endpoints.logout.matchFulfilled, () => anonymous);
   },
 });
-
 export const { setUser, userLogout } = userSlice.actions;
 export const userReducer = userSlice.reducer;

@@ -16,8 +16,7 @@ import {
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import {
-  useDishes,
-  useDishRecommendations,
+  useGuestMenu,
   getGuestMenuDishes,
   GUEST_MENU_PAGE_SIZE,
 } from "@/entities/dish";
@@ -35,12 +34,11 @@ export function GuestMenuPage() {
     isLoading: dishesLoading,
     isError,
     refetch,
-  } = useDishes(debouncedSearch);
-  const recommendations = useDishRecommendations();
-  const isLoading = dishesLoading || recommendations.isLoading;
+  } = useGuestMenu(debouncedSearch);
+  const isLoading = dishesLoading;
 
   const [page, setPage] = useState(1);
-  const matching = getGuestMenuDishes(dishes, recommendations.dishes);
+  const matching = getGuestMenuDishes(dishes, []);
   const totalPages = Math.max(1, Math.ceil(matching.length / pageSize));
   const activePage = Math.min(page, totalPages);
   const offset = (activePage - 1) * pageSize;
@@ -69,18 +67,6 @@ export function GuestMenuPage() {
           }}
         />
       </Group>
-      {recommendations.isError && (
-        <Alert color="orange" role="alert">
-          Не удалось загрузить рекомендации. Показываем обычное меню.
-          <Button
-            type="button"
-            variant="subtle"
-            onClick={recommendations.refetch}
-          >
-            Повторить
-          </Button>
-        </Alert>
-      )}
       {isLoading ? (
         <Center w="100%" h="100%">
           <Loader />
@@ -98,9 +84,7 @@ export function GuestMenuPage() {
             <GuestDishCard
               key={dish.id}
               dish={dish}
-              recommended={recommendations.dishes.some(
-                (item) => String(item.dishId) === dish.id,
-              )}
+              recommended={false}
             />
           ))}
         </SimpleGrid>

@@ -1,1 +1,1 @@
-export const selectUser = (state: any) => state.user;
+export const selectUser = (state: RootState) => state.user;

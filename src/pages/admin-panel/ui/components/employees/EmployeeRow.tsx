@@ -32,7 +32,7 @@ export function EmployeeRow({
   onApprove,
 }: Props) {
   const status = employeeStatusLabels[employee.status];
-  const owner = employee.role === "OWNER";
+  const owner = employee.role === "ADMIN";
   return (
     <Table.Tr>
       <Table.Td>

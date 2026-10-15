@@ -1,13 +1,15 @@
 import componentClasses from "./GuestRoutesLayout.module.css";
 import { Paper, Stack, Text, Title } from "@mantine/core";
 import { Outlet, useParams } from "react-router-dom";
-import { useGuestRestaurant } from "@/entities/restaurant";
+
 import { GuestOrderProvider } from "@/features/guest-order";
 import { GuestHeader } from "../GuestHeader/GuestHeader";
 
 export function GuestRoutesLayout() {
   const { restaurantId } = useParams();
-  const { restaurant } = useGuestRestaurant(restaurantId);
+  const id = Number(restaurantId);
+  const restaurant = Number.isSafeInteger(id) && id > 0
+    ? { id: String(id), name: `Ресторан №${id}`, city: "" } : undefined;
   if (!restaurant)
     return (
       <div className={componentClasses.shell}>

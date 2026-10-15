@@ -1,5 +1,5 @@
 import type { UserRole } from "../../user/@x/invitation.ts";
-export type InvitationRole = Exclude<UserRole, "OWNER">;
+export type InvitationRole = Exclude<UserRole, "ADMIN" | "WAIT_CONFIRM">;
 export type Invitation = {
   id: string;
   role: InvitationRole;

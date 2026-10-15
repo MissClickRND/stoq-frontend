@@ -15,8 +15,7 @@ import { IconShoppingCart } from "@tabler/icons-react";
 import { useParams } from "react-router-dom";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import {
-  useDish,
-  useDishRecommendations,
+  useGuestMenu,
   dishCanBeOrdered,
   DishPhoto,
 } from "@/entities/dish";
@@ -28,8 +27,8 @@ import classes from "../../classes/Guest.module.css";
 
 export function GuestDishPage() {
   const { dishId } = useParams();
-  const { dish, isLoading, isError, refetch } = useDish(dishId);
-  const recommendations = useDishRecommendations();
+  const { dishes, isLoading, isError, refetch } = useGuestMenu();
+  const dish = dishes.find(item => item.id === dishId);
   const { basePath, items, addDish } = useGuestOrder();
   if (isLoading)
     return (
@@ -78,13 +77,6 @@ export function GuestDishPage() {
         />
         <Paper withBorder p="xl">
           <Stack gap="lg">
-            {recommendations.dishes.some(
-              (item) => String(item.dishId) === dish.id,
-            ) && (
-              <Badge color="primary" variant="light" tt="none">
-                Советуем
-              </Badge>
-            )}
             <Title order={1} className={classes.title}>
               {dish.name}
             </Title>

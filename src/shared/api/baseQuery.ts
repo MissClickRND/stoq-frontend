@@ -1,50 +1,43 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type {
-  BaseQueryFn,
-  FetchArgs,
-  FetchBaseQueryError,
-} from "@reduxjs/toolkit/query";
-import { sessionExpired } from "@/shared/lib/session-events";
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { sessionExpired, sessionReceived } from "@/shared/lib/session-events";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
   credentials: "include",
+  timeout: 20000,
 });
-
-export const baseQueryWithReauth: BaseQueryFn<
-  string | FetchArgs,
-  unknown,
-  FetchBaseQueryError
-> = async (args, api, extraOptions) => {
+type Query = BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError>;
+let refreshing: Promise<Awaited<ReturnType<typeof baseQuery>>> | undefined;
+const publicAuth = new Set(["/auth/login", "/auth/register-user", "/auth/register-restaurant"]);
+export const baseQueryWithReauth: Query = async (args, api, extraOptions) => {
+  const url = typeof args === "string" ? args : args.url;
+  const guest = typeof args !== "string" && args.credentials === "omit";
+  if (refreshing && !publicAuth.has(url) && !guest) await refreshing;
   let result = await baseQuery(args, api, extraOptions);
-
-  if (result.error && result.error.status === 401) {
-    if (typeof args === "string" && args.includes("/auth/refresh")) {
-      api.dispatch(sessionExpired());
-      return result;
-    }
-
-    if (typeof args !== "string" && args.url.includes("/auth/refresh")) {
-      api.dispatch(sessionExpired());
-      return result;
-    }
-
-    const refreshResult = await baseQuery(
-      {
-        url: "/auth/refresh",
-        method: "POST",
-      },
-      api,
-      extraOptions,
-    );
-
-    if (refreshResult.data) {
-      // повторяем исходный запрос
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      api.dispatch(sessionExpired());
-    }
+  if (result.error?.status !== 401 || publicAuth.has(url) || guest) return result;
+  if (url === "/auth/refresh") {
+    api.dispatch(sessionExpired());
+    return result;
   }
-
+  if (!refreshing) {
+    // One query being cancelled must not abort the shared cookie rotation.
+    refreshing = Promise.resolve(baseQuery({ url: "/auth/refresh", method: "POST" },
+      { ...api, signal: new AbortController().signal }, extraOptions)).then(refresh => {
+      if (refresh.data && typeof refresh.data === "object" && "user" in refresh.data) {
+        api.dispatch(sessionReceived(refresh.data.user as ReturnType<typeof sessionReceived>["payload"]));
+      } else if (refresh.error?.status === 401 || refresh.error?.status === 403) {
+        api.dispatch(sessionExpired());
+      }
+      return refresh;
+    }).finally(() => { refreshing = undefined; });
+  }
+  const refresh = await refreshing;
+  if (refresh.data) {
+    result = await baseQuery(args, api, extraOptions);
+    if (result.error?.status === 401) api.dispatch(sessionExpired());
+  } else if (refresh.error && refresh.error.status !== 401 && refresh.error.status !== 403) {
+    return refresh;
+  }
   return result;
 };

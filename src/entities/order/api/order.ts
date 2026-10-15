@@ -1,6 +1,11 @@
 import { baseApi } from "@/shared/api";
 import { toOrder, type OrderResponse } from "../lib/adapters.ts";
 
+type CreateOrderRequest = {
+  date: string; type: "dine-in" | "takeaway"; table: number | null; guests: number;
+  items: { dishId: number; quantity: number }[];
+};
+
 export const ordersApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getOrders: build.query<OrderResponse[], void>({
@@ -28,6 +33,10 @@ export const ordersApi = baseApi.injectEndpoints({
         { type: "Store", id: "LIST" },
       ],
     }),
+    createGuestOrder: build.mutation<OrderResponse, CreateOrderRequest>({
+      query: body => ({ url: "/orders", method: "POST", body, credentials: "omit" }),
+      invalidatesTags: [{ type: "Dish", id: "GUEST_MENU" }],
+    }),
     completeOrder: build.mutation<OrderResponse, { id: number }>({
       query: ({ id }) => ({
         url: `/orders/${id}/status`,
@@ -40,6 +49,7 @@ export const ordersApi = baseApi.injectEndpoints({
 });
 export const {
   useCreateOrderMutation,
+  useCreateGuestOrderMutation,
   useGetOrdersQuery,
   useGetOrderByIdQuery,
 } = ordersApi;

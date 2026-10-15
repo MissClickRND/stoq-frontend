@@ -19,7 +19,7 @@ export const mockInvitations: Invitation[] = [
   },
   {
     id: "invite-expired",
-    role: "ADMIN",
+    role: "MANAGER",
     createdAt: date(-72),
     expiresAt: date(-24),
     revoked: false,

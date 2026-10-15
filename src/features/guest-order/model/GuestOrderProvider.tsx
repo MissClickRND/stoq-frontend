@@ -1,5 +1,7 @@
 import {
-  useCreateOrderMutation,
+  useCreateGuestOrderMutation,
+  readGuestReceipt,
+  saveGuestReceipt,
   toCreateOrderRequest,
   toOrder,
   addOrderDish,
@@ -18,7 +20,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { type Dish, useDishes, dishCanBeOrdered } from "@/entities/dish";
+import { type Dish, useGuestMenu, dishCanBeOrdered } from "@/entities/dish";
 
 import type { Restaurant } from "@/entities/restaurant";
 
@@ -54,10 +56,12 @@ export function GuestOrderProvider({
   restaurant: Restaurant;
   children: ReactNode;
 }) {
-  const { dishes } = useDishes();
-  const [createOrder, { isLoading: isSubmitting }] = useCreateOrderMutation();
+  const { dishes } = useGuestMenu();
+  const [createOrder, { isLoading: isSubmitting }] = useCreateGuestOrderMutation();
   const submitting = useRef(false);
-  const [lastOrder, setLastOrder] = useState<Order | null>(null);
+  const [lastOrder, setLastOrder] = useState<Order | null>(() => {
+    try { return readGuestReceipt(window.sessionStorage, restaurant.id); } catch { return null; }
+  });
   const [items, setItems] = useState<OrderItemDraft[]>([]);
   const [stockError, setStockError] = useState<OrderStockError | null>(null);
   const [details, setDetails] = useState<GuestCheckoutDetails>({
@@ -107,6 +111,7 @@ export function GuestOrderProvider({
       const response = await createOrder(payload).unwrap();
       const order = toOrder(response);
       setLastOrder(order);
+      try { saveGuestReceipt(window.sessionStorage, restaurant.id, order); } catch { /* Storage may be disabled. */ }
       setItems([]);
       return order;
     } catch (error) {

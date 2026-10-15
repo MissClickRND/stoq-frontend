@@ -1,10 +1,7 @@
 import componentClasses from "./GuestOrderCompletePage.module.css";
 import {
-  Alert,
   Button,
-  Center,
   Group,
-  Loader,
   Paper,
   Stack,
   Text,
@@ -13,7 +10,7 @@ import {
 } from "@mantine/core";
 import { Link, useSearchParams } from "react-router-dom";
 import { IconCheck } from "@tabler/icons-react";
-import { useGuestOrderResult, formatOrderMoney } from "@/entities/order";
+import { formatOrderMoney } from "@/entities/order";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 
 import { useGuestOrder } from "@/features/guest-order";
@@ -24,8 +21,7 @@ export function GuestOrderCompletePage() {
   const [params] = useSearchParams();
   const orderId = params.get("orderId");
   const localOrder = savedOrder?.id === orderId ? savedOrder : null;
-  const result = useGuestOrderResult(orderId, { skip: Boolean(localOrder) });
-  const lastOrder = localOrder ?? result.order;
+  const lastOrder = localOrder;
   if (!lastOrder) {
     return (
       <Stack>
@@ -34,22 +30,7 @@ export function GuestOrderCompletePage() {
           parentPath={basePath}
           currentLabel="Результат заказа"
         />
-        {result.isLoading ? (
-          <Center role="status" aria-label="Загрузка заказа">
-            <Loader />
-          </Center>
-        ) : result.isError ? (
-          <Alert color="red" role="alert">
-            Не удалось загрузить заказ.
-            <Button variant="subtle" onClick={() => result.refetch()}>
-              Повторить
-            </Button>
-          </Alert>
-        ) : (
-          <Paper withBorder p="xl">
-            <Text>Заказ не найден. Оформите заказ из корзины.</Text>
-          </Paper>
-        )}
+        <Paper withBorder p="xl"><Text>Подробности заказа доступны сразу после оформления. Если вы уже отправили заказ, уточните его статус у сотрудника ресторана.</Text></Paper>
         <Button component={Link} to={basePath} variant="default">
           Вернуться в меню
         </Button>

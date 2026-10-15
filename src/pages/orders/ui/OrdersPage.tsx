@@ -24,12 +24,14 @@ import { useOrders } from "@/entities/order";
 
 import { OrdersTable } from "./components/OrdersTable";
 import { GuestOrderQrModal } from "@/features/share-guest-menu";
-import { useRestaurant } from "@/entities/restaurant";
+import { selectUser } from "@/entities/user";
+import { useAppSelector } from "@/shared/lib";
 import { useGetOrderStatisticQuery } from "@/entities/statistic";
 
 export function OrdersPage() {
   const { data } = useGetOrderStatisticQuery();
-  const { restaurant: initialRestaurant } = useRestaurant();
+  const user = useAppSelector(selectUser);
+  const initialRestaurant = { id: String(user.restaurantId) };
   const { orders, completeOrder, isLoading, isError, refetch } = useOrders();
   const [actionError, setActionError] = useState<string | null>(null);
   const onComplete = async (id: string) => {

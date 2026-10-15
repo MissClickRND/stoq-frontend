@@ -1,127 +1,54 @@
-import componentClasses from "./RegistrationForm.module.css";
-import { Button, Select, Stack, Text, TextInput } from "@mantine/core";
-import { IconBuildingStore, IconMail, IconUser } from "@tabler/icons-react";
+import { Alert, Button, PasswordInput, Stack, Text, TextInput, Title } from "@mantine/core";
 import { useState, type FormEvent } from "react";
-import { useSearchParams } from "react-router-dom";
-import { getRestaurants } from "@/entities/restaurant";
-import { submitEmployeeRegistration } from "@/entities/auth";
-import { isValidEmail } from "@/shared/lib/auth-validation";
-import { employeeInitialValues, registrationCopy } from "../../../model/config";
+import { Link, useSearchParams } from "react-router-dom";
+import { useRegisterMutation } from "@/entities/auth";
+import { isValidEmail, isValidPassword } from "@/shared/lib/auth-validation";
+import { apiErrorMessage } from "@/shared/lib/api-error";
+import { employeeInitialValues, registrationCopy as copy } from "../../../model/config";
 import classes from "@/shared/ui/auth-fields/classes/AuthFields.module.css";
 
 export function RegistrationForm() {
-  const [restaurants] = useState(getRestaurants);
   const [params] = useSearchParams();
-  const [values, setValues] = useState(() => ({
-    ...employeeInitialValues,
-    restaurantId: restaurants.some(
-      (restaurant) => restaurant.id === params.get("restaurantId"),
-    )
-      ? params.get("restaurantId")!
-      : "",
-  }));
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof typeof values, string>>
-  >({});
-  const updateValue = (field: keyof typeof values, value: string) => {
-    setValues((current) => ({ ...current, [field]: value }));
-    setErrors((current) => ({ ...current, [field]: undefined }));
+  const [values, setValues] = useState(() => ({ ...employeeInitialValues, restaurantId: params.get("restaurantId") ?? "" }));
+  const [errors, setErrors] = useState<Partial<Record<keyof typeof values, string>>>({});
+  const [register, { isLoading, error, data }] = useRegisterMutation();
+  const update = (field: keyof typeof values, value: string) => {
+    setValues(current => ({ ...current, [field]: value }));
+    setErrors(current => ({ ...current, [field]: undefined }));
   };
-  const submit = (event: FormEvent) => {
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    const nextErrors = {
-      name:
-        values.name.trim().split(/\s+/).length >= 2
-          ? undefined
-          : registrationCopy.nameError,
-      email: isValidEmail(values.email)
-        ? undefined
-        : registrationCopy.emailError,
-      restaurantId: restaurants.some(
-        (restaurant) => restaurant.id === values.restaurantId,
-      )
-        ? undefined
-        : registrationCopy.restaurantError,
+    if (isLoading) return;
+    const id = Number(values.restaurantId);
+    const next = {
+      name: values.name.trim().length >= 2 && values.name.trim().length <= 100 ? undefined : copy.nameError,
+      email: isValidEmail(values.email) ? undefined : copy.emailError,
+      password: isValidPassword(values.password) ? undefined : "Пароль должен содержать минимум 4 символа",
+      restaurantId: /^\d+$/.test(values.restaurantId) && Number.isSafeInteger(id) && id > 0 ? undefined : copy.restaurantError,
     };
-    setErrors(nextErrors);
-    if (Object.values(nextErrors).some(Boolean)) return;
-    submitEmployeeRegistration({
-      ...values,
-      name: values.name.trim(),
-      email: values.email.trim(),
-      invitationId: params.get("invitation") ?? undefined,
-    });
-    //! Обработать ошибки и показать результат только после ответа сервера.
+    setErrors(next);
+    if (Object.values(next).some(Boolean)) return;
+    try {
+      await register({ fullName: values.name.trim(), email: values.email.trim().toLowerCase(), password: values.password, restaurantId: id }).unwrap();
+      setValues(current => ({ ...current, password: "" }));
+    } catch { /* Render the API error below, preserving the form for retry. */ }
   };
-  return (
-    <form onSubmit={submit} noValidate>
-      <Stack gap="md">
-        <TextInput
-          size="lg"
-          placeholder={registrationCopy.name}
-          aria-label={registrationCopy.name}
-          autoComplete="name"
-          leftSection={<IconUser size={22} />}
-          classNames={{ input: classes.input, section: classes.section }}
-          value={values.name}
-          onChange={(event) => updateValue("name", event.currentTarget.value)}
-          error={errors.name}
-        />
-        <TextInput
-          size="lg"
-          placeholder={registrationCopy.email}
-          aria-label={registrationCopy.email}
-          type="email"
-          autoComplete="email"
-          leftSection={<IconMail size={22} />}
-          classNames={{ input: classes.input, section: classes.section }}
-          value={values.email}
-          onChange={(event) => updateValue("email", event.currentTarget.value)}
-          error={errors.email}
-        />
-        <Select
-          size="lg"
-          placeholder={registrationCopy.restaurant}
-          aria-label={registrationCopy.restaurant}
-          description={registrationCopy.restaurantDescription}
-          inputWrapperOrder={["label", "input", "description", "error"]}
-          searchable
-          nothingFoundMessage="Заведение не найдено"
-          leftSection={<IconBuildingStore size={22} />}
-          data={restaurants.map((restaurant) => ({
-            value: restaurant.id,
-            label: restaurant.name + " — " + restaurant.city,
-          }))}
-          value={values.restaurantId || null}
-          onChange={(value) => updateValue("restaurantId", value ?? "")}
-          error={errors.restaurantId}
-          classNames={{
-            input: classes.input,
-            section: classes.section,
-            option: componentClasses.option,
-          }}
-          styles={{
-            dropdown: {
-              backgroundColor: "var(--mantine-color-white)",
-              color: "var(--mantine-color-secondary-9)",
-              borderColor: "var(--mantine-color-gray-3)",
-            },
-            description: { color: "var(--mantine-color-gray-6)" },
-          }}
-        />
-        <Button
-          className={classes.submit}
-          type="submit"
-          size="lg"
-          fullWidth
-          mt="sm"
-        >
-          {registrationCopy.submit}
-        </Button>
-        <Text className={classes.footer} size="sm" ta="center">
-          {registrationCopy.footer}
-        </Text>
-      </Stack>
-    </form>
-  );
+  if (data) return <Stack role="status">
+    <Title order={2}>{copy.pendingTitle}</Title><Text>{data.message}</Text><Text>{copy.pendingMessage}</Text>
+    <Button component={Link} to="/login">Перейти ко входу</Button>
+  </Stack>;
+  return <form onSubmit={submit} noValidate><Stack gap="md">
+    {error && <Alert color="red" role="alert">{apiErrorMessage(error, copy.requestError)}</Alert>}
+    <TextInput classNames={{ input: classes.input, section: classes.section }} size="lg" label={copy.name} placeholder="Иван Петров" autoComplete="name" value={values.name} maxLength={100}
+      onChange={event => update("name", event.currentTarget.value)} error={errors.name} required />
+    <TextInput classNames={{ input: classes.input, section: classes.section }} size="lg" label={copy.email} placeholder="employee@example.com" type="email" autoComplete="email" value={values.email}
+      onChange={event => update("email", event.currentTarget.value)} error={errors.email} required />
+    <PasswordInput classNames={{ input: classes.input, innerInput: classes.innerInput, section: classes.section }}
+      visibilityToggleButtonProps={{ "aria-label": "Показать или скрыть пароль", color: "secondary.9" }} size="lg" label={copy.password} placeholder="Не менее 4 символов" autoComplete="new-password" value={values.password}
+      onChange={event => update("password", event.currentTarget.value)} error={errors.password} required />
+    <TextInput classNames={{ input: classes.input, section: classes.section }} size="lg" label={copy.restaurant} placeholder="Например, 7" inputMode="numeric" description={copy.restaurantDescription}
+      value={values.restaurantId} onChange={event => update("restaurantId", event.currentTarget.value)} error={errors.restaurantId} required />
+    <Button className={classes.submit} type="submit" size="lg" loading={isLoading}>{copy.submit}</Button>
+    <Text size="sm" ta="center" className={classes.footer}>{copy.footer}</Text>
+  </Stack></form>;
 }

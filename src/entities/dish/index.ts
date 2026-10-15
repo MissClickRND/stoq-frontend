@@ -1,4 +1,5 @@
 export type * from "./model/type.ts";
+export { useGuestMenu } from "./api/guest-menu";
 export * from "./api/dish.ts";
 export { useDishes, useDish, useIngredients, useSaveDish } from "./api/hooks";
 export { useStopList, useDishRecommendations } from "./api/collections";
