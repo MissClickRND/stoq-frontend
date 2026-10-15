@@ -5,7 +5,7 @@ export const authAssets = {
 };
 
 export const authModes = [
-  { value: "/login", label: "Вход в аккаунт" },
-  { value: "/register/restaurant", label: "Регистрация ресторана" },
+  { value: "/login", label: "Вход" },
+  { value: "/register/restaurant", label: "Создание ресторана" },
   { value: "/register/employee", label: "Регистрация сотрудника" },
 ];

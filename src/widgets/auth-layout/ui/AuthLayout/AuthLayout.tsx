@@ -23,6 +23,7 @@ export function AuthLayout() {
         className={componentClasses.card}
         radius="xl"
         shadow="xl"
+        maw={560}
       >
         <Stack gap="xl">
           <Image

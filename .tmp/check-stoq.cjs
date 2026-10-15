@@ -1,0 +1,11 @@
+const fs=require('node:fs'),path=require('node:path');
+const root='C:/Users/Lyaguh/Desktop/stoq';
+const readme=fs.readFileSync(path.join(root,'README.md'),'utf8');
+const references=[...readme.matchAll(/(?:src|href)="([^"]+)"|\]\(([^)]+)\)/g)].map(m=>m[1]||m[2]).filter(p=>!/^https?:\/\//.test(p));
+const missing=references.filter(p=>!fs.existsSync(path.join(root,p.split('#')[0])));
+if(missing.length)throw new Error('Missing README targets: '+missing.join(', '));
+const images=[...readme.matchAll(/<img\s[^>]*>/g)].map(m=>m[0]);
+if(images.some(img=>!(/alt="[^"]+"/.test(img))))throw new Error('Missing image alt');
+if(!readme.endsWith('[Все скриншоты Android-приложения](screens/mobile)\n'))throw new Error('Gallery must remain at end');
+if(readme.includes('screens/desktop'))throw new Error('Unrequested desktop screenshots');
+console.log(JSON.stringify({localReferencesVerified:references.length,images:images.length,brokenLinks:0,screenshotSectionAtEnd:true}));
