@@ -32,6 +32,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Check TypeScript
         run: npm run typecheck
+      - name: Run tests
+        run: npm test
       - name: Configure production environment
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:

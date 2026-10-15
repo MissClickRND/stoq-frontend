@@ -21,7 +21,7 @@ import {
 } from "@tabler/icons-react";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { logGroups, type LogEntry } from "./model/mock-logs";
-import classes from "./LogsPage.module.css";
+import classes from "./classes/LogsPage.module.css";
 
 const actions = {
   create: { label: "Создание", color: "teal", icon: IconPlus },
