@@ -49,7 +49,7 @@ export function StoreProductRoute() {
     ?.batch;
   const batch = validId
     ? (listing.currentData?.find((item) => item.id === id) ??
-      (passedBatch?.id === id ? passedBatch : undefined))
+      (!listing.currentData && passedBatch?.id === id ? passedBatch : undefined))
     : undefined;
 
   return (
