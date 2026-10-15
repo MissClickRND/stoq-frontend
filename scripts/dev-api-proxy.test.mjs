@@ -2,6 +2,19 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createDevApiProxy, rewriteDevAuthCookie } from './dev-api-proxy.ts';
 import { getApiBaseUrl, getSocketUrl } from '../src/shared/api/connection.ts';
+import { resolveConfig } from 'vite';
+
+test('production builds accept a relative API URL without starting the development proxy', async () => {
+  const previous = process.env.API_PROXY_TARGET;
+  process.env.API_PROXY_TARGET = '/api';
+  try {
+    const config = await resolveConfig({ envFile: false }, 'build');
+    assert.equal(config.server.proxy, undefined);
+  } finally {
+    if (previous === undefined) delete process.env.API_PROXY_TARGET;
+    else process.env.API_PROXY_TARGET = previous;
+  }
+});
 
 test('development sends HTTP and both socket namespaces through the frontend origin', () => {
   const env = { DEV: true, VITE_API_URL: 'http://remote:3000', VITE_WEBSOCKET_API_URL: 'ws://remote:3000' };

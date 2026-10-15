@@ -4,13 +4,13 @@ import { resolve } from "path";
 import { createDevApiProxy } from "./scripts/dev-api-proxy";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const target = env.API_PROXY_TARGET || env.VITE_API_URL || "http://localhost:3000";
   return {
   plugins: [react()],
   server: {
-    proxy: createDevApiProxy(target),
+    proxy: command === "serve" ? createDevApiProxy(target) : undefined,
     watch: { ignored: ["**/release/**"] },
   },
   resolve: {
