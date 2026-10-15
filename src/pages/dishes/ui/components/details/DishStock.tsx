@@ -7,11 +7,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import {
-  type Dish,
-
-  isIngredientExpired,
-} from "@/entities/dish";
+import { type Dish, isIngredientExpired } from "@/entities/dish";
 
 export function DishStock({ dish }: { dish: Dish }) {
   return (
@@ -33,7 +29,7 @@ export function DishStock({ dish }: { dish: Dish }) {
               <Group justify="space-between">
                 <Text size="sm">{item.name}</Text>
                 <Text size="xs" c="dimmed">
-                  {item.stock} {item.unit}
+                  {Math.ceil(item.stock)} {item.unit}
                 </Text>
               </Group>
               <Progress

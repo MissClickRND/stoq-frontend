@@ -7,7 +7,7 @@ export function AuthModeSwitch() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   return (
-    <ScrollArea type="auto" className={classes.scroll}>
+    <ScrollArea className={classes.scroll}>
       <SegmentedControl<string>
         aria-label="Режим авторизации"
         value={pathname}
@@ -15,6 +15,7 @@ export function AuthModeSwitch() {
         data={authModes}
         fullWidth
         withItemsBorders={false}
+        size="lg"
         classNames={{
           root: classes.root,
           indicator: classes.indicator,

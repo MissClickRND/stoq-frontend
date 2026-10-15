@@ -28,7 +28,8 @@ export default function TestPanel() {
   const [failure, setFailure] = useState("");
   const [prepare, { isLoading: preparing }] = usePrepareTestDataMutation();
   const [reset, { isLoading: resetting }] = useResetTestDataMutation();
-  const [createRestaurant, { isLoading: creatingRestaurant }] = testPanelApi.useCreateDemoRestaurantMutation();
+  const [createRestaurant, { isLoading: creatingRestaurant }] =
+    testPanelApi.useCreateDemoRestaurantMutation();
   const busy = preparing || resetting || creatingRestaurant;
   const run = async (mode: "seed" | "external" | "short-life") => {
     if (busy) return;
@@ -78,16 +79,42 @@ export default function TestPanel() {
             </Alert>
           )}
           <Stack gap="sm">
-            <Title order={2} size="lg">Отдельный тестовый ресторан</Title>
-            <Text size="sm" c="dimmed">Создаёт новый ресторан с продуктами, блюдами, рецептами, поставками, складом и заказом.
-              Для него будут доступны администратор, менеджер, официант и кладовщик. Текущий ресторан не изменяется.</Text>
-            <Button loading={creatingRestaurant} disabled={busy} onClick={async () => {
-              if (busy) return;
-              setFailure(""); setMessage("");
-              try { const result = await createRestaurant().unwrap(); setMessage(`${result.message} Ресторан: ${result.restaurant.name}. Для входа под ролями откройте страницу авторизации.`); }
-              catch (error) { setFailure(apiErrorMessage(error, "Не удалось создать тестовый ресторан.")); }
-            }}>Создать отдельный ресторан</Button>
-            <Button component={Link} to="/login" variant="default">Выбрать тестовую роль</Button>
+            <Title order={2} size="lg">
+              Отдельный тестовый ресторан
+            </Title>
+            <Text size="sm" c="dimmed">
+              Создаёт новый ресторан с продуктами, блюдами, рецептами,
+              поставками, складом и заказом. Для него будут доступны
+              администратор, менеджер, официант и кладовщик. Текущий ресторан не
+              изменяется.
+            </Text>
+            <Button
+              loading={creatingRestaurant}
+              disabled={busy}
+              onClick={async () => {
+                if (busy) return;
+                setFailure("");
+                setMessage("");
+                try {
+                  const result = await createRestaurant().unwrap();
+                  setMessage(
+                    `${result.message} Ресторан: ${result.restaurant.name}. Для входа под ролями откройте страницу авторизации.`,
+                  );
+                } catch (error) {
+                  setFailure(
+                    apiErrorMessage(
+                      error,
+                      "Не удалось создать тестовый ресторан.",
+                    ),
+                  );
+                }
+              }}
+            >
+              Создать отдельный ресторан
+            </Button>
+            <Button component={Link} to="/login" variant="default">
+              Выбрать тестовую роль
+            </Button>
           </Stack>
           <Stack gap="sm">
             <Title order={2} size="lg">

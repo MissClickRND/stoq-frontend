@@ -1,6 +1,7 @@
 .scroll {
   min-width: 0;
   max-width: 100%;
+  overflow: visible;
 }
 .root {
   width: max-content;
@@ -9,7 +10,7 @@
   padding: 3px;
 }
 .indicator {
-  background: var(--mantine-color-primary-2);
+  background: var(--mantine-color-primary-5);
   box-shadow: none;
 }
 .control {
@@ -22,7 +23,7 @@
   justify-content: center;
   flex: 1;
   color: var(--mantine-color-gray-7);
-  font-size: 12px;
+  font-size: 14px;
   padding: 10px 8px;
   white-space: nowrap;
   line-height: 1.35;
