@@ -50,6 +50,12 @@ test('write-off history keeps decimal lost quantity, unknown legacy data and no 
   const markup = render(writeOffs.WriteOffsTable, { items: [{ batchId: 81, product, writtenOffQuantity: 12.5, expiresAt: '2026-10-15T00:00:00Z', writtenOffAt: null }, { batchId: 82, product, writtenOffQuantity: null, expiresAt: '2026-10-15T00:00:00Z', writtenOffAt: null }] });
   assert.match(markup, /12,5 л/); assert.match(markup, /Молоко/); assert.match(markup, /—/); assert.doesNotMatch(markup, /<button/);
 });
+
+test('expired stock table exposes disposal only when connected to an explicit action', () => {
+  const product = { id: 3, name: 'Молоко', unit: { shortName: 'л' } };
+  const markup = render(writeOffs.WriteOffsTable, { items: [{ batchId: 81, product, writtenOffQuantity: 12.5, expiresAt: '2026-10-15T00:00:00Z', writtenOffAt: null }], onDelete() {} });
+  assert.match(markup, /Удалить продукт/);
+});
 test('loading, true empty and error statistics have distinct visible states with retry', () => {
   assert.match(render(StatisticsFeedback, { query: { isFetching: true, isError: false } }), /Загрузка статистики/);
   const markup = render(StatisticsFeedback, { query: { isFetching: false, isError: true, refetch() {} } });

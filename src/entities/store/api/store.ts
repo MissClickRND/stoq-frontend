@@ -13,6 +13,10 @@ import type {
 
 export const storeApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    disposeStoreBatch: build.mutation<{ batchId: number; disposedAt: string; alreadyDisposed: boolean }, { batchId: number }>({
+      query: ({ batchId }) => ({ url: `/inventory/write-offs/${batchId}`, method: 'DELETE' }),
+      invalidatesTags: ['Store', 'Statistic', 'Activity'],
+    }),
     getStore: build.query<IStoreProduct[], { search: string }>({
       async queryFn({ search }, api) {
         try { return { data: (await inventorySocketCache.readStock(api.signal)).filter(batch => matchesStoreProduct(batch, search)) }; }
@@ -91,4 +95,5 @@ export const {
   useGetExpiringStoreQuery,
   useInventoryStoreMutation, useInventoryStoreReportMutation, usePreviewInventoryQuery,
   useWriteOffStoreBatchMutation,
+  useDisposeStoreBatchMutation,
 } = storeApi;
