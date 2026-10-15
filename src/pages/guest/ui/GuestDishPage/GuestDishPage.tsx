@@ -27,9 +27,9 @@ import classes from "../../classes/Guest.module.css";
 
 export function GuestDishPage() {
   const { dishId } = useParams();
-  const { dishes, isLoading, isError, refetch } = useGuestMenu();
+  const { restaurant, basePath, items, addDish } = useGuestOrder();
+  const { dishes, isLoading, isError, refetch } = useGuestMenu(restaurant.id);
   const dish = dishes.find(item => item.id === dishId);
-  const { basePath, items, addDish } = useGuestOrder();
   if (isLoading)
     return (
       <Center w="100%" mih="50svh">
@@ -77,6 +77,11 @@ export function GuestDishPage() {
         />
         <Paper withBorder p="xl">
           <Stack gap="lg">
+            {dish.recommended && (
+              <Badge variant="light" color="primary" tt="none">
+                Советуем
+              </Badge>
+            )}
             <Title order={1} className={classes.title}>
               {dish.name}
             </Title>

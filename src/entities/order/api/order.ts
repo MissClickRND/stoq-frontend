@@ -33,9 +33,12 @@ export const ordersApi = baseApi.injectEndpoints({
         { type: "Store", id: "LIST" },
       ],
     }),
-    createGuestOrder: build.mutation<OrderResponse, CreateOrderRequest>({
-      query: body => ({ url: "/orders", method: "POST", body, credentials: "omit" }),
-      invalidatesTags: [{ type: "Dish", id: "GUEST_MENU" }],
+    createGuestOrder: build.mutation<OrderResponse, { restaurantId: string; order: CreateOrderRequest }>({
+      query: ({ restaurantId, order }) => ({
+        url: "/orders", method: "POST", body: order, credentials: "omit",
+        headers: { "X-Restaurant-Id": restaurantId },
+      }),
+      invalidatesTags: (_result, _error, { restaurantId }) => [{ type: "Dish", id: `GUEST_MENU:${restaurantId}` }],
     }),
     completeOrder: build.mutation<OrderResponse, { id: number }>({
       query: ({ id }) => ({
@@ -43,7 +46,11 @@ export const ordersApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { status: "completed" },
       }),
-      invalidatesTags: ["Order"],
+      invalidatesTags: ["Order", "Statistic"],
+    }),
+    rejectOrder: build.mutation<OrderResponse, { id: number }>({
+      query: ({ id }) => ({ url: `/orders/${id}/status`, method: "PATCH", body: { status: "rejected" } }),
+      invalidatesTags: ["Order", "Statistic"],
     }),
   }),
 });
@@ -55,7 +62,8 @@ export const {
 } = ordersApi;
 export function useOrders() {
   const query = useGetOrdersQuery();
-  const [complete] = ordersApi.useCompleteOrderMutation();
+  const [complete, completing] = ordersApi.useCompleteOrderMutation();
+  const [reject, rejecting] = ordersApi.useRejectOrderMutation();
   return {
     ...query,
     orders: (query.data ?? []).map(toOrder),
@@ -63,6 +71,8 @@ export function useOrders() {
       void query.refetch();
     },
     completeOrder: (id: string) => complete({ id: Number(id) }).unwrap(),
+    rejectOrder: (id: string) => reject({ id: Number(id) }).unwrap(),
+    isUpdating: completing.isLoading || rejecting.isLoading,
   };
 }
 

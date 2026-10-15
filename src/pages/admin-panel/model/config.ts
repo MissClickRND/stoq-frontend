@@ -24,10 +24,10 @@ export const roleLabels: Record<UserRole, string> = {
 export const roleOptions = Object.entries(roleLabels).map(([value, label]) => ({
   value,
   label,
-  disabled: value === "ADMIN" || value === "WAIT_CONFIRM",
+  disabled: value === "WAIT_CONFIRM",
 }));
 export const invitationRoleOptions = roleOptions.filter(
-  (item) => item.value !== "ADMIN" && item.value !== "WAIT_CONFIRM",
+  (item) => item.value !== "WAIT_CONFIRM",
 );
 export const employeeStatusLabels = {
   active: { label: "Активен", color: "green" },

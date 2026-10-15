@@ -1,6 +1,6 @@
 const { chromium } = require(require.resolve("playwright", { paths: [process.argv[2] || process.cwd()] }));
 const assert = require("node:assert/strict");
-const origin = process.env.INVENTORY_UI_URL || "http://127.0.0.1:5180";
+let origin = process.env.INVENTORY_UI_URL;
 const oil = { id: 93, supplyId: 53, productId: 79, price: 300, totalPrice: 897,
   availableQuantity: 2.99, Quantity: 2.99, expiresAt: "2027-10-15T10:31:52.788Z", status: "RUNNINGOUT",
   product: { id: 79, name: "Масло растительное", unit: { id: 12, name: "Литр", shortName: "л" } } };
@@ -8,26 +8,25 @@ const milk = { ...oil, id: 89, productId: 75, availableQuantity: 12, Quantity: 1
   product: { id: 75, name: "Молоко", unit: oil.product.unit } };
 
 (async () => {
+  const { createServer } = await import("vite");
+  const vite = origin ? null : await createServer({ server: { host: "127.0.0.1", port: 0, watch: null, hmr: false } });
+  if (vite) { await vite.listen(); origin = "http://127.0.0.1:" + vite.httpServer.address().port; }
   const browser = await chromium.launch({ headless: true });
   try {
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
     const errors = [], requests = [];
     let stock = [oil, milk], expiring = [], activeSocket, inventoryConnections = 0;
-    let holdSearch = false, releaseSearch;
+    const httpReads = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.route("**/*", async (route) => {
       const request = route.request();
       if (!["fetch", "xhr"].includes(request.resourceType())) return route.continue();
       const url = new URL(request.url());
+      const path = url.pathname.replace(/^\/api(?=\/)/, "");
       let data = {};
-      if (url.pathname === "/inventory") {
-        const search = url.searchParams.get("search") || "";
-        data = stock.filter((batch) => batch.product.name.toLowerCase().includes(search.toLowerCase()));
-        if (holdSearch && search) {
-          await new Promise((resolve) => { releaseSearch = resolve; });
-        }
-      } else if (url.pathname === "/inventory/expiring") data = expiring;
-      else if (["/dishes", "/supplies"].includes(url.pathname)) data = [];
+      if (path.startsWith("/inventory")) { httpReads.push(path); throw new Error("Inventory must use sockets only"); }
+      if (path === "/auth/status") data = { authenticated: true, user: { id: 1, fullName: "Администратор", email: "admin@test.local", role: "ADMIN", restaurantId: 7 } };
+      else if (["/dishes", "/supplies", "/test/restaurants"].includes(path)) data = [];
       return route.fulfill({ contentType: "application/json", body: JSON.stringify(data) });
     });
     await page.routeWebSocket(/\/socket\.io\//, (ws) => {
@@ -53,17 +52,15 @@ const milk = { ...oil, id: 89, productId: 75, availableQuantity: 12, Quantity: 1
     await page.waitForFunction(() => document.querySelectorAll("tbody tr").length === 2);
     assert.deepEqual(requests.find((request) => request.event === "inventory:getStock").payload, { requestId: "store" });
     const connectionCount = inventoryConnections;
-    holdSearch = true;
     await page.getByPlaceholder("Поиск продуктов по названию").fill("масло");
-    await page.waitForResponse(() => false, { timeout: 400 }).catch(() => {});
-    assert.equal(typeof releaseSearch, "function");
+    await page.waitForFunction(() => document.querySelectorAll("tbody tr").length === 1);
+    assert.equal(httpReads.length, 0);
     stock = [{ ...oil, availableQuantity: 1.25, Quantity: 1.25, totalPrice: 375 }];
     const expired = { eventId: "expired-75", reason: "EXPIRATION_WRITE_OFF", data: stock,
       notifications: [{ productId: 75, productName: "Молоко", problem: "Истёк срок годности партии, остаток списан",
         message: "Молоко: Истёк срок годности партии, остаток списан.", severity: "warning" }] };
     send("inventory:stockChanged", expired);
     send("inventory:batchExpired", expired);
-    releaseSearch(); holdSearch = false;
     await row("Масло растительное").getByText("1,25", { exact: true }).waitFor();
     assert.equal(await row("Молоко").count(), 0);
     assert.equal(await page.getByText(expired.notifications[0].message, { exact: true }).count(), 1);
@@ -93,6 +90,7 @@ const milk = { ...oil, id: 89, productId: 75, availableQuantity: 12, Quantity: 1
     await section.getByText("Масло растительное", { exact: true }).waitFor();
     assert.ok(requests.some((request) => request.event === "inventory:getExpiringSoon" && request.payload.daysThreshold === 14));
     assert.deepEqual(errors, []);
-    console.log("Inventory socket UI passed: initial request, decimal snapshots, filtered caches, old HTTP response race, event deduplication, detail removal, manual write-off notice, dashboard and threshold refresh.");
-  } finally { await browser.close(); }
+    assert.deepEqual(httpReads, []);
+    console.log("Inventory socket UI passed: initial request, decimal snapshots, filtered caches, no HTTP warehouse reads, event deduplication, detail removal, manual write-off notice, dashboard and threshold refresh.");
+  } finally { await browser.close(); if (vite) await vite.close(); }
 })().catch((error) => { console.error(error); process.exitCode = 1; });

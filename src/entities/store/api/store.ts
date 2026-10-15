@@ -3,6 +3,8 @@ export function removeProduct(_id: string): void {
 }
 
 import { baseApi } from "@/shared/api";
+import { inventorySocketCache } from "./socket-cache";
+import { matchesStoreProduct } from "../lib/search";
 import type {
   IExpiringStoreProduct,
   IInventoryStoreRequest,
@@ -12,19 +14,18 @@ import type {
 export const storeApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getStore: build.query<IStoreProduct[], { search: string }>({
-      query: ({ search }) => ({
-        url: "/inventory",
-        params: {
-          search,
-        },
-      }),
+      async queryFn({ search }, api) {
+        try { return { data: (await inventorySocketCache.readStock(api.signal)).filter(batch => matchesStoreProduct(batch, search)) }; }
+        catch (error) { return { error: { status: "CUSTOM_ERROR", error: error instanceof Error ? error.message : "Склад недоступен" } }; }
+      },
       providesTags: [{ type: "Store", id: "LIST" }],
     }),
 
     getStoreProductById: build.query<IStoreProduct[], { id: number }>({
-      query: ({ id }) => ({
-        url: `/inventory/${id}`,
-      }),
+      async queryFn({ id }, api) {
+        try { return { data: (await inventorySocketCache.readStock(api.signal)).filter(batch => batch.productId === id) }; }
+        catch (error) { return { error: { status: "CUSTOM_ERROR", error: error instanceof Error ? error.message : "Склад недоступен" } }; }
+      },
       providesTags: (_result, _error, arg) => [{ type: "Store", id: arg.id }],
     }),
 
@@ -32,10 +33,10 @@ export const storeApi = baseApi.injectEndpoints({
       IExpiringStoreProduct[],
       { daysThreshold: number }
     >({
-      query: ({ daysThreshold }) => ({
-        url: "/inventory/expiring",
-        params: { daysThreshold },
-      }),
+      async queryFn({ daysThreshold }, api) {
+        try { return { data: await inventorySocketCache.readExpiring(daysThreshold, api.signal) }; }
+        catch (error) { return { error: { status: "CUSTOM_ERROR", error: error instanceof Error ? error.message : "Склад недоступен" } }; }
+      },
       providesTags: [{ type: "Store", id: "LIST" }],
     }),
 

@@ -10,7 +10,8 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconCheck, IconLock, IconLockOpen } from "@tabler/icons-react";
-import type { UserRole } from "@/entities/user";
+import { selectUser, type UserRole } from "@/entities/user";
+import { useAppSelector } from "@/shared/lib";
 import type { Employee } from "@/entities/employee";
 import {
   employeeStatusLabels,
@@ -24,15 +25,18 @@ type Props = {
   onRoleChange: (id: string, role: UserRole) => void;
   onBlock: (employee: Employee) => void;
   onApprove: (id: string) => void;
+  busy?: boolean;
 };
 export function EmployeeRow({
   employee,
   onRoleChange,
   onBlock,
   onApprove,
+  busy,
 }: Props) {
   const status = employeeStatusLabels[employee.status];
-  const owner = employee.role === "ADMIN";
+  const currentUser = useAppSelector(selectUser);
+  const ownAccount = employee.id === String(currentUser.id);
   return (
     <Table.Tr>
       <Table.Td>
@@ -72,9 +76,9 @@ export function EmployeeRow({
           w={230}
           size="lg"
           aria-label={`Изменить роль: ${employee.name}`}
-          data={roleOptions}
+          data={employee.status === "pending" ? roleOptions.filter(option => option.value !== "ADMIN") : roleOptions}
           value={employee.role}
-          disabled={owner}
+          disabled={ownAccount || busy}
           allowDeselect={false}
           onChange={(value) =>
             value && onRoleChange(employee.id, value as UserRole)
@@ -87,6 +91,7 @@ export function EmployeeRow({
             <Tooltip label="Одобрить доступ">
               <ActionIcon
                 color="green"
+                disabled={busy}
                 variant="light"
                 size={50}
                 aria-label={`Одобрить доступ: ${employee.name}`}
@@ -98,15 +103,15 @@ export function EmployeeRow({
           )}
           <Tooltip
             label={
-              owner
-                ? "Управляющего нельзя заблокировать"
+              ownAccount
+                ? "Нельзя заблокировать свой аккаунт"
                 : employee.status === "blocked"
                   ? "Разблокировать"
                   : "Заблокировать"
             }
           >
             <ActionIcon
-              disabled={owner}
+              disabled={ownAccount || busy}
               color={employee.status === "blocked" ? "green" : "red"}
               variant="light"
               size={50}

@@ -8,7 +8,6 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import { useState, type FormEvent } from "react";
 import { isValidEmail } from "@/shared/lib/auth-validation";
 import type { RestaurantSettings } from "@/entities/restaurant";
@@ -18,18 +17,22 @@ type Props = {
   onChange: (draft: RestaurantSettings) => void;
   onSave: () => void;
   onReset: () => void;
+  disabled?: boolean;
+  saving?: boolean;
 };
 export function EstablishmentSection({
   draft,
   onChange,
   onSave,
   onReset,
+  disabled,
+  saving,
 }: Props) {
   const [errors, setErrors] = useState<
-    Partial<Record<"name" | "city" | "email" | "phone", string>>
+    Partial<Record<"name" | "address" | "email" | "phone", string>>
   >({});
   const update = (
-    field: "name" | "city" | "email" | "phone",
+    field: "name" | "address" | "email" | "phone",
     value: string,
   ) => {
     onChange({ ...draft, [field]: value });
@@ -37,30 +40,27 @@ export function EstablishmentSection({
   };
   const submit = (event: FormEvent) => {
     event.preventDefault();
+    if (disabled || saving) return;
     const next = {
-      name: draft.name.trim() ? undefined : "Укажите название ресторана",
-      city: draft.city.trim() ? undefined : "Укажите город",
-      email: isValidEmail(draft.email) ? undefined : "Введите корректную почту",
+      name: draft.name.trim().length >= 2 ? undefined : "Укажите название ресторана (минимум 2 символа)",
+      address: undefined,
+      email: !draft.email.trim() || isValidEmail(draft.email) ? undefined : "Введите корректную почту",
       phone:
-        /^\+?[\d\s()\-]{7,25}$/.test(draft.phone.trim()) &&
-        draft.phone.replace(/\D/g, "").length >= 7
+        !draft.phone.trim() || (/^\+?[\d\s()\-]{7,30}$/.test(draft.phone.trim()) &&
+        draft.phone.replace(/\D/g, "").length >= 7)
           ? undefined
           : "Введите корректный телефон",
     };
     setErrors(next);
     if (Object.values(next).some(Boolean)) return;
     onSave();
-    notifications.show({
-      title: "Изменения сохранены",
-      message: "Настройки заведения обновлены локально",
-      color: "green",
-    });
   };
   return (
     <Box className={componentClasses.content}>
       <form onSubmit={submit} noValidate>
         <Group justify="center" grow>
           <Fieldset
+            disabled={disabled || saving}
             legend="Настройки заведения"
             className={componentClasses.fieldset}
           >
@@ -69,6 +69,7 @@ export function EstablishmentSection({
                 <TextInput
                   size="lg"
                   label="Название ресторана"
+                  maxLength={100}
                   required
                   value={draft.name}
                   onChange={(event) =>
@@ -78,19 +79,19 @@ export function EstablishmentSection({
                 />
                 <TextInput
                   size="lg"
-                  label="Город"
-                  required
-                  value={draft.city}
+                  label="Адрес ресторана"
+                  maxLength={200}
+                  value={draft.address}
                   onChange={(event) =>
-                    update("city", event.currentTarget.value)
+                    update("address", event.currentTarget.value)
                   }
-                  error={errors.city}
+                  error={errors.address}
                 />
                 <TextInput
                   size="lg"
                   label="Email ресторана"
                   type="email"
-                  required
+                  maxLength={254}
                   value={draft.email}
                   onChange={(event) =>
                     update("email", event.currentTarget.value)
@@ -101,7 +102,7 @@ export function EstablishmentSection({
                   size="lg"
                   label="Телефон ресторана"
                   type="tel"
-                  required
+                  maxLength={30}
                   value={draft.phone}
                   onChange={(event) =>
                     update("phone", event.currentTarget.value)
@@ -119,7 +120,7 @@ export function EstablishmentSection({
                 >
                   Отмена
                 </Button>
-                <Button type="submit">Сохранить изменения</Button>
+                <Button type="submit" loading={saving}>Сохранить изменения</Button>
               </Group>
             </Stack>
           </Fieldset>

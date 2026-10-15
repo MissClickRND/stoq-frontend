@@ -1,15 +1,19 @@
 import componentClasses from "./OrderExpandedDetails.module.css";
 import { Button, Group, Paper, Stack, Table, Text } from "@mantine/core";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import TableLayout from "@/shared/ui/table-layout";
 import { formatOrderMoney, type Order } from "@/entities/order";
 
 export function OrderExpandedDetails({
   order,
   onComplete,
+  onReject,
+  busy = false,
 }: {
   order: Order;
   onComplete: () => void;
+  onReject: () => void;
+  busy?: boolean;
 }) {
   return (
     <div className={componentClasses.detailsBody}>
@@ -83,16 +87,20 @@ export function OrderExpandedDetails({
             </Text>
           </Group>
         </Stack>
-        {order.status !== "completed" && (
+        {(order.status === "processing" || order.status === "preparing") && (
+          <Stack gap="sm" mt="auto">
           <Button
             size="lg"
             fullWidth
-            mt="auto"
+            disabled={busy}
             leftSection={<IconCheck size={20} />}
             onClick={onComplete}
           >
             Завершить заказ
           </Button>
+          <Button size="lg" fullWidth color="red" variant="light" disabled={busy}
+            leftSection={<IconX size={20} />} onClick={onReject}>Отклонить заказ</Button>
+          </Stack>
         )}
       </Paper>
     </div>

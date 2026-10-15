@@ -1,4 +1,4 @@
-import { sessionExpired, sessionReceived } from "@/shared/lib/session-events";
+import { sessionExpired, sessionReceived, sessionStarted } from "@/shared/lib/session-events";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { authApi } from "../../auth/@x/user.ts";
 import type { IUserState, SessionUser } from "./type.ts";
@@ -22,6 +22,7 @@ export const userSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(sessionExpired, () => anonymous);
     builder.addCase(sessionReceived, (state, action) => fromSession(action.payload, state, true));
+    builder.addCase(sessionStarted, (state, action) => fromSession(action.payload, state, true));
     builder.addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => fromSession(action.payload.user, state, true));
     builder.addMatcher(authApi.endpoints.status.matchFulfilled, (state, action) => action.payload.authenticated ? fromSession(action.payload.user, state) : anonymous);
     builder.addMatcher(authApi.endpoints.logout.matchFulfilled, () => anonymous);

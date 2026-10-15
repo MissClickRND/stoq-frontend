@@ -25,7 +25,7 @@ export function getTodayOrderStatistics(orders: Order[], day: string) {
         completed.reduce((sum, order) => sum + order.totalPrice!, 0) *
           100,
       ) / 100,
-    processing: today.length - completed.length,
+    processing: today.filter(order => ["pending", "processing", "preparing"].includes(order.status)).length,
   };
 }
 

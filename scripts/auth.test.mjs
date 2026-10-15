@@ -29,6 +29,7 @@ const { authApi } = await import('../src/entities/auth/api/authApi.ts');
 const { sessionExpired } = await import('../src/shared/lib/session-events.ts');
 const { guestMenuApi, toGuestDish } = await import('../src/entities/dish/api/guest-menu.ts');
 const { ordersApi } = await import('../src/entities/order/api/order.ts');
+const { testPanelApi } = await import('../src/features/test-panel/api/testPanel.ts');
 const user = { id: 1, fullName: 'Иван Петров', email: 'ivan@example.com', role: 'ADMIN', restaurantId: 7 };
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 function makeStore(t) {
@@ -38,10 +39,10 @@ function makeStore(t) {
 }
 test('role policy denies unknown roles and protects direct links and nested pages', () => {
   for (const role of ['ADMIN', 'MANAGER', 'WAITER', 'STOREKEEPER']) {
-    for (const route of ['/analytics/dashboard', '/store/1', '/store/inventory/confirm', '/supply/new', '/dishes/2', '/orders/new', '/logs', '/admin-panel', '/test']) {
+    for (const route of ['/analytics/dashboard', '/analytics/dependencies', '/store/1', '/store/inventory/confirm', '/supply/new', '/dishes/2', '/orders/new', '/logs', '/admin-panel', '/test']) {
       const allowed = role === 'ADMIN' || (role === 'MANAGER' && !['/admin-panel', '/test'].includes(route))
         || (['WAITER', 'STOREKEEPER'].includes(role) && /^\/(store|supply)(\/|$)/.test(route))
-        || (role === 'WAITER' && route.startsWith('/dishes'));
+        || (role === 'WAITER' && (route.startsWith('/dishes') || route.startsWith('/orders') || route === '/analytics/dependencies'));
       assert.equal(canAccessPath(role, route), allowed, `${role}: ${route}`);
     }
     assert.ok(canAccessPath(role, roleHome(role)));
@@ -168,4 +169,60 @@ test('admin mutations use the supported gateway routes and DTOs', async t => {
     { path: '/auth/admin/users/9', method: 'DELETE', body: undefined },
     { path: '/auth/admin/restaurant', method: 'PATCH', body: { name: 'Кафе', address: 'Москва' } },
   ]);
+});
+
+test('demo login waits for a pending real status refresh before rotating cookies', async t => {
+  const events = [];
+  let refreshed = false;
+  let releaseRefresh;
+  const refreshGate = new Promise(resolve => { releaseRefresh = resolve; });
+  let markRefreshStarted;
+  const refreshStarted = new Promise(resolve => { markRefreshStarted = resolve; });
+  const demoUser = { ...user, id: 40, restaurantId: 42, fullName: 'Демо менеджер', role: 'MANAGER' };
+  t.mock.method(globalThis, 'fetch', async request => {
+    const pathname = new URL(request.url).pathname;
+    if (pathname === '/auth/status') {
+      events.push(refreshed ? 'status-retry' : 'status-expired');
+      return refreshed ? json({ authenticated: true, user }) : json({ message: 'Expired' }, 401);
+    }
+    if (pathname === '/auth/refresh') {
+      events.push('refresh-start'); markRefreshStarted();
+      await refreshGate;
+      refreshed = true; events.push('refresh-complete');
+      return json({ user });
+    }
+    assert.equal(pathname, '/test/restaurants/42/login');
+    events.push('demo-login');
+    assert.equal(refreshed, true, 'the old session rotation must finish before demo cookies are set');
+    assert.equal(request.credentials, 'include');
+    assert.deepEqual(await request.json(), { role: 'MANAGER' });
+    return json({ user: demoUser });
+  });
+  const store = makeStore(t);
+  const status = store.dispatch(authApi.endpoints.status.initiate());
+  t.after(status.unsubscribe);
+  await refreshStarted;
+  const login = store.dispatch(testPanelApi.endpoints.demoLogin.initiate({ restaurantId: 42, role: 'MANAGER' }));
+  try {
+    await new Promise(resolve => setImmediate(resolve));
+    assert.deepEqual(events, ['status-expired', 'refresh-start']);
+  } finally { releaseRefresh(); }
+  assert.deepEqual((await login.unwrap()).user, demoUser);
+  await status.unwrap();
+  assert.ok(events.indexOf('refresh-complete') < events.indexOf('demo-login'));
+  assert.equal(events.filter(event => event === 'refresh-start').length, 1);
+});
+
+test('rejected public demo login does not refresh or replace the existing actor', async t => {
+  const calls = [];
+  t.mock.method(globalThis, 'fetch', async request => {
+    calls.push(new URL(request.url).pathname);
+    return json({ message: 'Демо-вход запрещён' }, 401);
+  });
+  const store = makeStore(t);
+  store.dispatch({ type: 'user/setUser', payload: user });
+  await assert.rejects(store.dispatch(testPanelApi.endpoints.demoLogin.initiate({ restaurantId: 42, role: 'ADMIN' })).unwrap());
+  assert.deepEqual(calls, ['/test/restaurants/42/login']);
+  assert.equal(store.getState().user.id, user.id);
+  assert.equal(store.getState().user.restaurantId, user.restaurantId);
 });

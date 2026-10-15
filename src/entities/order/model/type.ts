@@ -1,5 +1,5 @@
 export type OrderType = "dine-in" | "takeaway";
-export type OrderStatus = "processing" | "preparing" | "completed";
+export type OrderStatus = "pending" | "processing" | "preparing" | "completed" | "rejected" | "cancelled";
 export type OrderItem = {
   dishId: string;
   name: string;

@@ -23,9 +23,11 @@ import {
 import { GuestDishCard } from "../components/GuestDishCard/GuestDishCard";
 import classes from "../../classes/Guest.module.css";
 import { useDebouncedValue } from "@mantine/hooks";
+import { useGuestOrder } from "@/features/guest-order";
 
 const pageSize = GUEST_MENU_PAGE_SIZE;
 export function GuestMenuPage() {
+  const { restaurant } = useGuestOrder();
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebouncedValue(search, 200);
 
@@ -34,7 +36,7 @@ export function GuestMenuPage() {
     isLoading: dishesLoading,
     isError,
     refetch,
-  } = useGuestMenu(debouncedSearch);
+  } = useGuestMenu(restaurant.id, debouncedSearch);
   const isLoading = dishesLoading;
 
   const [page, setPage] = useState(1);
@@ -84,7 +86,7 @@ export function GuestMenuPage() {
             <GuestDishCard
               key={dish.id}
               dish={dish}
-              recommended={false}
+              recommended={dish.recommended}
             />
           ))}
         </SimpleGrid>

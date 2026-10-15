@@ -24,17 +24,21 @@ import { useOrders } from "@/entities/order";
 
 import { OrdersTable } from "./components/OrdersTable";
 import { GuestOrderQrModal } from "@/features/share-guest-menu";
-import { selectUser } from "@/entities/user";
+import { selectUser, fullAccessRoles } from "@/entities/user";
 import { useAppSelector } from "@/shared/lib";
 import { useGetOrderStatisticQuery } from "@/entities/statistic";
+import { ConfirmationModal } from "@/shared/ui/confirmation-modal";
 
 export function OrdersPage() {
-  const { data } = useGetOrderStatisticQuery();
   const user = useAppSelector(selectUser);
+  const canViewStatistics = Boolean(user.role && fullAccessRoles.includes(user.role));
+  const { data } = useGetOrderStatisticQuery(undefined, { skip: !canViewStatistics });
   const initialRestaurant = { id: String(user.restaurantId) };
-  const { orders, completeOrder, isLoading, isError, refetch } = useOrders();
+  const { orders, completeOrder, rejectOrder, isUpdating, isLoading, isError, refetch } = useOrders();
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const onComplete = async (id: string) => {
+    if (isUpdating) return;
     setActionError(null);
     try {
       await completeOrder(id);
@@ -91,6 +95,7 @@ export function OrdersPage() {
         searchValue={search}
         setSearchValue={setSearch}
         statisticData={statistics}
+        disableStatistics={!canViewStatistics}
       >
         <TableSummary
           count={filtered.length}
@@ -132,9 +137,21 @@ export function OrdersPage() {
             <Loader />
           </Center>
         ) : (
-          !isError && <OrdersTable orders={filtered} onComplete={onComplete} />
+          !isError && <OrdersTable orders={filtered} onComplete={onComplete} busy={isUpdating}
+            onReject={id => { setActionError(null); setRejectingId(id); }} />
         )}
       </DefaultPageLayout>
+      <ConfirmationModal opened={Boolean(rejectingId)} title="Отклонить заказ"
+        message={`Отклонить заказ №${rejectingId ?? ""}?`}
+        warning={actionError ?? "Списанные продукты автоматически не возвращаются на склад."}
+        confirmText="Отклонить" cancelText="Отмена" loading={isUpdating}
+        onClose={() => { if (!isUpdating) setRejectingId(null); }}
+        onConfirm={async () => {
+          if (!rejectingId || isUpdating) return;
+          setActionError(null);
+          try { await rejectOrder(rejectingId); setRejectingId(null); }
+          catch (error) { setActionError(apiErrorMessage(error, "Не удалось отклонить заказ")); }
+        }} />
       <GuestOrderQrModal
         opened={sharing}
         onClose={() => setSharing(false)}

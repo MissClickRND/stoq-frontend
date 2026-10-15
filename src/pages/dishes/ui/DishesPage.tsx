@@ -19,10 +19,14 @@ import { DishIngredientSearch } from "./components/DishIngredientSearch";
 import { TableSummary } from "@/shared/ui/table-summary";
 import { useGetDishStatisticQuery } from "@/entities/statistic";
 import { DependencyGraph } from "@/widgets/dependency-graph";
+import { selectUser, fullAccessRoles } from "@/entities/user";
+import { useAppSelector } from "@/shared/lib";
 
 export function DishesPage() {
   const [searchValue, setSearchValue] = useState("");
-  const { data } = useGetDishStatisticQuery();
+  const user = useAppSelector(selectUser);
+  const canViewStatistics = Boolean(user.role && fullAccessRoles.includes(user.role));
+  const { data } = useGetDishStatisticQuery(undefined, { skip: !canViewStatistics });
 
   const [query] = useDebouncedValue(searchValue, 200);
   const [adding, setAdding] = useState(false);
@@ -84,7 +88,7 @@ export function DishesPage() {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         disableSearch={mode === "recommended" || mode === "graph"}
-        disableStatistics={mode === "graph"}
+        disableStatistics={mode === "graph" || !canViewStatistics}
         statisticData={statistics}
         topSection={{
           items: dishModes,

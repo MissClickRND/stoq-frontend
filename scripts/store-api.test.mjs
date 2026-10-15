@@ -39,6 +39,7 @@ registerHooks({
 });
 
 const { storeApi } = await import("../src/entities/store/api/store.ts");
+const { inventorySocketCache } = await import("../src/entities/store/api/socket-cache.ts");
 const { toInventoryStoreRequest } = await import("../src/entities/inventory/lib/inventory.ts");
 
 const batch = {
@@ -51,13 +52,19 @@ const createTestStore = () => configureStore({
 });
 
 test("store endpoints read warehouse and product batches by product ID and PUT exact changed quantities", async (t) => {
+  inventorySocketCache.reset();
+  inventorySocketCache.setStock([batch]);
+  t.after(() => inventorySocketCache.reset());
   const requests = [];
   let current = { ...batch };
   t.mock.method(globalThis, "fetch", async (request) => {
     const url = new URL(request.url);
     const body = request.method === "PUT" ? await request.json() : undefined;
     requests.push({ method: request.method, path: url.pathname, search: url.searchParams.get("search"), body });
-    if (body) current = { ...current, Quantity: body.items[0].quantity, totalPrice: body.items[0].quantity * current.price };
+    if (body) {
+      current = { ...current, Quantity: body.items[0].quantity, totalPrice: body.items[0].quantity * current.price };
+      inventorySocketCache.setStock([current]);
+    }
     return new Response(JSON.stringify([current]), {
       headers: { "Content-Type": "application/json" },
     });
@@ -66,11 +73,11 @@ test("store endpoints read warehouse and product batches by product ID and PUT e
   const listing = store.dispatch(storeApi.endpoints.getStore.initiate({ search: "Помидоры" }));
   t.after(() => { listing.unsubscribe(); store.dispatch(storeApi.util.resetApiState()); });
   assert.deepEqual(await listing.unwrap(), [batch]);
-  assert.equal(requests[0].search, "Помидоры");
+  assert.equal(requests.length, 0, "Warehouse reads must not issue HTTP requests");
   const detail = store.dispatch(storeApi.endpoints.getStoreProductById.initiate({ id: 3 }));
   t.after(() => detail.unsubscribe());
   assert.deepEqual(await detail.unwrap(), [batch]);
-  assert.equal(requests.at(-1).path, "/inventory/3");
+  assert.equal(requests.length, 0, "Product batches share the socket snapshot");
   const request = toInventoryStoreRequest([{ product: batch, actual: "2.75", remove: false }]);
   const saved = await store.dispatch(storeApi.endpoints.inventoryStore.initiate(request)).unwrap();
   assert.equal(saved[0].Quantity, 2.75);
@@ -90,18 +97,18 @@ test("store endpoints read warehouse and product batches by product ID and PUT e
 });
 
 test("expiring inventory sends the threshold, preserves decimal quantities, and refreshes with Store tags", async (t) => {
+  inventorySocketCache.reset();
+  t.after(() => inventorySocketCache.reset());
   assert.ok(storeApi.endpoints.getExpiringStore, "Expiring batches must load from the inventory API");
   const response = [{ batchId: 59, productId: 3, product: batch.product,
     expiresAt: "2026-10-16T10:55:00.000Z", daysRemaining: 1, availableQuantity: "0.5", price: "600" }];
   let calls = 0;
   const thresholds = [];
-  t.mock.method(globalThis, "fetch", async (request) => {
-    const url = new URL(request.url);
-    assert.equal(url.pathname, "/inventory/expiring");
-    thresholds.push(url.searchParams.get("daysThreshold"));
-    calls++;
-    return new Response(JSON.stringify(response), { headers: { "Content-Type": "application/json" } });
-  });
+  t.mock.method(globalThis, "fetch", async () => { throw new Error("HTTP warehouse reads are forbidden"); });
+  inventorySocketCache.attach({ stock() {}, expiring(days) {
+    thresholds.push(days); calls++;
+    queueMicrotask(() => inventorySocketCache.setExpiring(days, response));
+  } });
   const store = createTestStore();
   const operation = store.dispatch(storeApi.endpoints.getExpiringStore.initiate({ daysThreshold: 7 }));
   t.after(() => { operation.unsubscribe(); store.dispatch(storeApi.util.resetApiState()); });
@@ -112,7 +119,7 @@ test("expiring inventory sends the threshold, preserves decimal quantities, and 
   const changedThreshold = store.dispatch(storeApi.endpoints.getExpiringStore.initiate({ daysThreshold: 14 }));
   t.after(() => changedThreshold.unsubscribe());
   assert.deepEqual(await changedThreshold.unwrap(), response);
-  assert.deepEqual(thresholds, ["7", "7", "14"]);
+  assert.deepEqual(thresholds, [7, 7, 14]);
 });
 
 test('write-off uses a batch endpoint and keeps inventory adjustment separate', async t => {

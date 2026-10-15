@@ -29,12 +29,14 @@ type Props = {
   latest: Invitation | null;
   now: number;
   onCreate: (role: InvitationRole, hours: number) => void;
+  busy?: boolean;
 };
 export function InvitationCreator({
   restaurantId,
   latest,
   now,
   onCreate,
+  busy,
 }: Props) {
   const [values, setValues] = useState<{ role: InvitationRole; hours: string }>(
     initialInvitationForm,
@@ -42,8 +44,7 @@ export function InvitationCreator({
   const url = latest ? invitationUrl(latest.id, restaurantId) : "";
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    onCreate(values.role, Number(values.hours));
-    //! Показать созданную ссылку после успешного ответа сервера.
+    if (!busy) onCreate(values.role, Number(values.hours));
   };
   return (
     <Paper withBorder p="md">
@@ -62,6 +63,7 @@ export function InvitationCreator({
               <Select
                 size="lg"
                 label="Роль для приглашения"
+                disabled={busy}
                 required
                 data={invitationRoleOptions}
                 value={values.role}
@@ -74,6 +76,7 @@ export function InvitationCreator({
               <Select
                 size="lg"
                 label="Срок действия ссылки"
+                disabled={busy}
                 required
                 data={invitationDurationOptions}
                 value={values.hours}
@@ -95,7 +98,7 @@ export function InvitationCreator({
                 url={url}
                 disabled={!latest || invitationStatus(latest, now) !== "active"}
               />
-              <Button type="submit">Создать ссылку</Button>
+              <Button type="submit" loading={busy}>Создать ссылку</Button>
             </Group>
           </Stack>
         </form>

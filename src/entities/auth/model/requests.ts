@@ -7,4 +7,5 @@ export type RestaurantRegistrationRequest = LoginRequest & {
 export type EmployeeRegistrationRequest = LoginRequest & {
   fullName: string;
   restaurantId: number;
+  invitationId?: string;
 };

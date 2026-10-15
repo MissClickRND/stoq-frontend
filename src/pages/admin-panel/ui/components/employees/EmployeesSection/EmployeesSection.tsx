@@ -11,14 +11,16 @@ import { EmployeeRow } from "../EmployeeRow";
 type Props = {
   employees: Employee[];
   onRoleChange: (id: string, role: UserRole) => void;
-  onToggleBlock: (id: string) => void;
+  onToggleBlock: (id: string) => Promise<boolean>;
   onApprove: (id: string) => void;
+  busy?: boolean;
 };
 export function EmployeesSection({
   employees,
   onRoleChange,
   onToggleBlock,
   onApprove,
+  busy,
 }: Props) {
   const [blocking, setBlocking] = useState<Employee | null>(null);
   return (
@@ -34,6 +36,7 @@ export function EmployeesSection({
             employee={employee}
             onRoleChange={onRoleChange}
             onApprove={onApprove}
+            busy={busy}
             onBlock={(item) =>
               item.status === "blocked"
                 ? onToggleBlock(item.id)
@@ -49,10 +52,10 @@ export function EmployeesSection({
         warning="Сотрудник потеряет доступ к заведению до разблокировки."
         confirmText="Заблокировать"
         cancelText="Отмена"
-        onClose={() => setBlocking(null)}
-        onConfirm={() => {
-          if (blocking) onToggleBlock(blocking.id);
-          setBlocking(null);
+        loading={busy}
+        onClose={() => !busy && setBlocking(null)}
+        onConfirm={async () => {
+          if (blocking && !busy && await onToggleBlock(blocking.id)) setBlocking(null);
         }}
       />
     </Stack>

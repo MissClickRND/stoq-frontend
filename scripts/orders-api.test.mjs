@@ -22,6 +22,7 @@ registerHooks({
   }
 });
 const { ordersApi } = await import('../src/entities/order/api/order.ts');
+const { toOrder } = await import('../src/entities/order/lib/adapters.ts');
 test('orders POST and GET use server metadata and invalidate the listing', async t => {
   assert.ok(ordersApi, 'Orders must use real server API');
   const calls = [];
@@ -38,4 +39,20 @@ test('orders POST and GET use server metadata and invalidate the listing', async
   assert.deepEqual(calls[0], { path: '/orders', method: 'POST', body });
   assert.deepEqual(await store.dispatch(ordersApi.endpoints.getOrders.initiate()).unwrap(), [order]);
   assert.deepEqual(await store.dispatch(ordersApi.endpoints.getOrderById.initiate({ id: 1 })).unwrap(), order);
+});
+
+test('rejecting uses the existing status endpoint and preserves rejected/cancelled terminal states', async t => {
+  const calls = [];
+  const order = { id: 1, date: '2026-10-15T12:00:00Z', type: 'takeaway', table: null, guests: 1, status: 'rejected', items: [] };
+  t.mock.method(globalThis, 'fetch', async request => {
+    calls.push({ path: new URL(request.url).pathname, method: request.method, body: await request.json() });
+    return new Response(JSON.stringify(order), { headers: { 'Content-Type': 'application/json' } });
+  });
+  const store = configureStore({ reducer: { [ordersApi.reducerPath]: ordersApi.reducer }, middleware: g => g().concat(ordersApi.middleware) });
+  t.after(() => store.dispatch(ordersApi.util.resetApiState()));
+  const result = await store.dispatch(ordersApi.endpoints.rejectOrder.initiate({ id: 1 })).unwrap();
+  assert.deepEqual(calls, [{ path: '/orders/1/status', method: 'PATCH', body: { status: 'rejected' } }]);
+  assert.equal(toOrder(result).status, 'rejected');
+  assert.equal(toOrder({ ...order, status: 'cancelled' }).status, 'cancelled');
+  assert.equal(toOrder({ ...order, status: 'pending_reservation' }).status, 'pending');
 });

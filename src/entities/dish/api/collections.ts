@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { selectUser } from "../../user/@x/dish";
 import { useAppSelector } from "@/shared/lib/store";
+import { getSocketUrl } from "@/shared/api/connection";
 import type { IRecommendedDishes, IStopListDish } from "../model/type";
 import {
   createSocketCollection,
@@ -42,16 +43,7 @@ function useSocketCollection<T>(
 
   useEffect(() => {
     if (skip) return;
-    const url = new URL(
-      import.meta.env.VITE_WEBSOCKET_API_URL ||
-        import.meta.env.VITE_API_URL ||
-        "http://localhost:3000",
-      window.location.origin,
-    );
-    url.pathname = "/recommendations";
-    url.search = "";
-    url.hash = "";
-    const socket = io(url.toString(), {
+    const socket = io(getSocketUrl("/recommendations"), {
       transports: ["websocket"],
       autoConnect: false,
       withCredentials: true,

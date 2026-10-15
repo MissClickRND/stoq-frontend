@@ -1,9 +1,10 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { sessionExpired, sessionReceived } from "@/shared/lib/session-events";
+import { getApiBaseUrl } from "./connection";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_API_URL ?? "http://localhost:3000",
+  baseUrl: getApiBaseUrl(),
   credentials: "include",
   timeout: 20000,
 });
@@ -13,9 +14,11 @@ const publicAuth = new Set(["/auth/login", "/auth/register-user", "/auth/registe
 export const baseQueryWithReauth: Query = async (args, api, extraOptions) => {
   const url = typeof args === "string" ? args : args.url;
   const guest = typeof args !== "string" && args.credentials === "omit";
-  if (refreshing && !publicAuth.has(url) && !guest) await refreshing;
+  const publicLogin = publicAuth.has(url) || /^\/test\/restaurants\/\d+\/login$/.test(url);
+  // Cookie-changing logins must finish after any rotation of the previous session.
+  if (refreshing && !guest) await refreshing;
   let result = await baseQuery(args, api, extraOptions);
-  if (result.error?.status !== 401 || publicAuth.has(url) || guest) return result;
+  if (result.error?.status !== 401 || publicLogin || guest) return result;
   if (url === "/auth/refresh") {
     api.dispatch(sessionExpired());
     return result;

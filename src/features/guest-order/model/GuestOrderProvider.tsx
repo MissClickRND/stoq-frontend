@@ -56,7 +56,7 @@ export function GuestOrderProvider({
   restaurant: Restaurant;
   children: ReactNode;
 }) {
-  const { dishes } = useGuestMenu();
+  const { dishes } = useGuestMenu(restaurant.id);
   const [createOrder, { isLoading: isSubmitting }] = useCreateGuestOrderMutation();
   const submitting = useRef(false);
   const [lastOrder, setLastOrder] = useState<Order | null>(() => {
@@ -108,7 +108,7 @@ export function GuestOrderProvider({
     submitting.current = true;
     try {
       setStockError(null);
-      const response = await createOrder(payload).unwrap();
+      const response = await createOrder({ restaurantId: restaurant.id, order: payload }).unwrap();
       const order = toOrder(response);
       setLastOrder(order);
       try { saveGuestReceipt(window.sessionStorage, restaurant.id, order); } catch { /* Storage may be disabled. */ }

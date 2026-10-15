@@ -3,9 +3,11 @@ import { useStore } from "react-redux";
 import { io } from "socket.io-client";
 import { notifications } from "@mantine/notifications";
 import { useAppDispatch, useAppSelector } from "@/shared/lib/store";
+import { getSocketUrl } from "@/shared/api/connection";
 import { matchesStoreProduct } from "../lib/search";
 import { storeApi } from "./store";
 import { createInventorySubscription } from "./inventory-socket";
+import { inventorySocketCache } from "./socket-cache";
 
 export function useInventoryLiveUpdates() {
   const dispatch = useAppDispatch();
@@ -20,18 +22,12 @@ export function useInventoryLiveUpdates() {
     let disposed = false;
     let stockRevision = 0;
     const expiryRevisions = new Map<number, number>();
-    const url = new URL(
-      import.meta.env.VITE_WEBSOCKET_API_URL || import.meta.env.VITE_API_URL || "http://localhost:3000",
-      window.location.origin,
-    );
-    url.pathname = "/inventory";
-    url.search = "";
-    url.hash = "";
-    const socket = io(url.toString(), { transports: ["websocket"], withCredentials: true, autoConnect: false });
+    const socket = io(getSocketUrl("/inventory"), { transports: ["websocket"], withCredentials: true, autoConnect: false });
     const active = createInventorySubscription({
       socket,
       async onStock(data, changed) {
         const revision = ++stockRevision;
+        inventorySocketCache.setStock(data);
         const state = reduxStore.getState();
         // Finish older HTTP reads before applying the newer event snapshot.
         await Promise.all([
@@ -59,6 +55,7 @@ export function useInventoryLiveUpdates() {
       async onExpiring(daysThreshold, data) {
         const revision = (expiryRevisions.get(daysThreshold) ?? 0) + 1;
         expiryRevisions.set(daysThreshold, revision);
+        inventorySocketCache.setExpiring(daysThreshold, data);
         const arg = { daysThreshold };
         await dispatch(storeApi.util.getRunningQueryThunk("getExpiringStore", arg));
         if (disposed || expiryRevisions.get(daysThreshold) !== revision) return;
@@ -74,19 +71,20 @@ export function useInventoryLiveUpdates() {
           message: notice.message,
           color: { warning: "orange", error: "red", success: "green", info: "blue" }[notice.severity],
           position: "top-right",
-          autoClose: 7000,
+          autoClose: 3000,
         });
       },
       onError(message) {
-        notifications.show({ id: "inventory:connection", title: "Обновление склада", message,
-          color: "orange", position: "top-right", autoClose: 5000 });
+        inventorySocketCache.fail(message);
       },
     });
+    inventorySocketCache.attach({ stock: active.refreshStock, expiring: active.refreshExpiring });
     subscription.current = active;
     return () => {
       disposed = true;
       subscription.current = null;
       active.dispose();
+      inventorySocketCache.reset();
     };
   }, [dispatch, reduxStore]);
 

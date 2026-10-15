@@ -12,9 +12,13 @@ import { OrderExpandedDetails } from "./OrderExpandedDetails/OrderExpandedDetail
 export function OrdersTable({
   orders,
   onComplete,
+  onReject,
+  busy = false,
 }: {
   orders: Order[];
   onComplete: (id: string) => void;
+  onReject: (id: string) => void;
+  busy?: boolean;
 }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   return (
@@ -92,6 +96,8 @@ export function OrdersTable({
                   <OrderExpandedDetails
                     order={order}
                     onComplete={() => onComplete(order.id)}
+                    onReject={() => onReject(order.id)}
+                    busy={busy}
                   />
                 </Table.Td>
               </Table.Tr>

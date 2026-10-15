@@ -1,8 +1,8 @@
 export const registrationCopy = {
   title: "Регистрация сотрудника",
   description: "Отправьте запрос на присоединение к существующему заведению",
-  name: "Имя и фамилия", email: "Почта", restaurant: "ID ресторана", password: "Пароль",
-  restaurantDescription: "Уточните ID ресторана у администратора",
+  name: "Имя и фамилия", email: "Почта", restaurant: "Заведение", password: "Пароль",
+  restaurantDescription: "Найдите своё заведение по названию или адресу",
   submit: "Отправить запрос",
   footer: "После одобрения администратором вы получите доступ к системе.",
   pendingTitle: "Ваша заявка получена",
@@ -10,7 +10,7 @@ export const registrationCopy = {
   pendingMessage: "После одобрения заявки вы сможете войти с указанными почтой и паролем.",
   nameError: "Укажите имя и фамилию (от 2 до 100 символов)",
   emailError: "Введите корректную почту",
-  restaurantError: "Введите положительный целый ID ресторана",
+  restaurantError: "Выберите заведение из списка",
   requestError: "Не удалось отправить запрос. Проверьте соединение и попробуйте ещё раз.",
 };
 export const employeeInitialValues = { name: "", email: "", password: "", restaurantId: "" };

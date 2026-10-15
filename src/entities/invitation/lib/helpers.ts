@@ -6,8 +6,8 @@ export function invitationStatus(
   now = Date.now(),
 ): InvitationStatus {
   if (invitation.revoked) return "revoked";
-  if (invitation.usedBy) return "used";
+  if (invitation.usedAt || invitation.usedBy) return "used";
   return Date.parse(invitation.expiresAt) <= now ? "expired" : "active";
 }
 export const invitationUrl = (id: string, restaurantId: string) =>
-  `${getPublicSiteOrigin()}/register/employee?restaurantId=${encodeURIComponent(restaurantId)}&invitation=${encodeURIComponent(id)}`;
+  `${getPublicSiteOrigin()}/register/employee?restaurantId=${encodeURIComponent(restaurantId)}&invitationId=${encodeURIComponent(id)}`;

@@ -27,7 +27,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         })}
         cssVariablesResolver={cssVariablesResolver}
       >
-        <Notifications />
+        <Notifications limit={3} />
         <DatesProvider settings={{ locale: "ru", firstDayOfWeek: 1 }}>
           <DesktopShell>
             <Router />

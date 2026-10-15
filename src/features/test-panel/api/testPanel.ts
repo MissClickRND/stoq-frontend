@@ -1,5 +1,11 @@
 import { baseApi } from "@/shared/api";
 import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type { SessionUser } from "@/entities/user";
+
+export type DemoAccount = Pick<SessionUser, "id" | "email" | "fullName" | "restaurantId"> & {
+  role: "ADMIN" | "MANAGER" | "WAITER" | "STOREKEEPER";
+};
+export type DemoRestaurant = { id: number; name: string; address: string; accounts: DemoAccount[] };
 import {
   createExternalSupply,
   createShortLifeSupply,
@@ -19,6 +25,17 @@ const tags = [
 
 export const testPanelApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
+    demoRestaurants: build.query<DemoRestaurant[], void>({
+      query: () => ({ url: "/test/restaurants", credentials: "omit" }),
+      providesTags: [{ type: "User", id: "DEMO_RESTAURANTS" }],
+    }),
+    createDemoRestaurant: build.mutation<{ restaurant: DemoRestaurant; accounts: DemoAccount[]; message: string }, void>({
+      query: () => ({ url: "/test/restaurant", method: "POST", timeout: 120000 }),
+      invalidatesTags: [{ type: "User", id: "DEMO_RESTAURANTS" }],
+    }),
+    demoLogin: build.mutation<{ user: SessionUser }, { restaurantId: number; role: DemoAccount["role"] }>({
+      query: ({ restaurantId, role }) => ({ url: `/test/restaurants/${restaurantId}/login`, method: "POST", body: { role } }),
+    }),
     resetTestData: build.mutation<Record<string, unknown>, void>({
       query: () => ({
         url: "/test/reset",

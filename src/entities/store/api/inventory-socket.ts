@@ -69,9 +69,10 @@ export function createInventorySubscription({
     wait("store");
     socket.emit("inventory:getStock", { requestId: "store" });
   }
-  function requestExpiry(daysThreshold: number) {
+  function requestExpiry(daysThreshold: number, force = false) {
     if (disposed || !socket.connected) return;
     const previous = pendingExpiry.get(daysThreshold);
+    if (previous && !force) return;
     if (previous) clearTimer(previous);
     const requestId = `store:expiring:${daysThreshold}:${++sequence}`;
     pendingExpiry.set(daysThreshold, requestId);
@@ -106,7 +107,7 @@ export function createInventorySubscription({
       break;
     }
   };
-  const onChanged = (event: InventoryEvent) => {
+  const onChanged = (event: InventoryEvent, expirationDetails = false) => {
     if (disposed || !event || typeof event !== "object") return;
     const repeated = remember(seenEvents, event.eventId);
     const hasSnapshot = isSnapshot(event.data);
@@ -121,7 +122,10 @@ export function createInventorySubscription({
         requestStock();
       }
     }
-    if (!repeated || newSnapshot) thresholds.forEach(requestExpiry);
+    if (!repeated || newSnapshot) thresholds.forEach(days => requestExpiry(days, true));
+    // Expiration emits both a summary and a detailed batch event with different IDs.
+    // Only the detailed event should produce a toast; both may update the data.
+    if (event.reason === "EXPIRATION_WRITE_OFF" && !expirationDetails) return;
     const notices = Array.isArray(event.notifications)
       ? event.notifications.filter((notice) => notice && typeof notice.message === "string" && notice.message.trim())
       : [];
@@ -160,7 +164,7 @@ export function createInventorySubscription({
   const onConnect = () => {
     onDisconnect();
     requestStock();
-    thresholds.forEach(requestExpiry);
+    thresholds.forEach(days => requestExpiry(days));
   };
   const onConnectError = (error: Error) => {
     if (!disposed) onError(`Не удалось подключиться к складу: ${error.message}`);
@@ -171,8 +175,8 @@ export function createInventorySubscription({
     connect_error: onConnectError,
     "inventory:stockResult": onStockResult,
     "inventory:expiringSoonResult": onExpiringResult,
-    "inventory:stockChanged": onChanged,
-    "inventory:batchExpired": onChanged,
+    "inventory:stockChanged": (event: InventoryEvent) => onChanged(event),
+    "inventory:batchExpired": (event: InventoryEvent) => onChanged(event, true),
     "inventory:error": onServerError,
   };
   for (const [event, handler] of Object.entries(listeners)) socket.on(event, handler);
@@ -180,13 +184,15 @@ export function createInventorySubscription({
   else socket.connect();
 
   return {
+    refreshStock: requestStock,
+    refreshExpiring: (days: number) => requestExpiry(days),
     setDaysThresholds(next: number[]) {
       const previous = thresholds;
       thresholds = [...new Set(next.filter((days) => Number.isFinite(days) && days >= 0))];
       for (const [days, id] of pendingExpiry) {
         if (!thresholds.includes(days)) { clearTimer(id); pendingExpiry.delete(days); }
       }
-      thresholds.filter((days) => !previous.includes(days)).forEach(requestExpiry);
+      thresholds.filter((days) => !previous.includes(days)).forEach(days => requestExpiry(days));
     },
     dispose() {
       if (disposed) return;

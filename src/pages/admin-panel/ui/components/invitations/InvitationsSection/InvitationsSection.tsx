@@ -12,9 +12,11 @@ import { InvitationRow } from "../InvitationRow";
 type Props = {
   invitations: Invitation[];
   restaurantId: string;
-  onCreate: (role: InvitationRole, hours: number) => void;
-  onRevoke: (id: string) => void;
-  onDelete: (id: string) => void;
+  onCreate: (role: InvitationRole, hours: number) => Promise<boolean>;
+  onRevoke: (id: string) => Promise<boolean>;
+  onDelete: (id: string) => Promise<boolean>;
+  latest: Invitation | null;
+  busy?: boolean;
 };
 export function InvitationsSection({
   invitations,
@@ -22,6 +24,8 @@ export function InvitationsSection({
   onCreate,
   onRevoke,
   onDelete,
+  latest,
+  busy,
 }: Props) {
   const [confirmation, setConfirmation] = useState<{
     invitation: Invitation;
@@ -40,7 +44,8 @@ export function InvitationsSection({
       >
         <InvitationCreator
           restaurantId={restaurantId}
-          latest={null}
+          latest={latest}
+          busy={busy}
           now={now}
           onCreate={onCreate}
         />
@@ -57,6 +62,7 @@ export function InvitationsSection({
             invitation={invitation}
             restaurantId={restaurantId}
             now={now}
+            busy={busy}
             onRevoke={(item) =>
               setConfirmation({ invitation: item, action: "revoke" })
             }
@@ -79,13 +85,13 @@ export function InvitationsSection({
           confirmation?.action === "delete" ? "Удалить" : "Отключить"
         }
         cancelText="Отмена"
-        onClose={() => setConfirmation(null)}
-        onConfirm={() => {
-          if (confirmation)
+        loading={busy}
+        onClose={() => !busy && setConfirmation(null)}
+        onConfirm={async () => {
+          if (confirmation && !busy && await
             (confirmation.action === "delete" ? onDelete : onRevoke)(
               confirmation.invitation.id,
-            );
-          //! Закрыть подтверждение и обновить список после ответа сервера.
+            )) setConfirmation(null);
         }}
       />
     </Stack>

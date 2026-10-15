@@ -24,6 +24,7 @@ type Props = {
   now: number;
   onRevoke: (invitation: Invitation) => void;
   onDelete: (invitation: Invitation) => void;
+  busy?: boolean;
 };
 export function InvitationRow({
   invitation,
@@ -31,6 +32,7 @@ export function InvitationRow({
   now,
   onRevoke,
   onDelete,
+  busy,
 }: Props) {
   const status = invitationStatus(invitation, now);
   const label = invitationStatusLabels[status];
@@ -92,7 +94,7 @@ export function InvitationRow({
               variant="light"
               color="orange"
               size="lg"
-              disabled={status !== "active"}
+              disabled={busy || status !== "active"}
               onClick={() => onRevoke(invitation)}
             >
               <IconBan size={20} />
@@ -103,6 +105,7 @@ export function InvitationRow({
               aria-label="Удалить приглашение"
               variant="light"
               color="red"
+              disabled={busy}
               size="lg"
               onClick={() => onDelete(invitation)}
             >

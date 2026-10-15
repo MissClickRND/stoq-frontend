@@ -7,3 +7,5 @@ export const sessionReceived = createAction<{
   role: "ADMIN" | "MANAGER" | "WAITER" | "STOREKEEPER" | "WAIT_CONFIRM";
   restaurantId: number;
 }>("session/received");
+// A new login also clears data belonging to the previous account/restaurant.
+export const sessionStarted = createAction<ReturnType<typeof sessionReceived>["payload"]>("session/started");

@@ -1,4 +1,4 @@
-import type { Order, OrderDraft, OrderType } from '../model/type.ts';
+import type { Order, OrderDraft, OrderType, OrderStatus } from '../model/type.ts';
 
 export interface OrderResponse {
   id: number;
@@ -32,9 +32,13 @@ export function toCreateOrderRequest(draft: Pick<OrderDraft, 'createdAt' | 'type
 }
 
 export function toOrder(source: OrderResponse): Order {
+  const statuses: Record<string, OrderStatus> = {
+    pending_reservation: 'pending', created: 'processing', confirmed: 'preparing',
+    completed: 'completed', rejected: 'rejected', cancelled: 'cancelled',
+  };
   return { id: String(source.id), createdAt: source.date, type: source.type, table: source.table,
     guests: source.guests, responsible: '—', totalPrice: source.totalPrice ?? null,
-    status: source.status === 'completed' ? 'completed' : source.status === 'confirmed' ? 'preparing' : 'processing',
+    status: statuses[source.status] ?? 'pending',
     items: source.items.map((item) => {
       return { dishId: String(item.dishId), quantity: item.quantity,
         name: item.name ?? `Блюдо #${item.dishId}`, price: item.price ?? null,

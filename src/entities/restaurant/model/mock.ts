@@ -10,7 +10,7 @@ export const mockRestaurants: Restaurant[] = [
 export const mockRestaurantSettings: RestaurantSettings = {
   id: "restaurant-1",
   name: "La Maison",
-  city: "Москва",
+  address: "Москва",
   email: "admin@lamaison.ru",
   phone: "+7 (999) 123-45-67",
 };

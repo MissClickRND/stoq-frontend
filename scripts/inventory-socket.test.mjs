@@ -64,6 +64,18 @@ test("an initial stock response cannot restore batches removed by a newer broadc
   socket.receive("inventory:stockResult", { requestId: "store", data: [batch] });
   assert.deepEqual(stock, [[]]);
 });
+test("expiry summary and detailed event with different IDs produce one notification", t => {
+  const { socket, notices } = setup(t);
+  socket.open();
+  socket.receive("inventory:stockResult", { requestId: "store", data: [batch] });
+  assert.equal(notices.length, 0, "Initial snapshot must be quiet");
+  socket.receive("inventory:stockChanged", { eventId: "summary", reason: "EXPIRATION_WRITE_OFF", data: [],
+    notifications: [{ productId: 79, message: "Масло: остаток списан." }] });
+  socket.receive("inventory:batchExpired", { eventId: "detail", productId: 79, batchId: 93, message: "Масло: истёк срок годности партии №93." });
+  socket.receive("inventory:batchExpired", { eventId: "detail", productId: 79, batchId: 93, message: "Масло: истёк срок годности партии №93." });
+  assert.equal(notices.length, 1);
+  assert.match(notices[0].message, /№93/);
+});
 
 test("a paired event can supply a snapshot and notifications missing from the first event", (t) => {
   const { socket, stock, notices } = setup(t);
