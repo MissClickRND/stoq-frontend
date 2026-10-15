@@ -1,12 +1,13 @@
 import { Table, Text } from "@mantine/core";
 import {
   type IRecommendedDishes,
+  type IDish,
   formatMoney,
   DishIdentity,
 } from "@/entities/dish";
 
 import { DishDetailsButton } from "../common/DishDetailsButton";
-export function RecommendationRow({ dish }: { dish: IRecommendedDishes }) {
+export function RecommendationRow({ dish, catalogDish }: { dish: IRecommendedDishes; catalogDish?: IDish }) {
   const markup =
     dish.costPrice !== null && dish.costPrice > 0
       ? ((dish.salePrice - dish.costPrice) / dish.costPrice) * 100
@@ -14,7 +15,7 @@ export function RecommendationRow({ dish }: { dish: IRecommendedDishes }) {
   return (
     <Table.Tr>
       <Table.Td>
-        <DishIdentity dish={{ name: dish.dishName }} />
+        <DishIdentity dish={{ name: dish.dishName, imageURL: dish.imageURL || catalogDish?.imageURL, imageUrl: dish.imageUrl || catalogDish?.imageUrl }} />
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>

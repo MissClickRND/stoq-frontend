@@ -26,11 +26,10 @@ test("product batches include current detail once and exclude other products; to
   assert.deepEqual(stock.getProductBatches([], selected), [selected]);
 });
 
-test("all four server statuses have distinct labels and shelf-life colors", () => {
-  assert.deepEqual(Object.keys(storeStatuses).sort(), ["ACTIVE", "DEPLETED", "EXPIRED", "RUNNINGOUT"]);
+test("stock statuses describe balances independently of shelf life", () => {
+  assert.deepEqual(Object.keys(storeStatuses).sort(), ["ACTIVE", "DEPLETED", "RUNNINGOUT"]);
   assert.equal(storeStatuses.ACTIVE.color, "green");
   assert.equal(storeStatuses.DEPLETED.color, "gray");
-  assert.equal(storeStatuses.EXPIRED.color, "red");
   assert.equal(storeStatuses.RUNNINGOUT.color, "orange");
-  assert.equal(storeStatuses.RUNNINGOUT.label, "Скоро испортится");
+  assert.equal(storeStatuses.RUNNINGOUT.label, "Заканчивается");
 });

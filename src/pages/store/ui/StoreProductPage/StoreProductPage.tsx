@@ -174,7 +174,6 @@ export function StoreProductPage({
                   </Text>
                   <StoreShelfLife
                     shelfLife={batch.expiresAt}
-                    status={batch.status}
                   />
                 </Box>
                 <Box>
@@ -273,7 +272,6 @@ export function StoreProductPage({
                       <Table.Td>
                         <StoreShelfLife
                           shelfLife={item.expiresAt}
-                          status={item.status}
                         />
                       </Table.Td>
                       <Table.Td>

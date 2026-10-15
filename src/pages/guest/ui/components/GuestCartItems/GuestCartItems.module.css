@@ -11,6 +11,12 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.cartRow[data-unavailable="true"] {
+  outline: 1px solid var(--mantine-color-red-6);
+  outline-offset: -1px;
+  border-radius: var(--mantine-radius-sm);
+  padding-inline: var(--mantine-spacing-sm);
+}
 
 .cartRow:last-child {
   border-bottom: none;

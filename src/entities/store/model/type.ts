@@ -1,6 +1,6 @@
 import type { IProduct as Product } from '../../product/@x/store';
 
-export type IStoreStatus = "ACTIVE" | "DEPLETED" | "EXPIRED" | "RUNNINGOUT";
+export type IStoreStatus = "ACTIVE" | "DEPLETED" | "RUNNINGOUT";
 
 export type IStoreProduct = {
   id: number;

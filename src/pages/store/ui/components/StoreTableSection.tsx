@@ -99,7 +99,7 @@ export default function StoreTableSection({
             : ""
         }
         warning={
-          writeOffProduct && writeOffProduct.status !== "EXPIRED"
+          writeOffProduct && Date.parse(writeOffProduct.expiresAt) > Date.now()
             ? writeOffText.warning
             : undefined
         }

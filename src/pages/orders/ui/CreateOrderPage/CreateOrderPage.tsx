@@ -3,7 +3,6 @@ import { useState, type FormEvent } from "react";
 import { Alert, Button, Group, Paper, Text } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
-import { apiErrorMessage } from "@/shared/lib/api-error";
 import dayjs from "dayjs";
 import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
@@ -15,6 +14,8 @@ import {
   orderTotal,
   validateOrderDraft,
   formatOrderMoney,
+  getOrderStockError,
+  type OrderStockError,
   type OrderDraft,
 } from "@/entities/order";
 
@@ -39,6 +40,7 @@ export function CreateOrderPage() {
   }));
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [stockError, setStockError] = useState<OrderStockError | null>(null);
   const errors = submitted ? validateOrderDraft(draft) : {};
   const change = (patch: Partial<OrderDraft>) => {
     setDraft((current) => ({ ...current, ...patch }));
@@ -54,14 +56,13 @@ export function CreateOrderPage() {
       return;
     }
     try {
+      setStockError(null);
       await createOrder(toCreateOrderRequest(draft)).unwrap();
       navigate("/orders");
     } catch (error) {
-      setMessage(
-        error instanceof Error
-          ? error.message
-          : apiErrorMessage(error, "Не удалось создать заказ"),
-      );
+      const failure = getOrderStockError(error, draft.items, dishes);
+      setStockError(failure);
+      setMessage(failure.message);
     }
   };
   return (
@@ -100,6 +101,7 @@ export function CreateOrderPage() {
         )}
         <OrderDishesEditor
           items={draft.items}
+          unavailableDishes={stockError?.dishes}
           submitted={submitted}
           search={
             <OrderDishSearch

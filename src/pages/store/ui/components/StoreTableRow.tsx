@@ -67,7 +67,7 @@ export function StoreTableRow({
         </Text>
       </Table.Td>
       <Table.Td>
-        <StoreShelfLife shelfLife={product.expiresAt} status={product.status} />
+        <StoreShelfLife shelfLife={product.expiresAt} />
       </Table.Td>
       <Table.Td>
         <StoreProductStatus status={product.status} />

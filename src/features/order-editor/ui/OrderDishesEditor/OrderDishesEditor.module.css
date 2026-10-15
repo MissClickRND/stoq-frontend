@@ -38,6 +38,15 @@
   flex: 1;
   min-height: 160px;
 }
+.dishRow[data-unavailable="true"] {
+  border-color: var(--mantine-color-red-6);
+}
+.dishPhoto {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  aspect-ratio: 1;
+}
 .quantityLabel {
   display: none;
 }

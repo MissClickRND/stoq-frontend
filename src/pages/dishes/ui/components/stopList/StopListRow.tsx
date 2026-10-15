@@ -5,6 +5,7 @@ import {
   formatMoney,
   type DishStopListStatus,
   type IStopListDish,
+  type IDish,
 } from "@/entities/dish";
 
 import { DishDetailsButton } from "../common/DishDetailsButton";
@@ -15,7 +16,7 @@ const reasonLabels: Record<DishStopListStatus, string> = {
   ACTIVE: "Активен",
 };
 
-export function StopListRow({ dish }: { dish: IStopListDish }) {
+export function StopListRow({ dish, catalogDish }: { dish: IStopListDish; catalogDish?: IDish }) {
   const unavailableIngredients = new Set(
     dish.reasons
       .filter((reason) => reason.status !== "ACTIVE")
@@ -24,7 +25,7 @@ export function StopListRow({ dish }: { dish: IStopListDish }) {
   return (
     <Table.Tr>
       <Table.Td>
-        <DishIdentity dish={{ name: dish.dishName }} />
+        <DishIdentity dish={{ name: dish.dishName, imageURL: dish.imageURL || catalogDish?.imageURL, imageUrl: dish.imageUrl || catalogDish?.imageUrl }} />
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>

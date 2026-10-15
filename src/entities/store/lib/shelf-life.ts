@@ -1,5 +1,13 @@
 const dayInMilliseconds = 86_400_000;
 
+export function getShelfLifeColor(days: number | null): string {
+  if (days === null) return "gray";
+  if (days <= 1) return "red";
+  if (days < 3) return "orange";
+  if (days < 7) return "yellow";
+  return "green";
+}
+
 function parseShelfLife(value: string): Date | null {
   const match = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(value);
   if (match) {

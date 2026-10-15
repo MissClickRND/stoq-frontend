@@ -36,9 +36,9 @@ export function DishesPage() {
       : "all";
   const search = query.trim();
   const allDishes = useGetDishesQuery(
-    { search },
+    { search: mode === "all" ? search : "" },
     {
-      skip: mode !== "all",
+      skip: mode === "graph",
     },
   );
 
@@ -146,9 +146,9 @@ export function DishesPage() {
               (mode === "all" ? (
                 <AllDishes dishes={allDishes.currentData ?? []} />
               ) : mode === "stop" ? (
-                <StopList stopListDishes={stopList.dishes} />
+                <StopList stopListDishes={stopList.dishes} catalog={allDishes.currentData ?? []} />
               ) : (
-                <RecommendationPage dishes={recommendations.dishes} />
+                <RecommendationPage dishes={recommendations.dishes} catalog={allDishes.currentData ?? []} />
               ))}
           </>
         )}

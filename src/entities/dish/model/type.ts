@@ -31,6 +31,8 @@ export type IDish = {
 };
 
 export type IStopListDish = {
+  imageURL?: string | null;
+  imageUrl?: string;
   dishId: number;
   dishName: string;
   salePrice: number | null;
@@ -41,6 +43,8 @@ export type IStopListDish = {
 };
 
 export type IRecommendedDishes = {
+  imageURL?: string | null;
+  imageUrl?: string;
   dishId: number;
   dishName: string;
   salePrice: number;

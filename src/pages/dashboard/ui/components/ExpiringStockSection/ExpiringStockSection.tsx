@@ -18,6 +18,7 @@ import {
   formatShelfLifeDate,
   formatShelfLifeDays,
   getShelfLifeDays,
+  getShelfLifeColor,
   soonExpiredDays,
   useGetExpiringStoreQuery,
 } from "@/entities/store";
@@ -139,7 +140,7 @@ export function ExpiringStockSection() {
                     до {formatShelfLifeDate(item.expiresAt)}
                   </Text>
                   <Badge
-                    color={item.daysRemaining <= 1 ? "red" : "orange"}
+                    color={getShelfLifeColor(getShelfLifeDays(item.expiresAt))}
                     variant="light"
                     tt="none"
                   >

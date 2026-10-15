@@ -7,20 +7,25 @@ import { useGuestOrder } from "@/features/guest-order";
 import { DishPhoto } from "@/entities/dish";
 
 export function GuestCartItems() {
-  const { items, setQuantity, removeDish, isSubmitting } = useGuestOrder();
+  const { items, setQuantity, removeDish, isSubmitting, stockError } = useGuestOrder();
   return (
     <Paper withBorder p="lg">
       {items.map((item) => (
-        <Box py={16} className={componentClasses.cartRow} key={item.dishId}>
+        <Box py={16} className={componentClasses.cartRow} key={item.dishId} data-unavailable={Boolean(stockError?.dishes[item.dishId])}>
           <DishPhoto
             src={item.imageUrl}
             name={item.name}
             className={componentClasses.cartPhoto}
           />
           <div className={componentClasses.cartName}>
-            <Text size="lg" fw={700}>
+            <Text size="lg" fw={700} c={stockError?.dishes[item.dishId] ? "red" : undefined}>
               {item.name}
             </Text>
+            {stockError?.dishes[item.dishId] && (
+              <Text size="sm" c="red" role="alert">
+                Недостаточно продуктов: {stockError.dishes[item.dishId].join(", ")}
+              </Text>
+            )}
             <Text size="sm" c="dimmed">
               {formatOrderMoney(item.price)} за порцию
             </Text>

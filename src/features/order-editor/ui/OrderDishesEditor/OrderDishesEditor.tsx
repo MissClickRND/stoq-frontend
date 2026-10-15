@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { IconChefHat, IconTrash } from "@tabler/icons-react";
 import type { ReactNode } from "react";
+import { DishPhoto } from "@/entities/dish";
 import {
   type OrderItemDraft,
   orderTotal,
@@ -21,12 +22,14 @@ import {
 export function OrderDishesEditor({
   search,
   items,
+  unavailableDishes = {},
   submitted,
   onQuantityChange,
   onRemove,
 }: {
   search: ReactNode;
   items: OrderItemDraft[];
+  unavailableDishes?: Record<string, string[]>;
   submitted: boolean;
   onQuantityChange: (id: string, quantity: number | string) => void;
   onRemove: (id: string) => void;
@@ -58,14 +61,19 @@ export function OrderDishesEditor({
             </div>
             <Stack gap="xs">
               {items.map((item) => (
-                <div key={item.dishId} className={componentClasses.dishRow}>
+                <div key={item.dishId} className={componentClasses.dishRow} data-unavailable={Boolean(unavailableDishes[item.dishId])}>
                   <Group gap="sm" wrap="nowrap">
-                    <ThemeIcon variant="light" size={42} radius="md">
-                      <IconChefHat size={23} />
-                    </ThemeIcon>
-                    <Text size="lg" fw={600}>
-                      {item.name}
-                    </Text>
+                    <DishPhoto src={item.imageUrl} name={item.name} className={componentClasses.dishPhoto} />
+                    <div>
+                      <Text size="lg" fw={600} c={unavailableDishes[item.dishId] ? "red" : undefined}>
+                        {item.name}
+                      </Text>
+                      {unavailableDishes[item.dishId] && (
+                        <Text size="sm" c="red" role="alert">
+                          Недостаточно продуктов: {unavailableDishes[item.dishId].join(", ")}
+                        </Text>
+                      )}
+                    </div>
                   </Group>
                   <NumberInput
                     size="lg"

@@ -8,6 +8,8 @@ import {
   type OrderType,
   type Order,
   guestMenuPath,
+  getOrderStockError,
+  type OrderStockError,
 } from "@/entities/order";
 import {
   createContext,
@@ -41,6 +43,7 @@ type GuestOrderContextValue = {
   submitOrder: () => Promise<Order>;
   isSubmitting: boolean;
   lastOrder: Order | null;
+  stockError: OrderStockError | null;
 };
 const GuestOrderContext = createContext<GuestOrderContextValue | null>(null);
 
@@ -56,6 +59,7 @@ export function GuestOrderProvider({
   const submitting = useRef(false);
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
   const [items, setItems] = useState<OrderItemDraft[]>([]);
+  const [stockError, setStockError] = useState<OrderStockError | null>(null);
   const [details, setDetails] = useState<GuestCheckoutDetails>({
     type: "dine-in",
     table: null,
@@ -90,15 +94,6 @@ export function GuestOrderProvider({
   };
   const submitOrder = async () => {
     if (submitting.current) throw new Error("Заказ уже отправляется.");
-    if (
-      items.some((item) => {
-        const dish = dishes.find((entry) => entry.id === item.dishId);
-        return !dish || !dishCanBeOrdered(dish);
-      })
-    )
-      throw new Error(
-        "Одно из блюд временно недоступно. Удалите его из корзины и выберите другое.",
-      );
     const payload = toCreateOrderRequest({
       createdAt: new Date().toISOString(),
       type: details.type,
@@ -108,11 +103,16 @@ export function GuestOrderProvider({
     });
     submitting.current = true;
     try {
+      setStockError(null);
       const response = await createOrder(payload).unwrap();
       const order = toOrder(response);
       setLastOrder(order);
       setItems([]);
       return order;
+    } catch (error) {
+      const failure = getOrderStockError(error, items, dishes);
+      setStockError(failure);
+      throw new Error(failure.message);
     } finally {
       submitting.current = false;
     }
@@ -136,6 +136,7 @@ export function GuestOrderProvider({
         submitOrder,
         isSubmitting,
         lastOrder,
+        stockError,
       }}
     >
       {children}
