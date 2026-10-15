@@ -35,7 +35,12 @@ export default function StoreTableSection({
   const { showError, showSuccess } = useNotifications("top-right");
 
   const confirmWriteOff = async () => {
-    if (!writeOffProduct || isSaving || Date.parse(writeOffProduct.expiresAt) <= Date.now()) return;
+    if (
+      !writeOffProduct ||
+      isSaving ||
+      Date.parse(writeOffProduct.expiresAt) <= Date.now()
+    )
+      return;
     try {
       await writeOffBatch({ batchId: writeOffProduct.id }).unwrap();
       dispatch(
