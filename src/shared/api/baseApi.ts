@@ -14,6 +14,7 @@ export const baseApi = createApi({
     "Dish",
     "Recommendation",
     "Statistic",
+    "Activity",
   ],
   endpoints: () => ({}),
 });

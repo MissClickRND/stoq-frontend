@@ -44,7 +44,7 @@ export const productApi = baseApi.injectEndpoints({
         body: data,
       }),
       transformResponse: normalizeProduct,
-      invalidatesTags: ["Statistic", { type: "Product", id: "LIST" }],
+      invalidatesTags: ["Statistic", "Activity", { type: "Product", id: "LIST" }],
     }),
 
     createManyProduct: build.mutation<IProduct[], ICreateProductRequest[]>({
@@ -55,7 +55,7 @@ export const productApi = baseApi.injectEndpoints({
       }),
       transformResponse: (products: ProductResponse[]) =>
         products.map(normalizeProduct),
-      invalidatesTags: ["Statistic", { type: "Product", id: "LIST" }],
+      invalidatesTags: ["Statistic", "Activity", { type: "Product", id: "LIST" }],
     }),
 
     deleteProduct: build.mutation<void, number>({
@@ -63,7 +63,7 @@ export const productApi = baseApi.injectEndpoints({
         url: `/product/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Statistic", { type: "Product", id: "LIST" }],
+      invalidatesTags: ["Statistic", "Activity", { type: "Product", id: "LIST" }],
     }),
   }),
 });

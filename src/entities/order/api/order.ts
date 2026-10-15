@@ -28,7 +28,7 @@ export const ordersApi = baseApi.injectEndpoints({
     >({
       query: (body) => ({ url: "/orders", method: "POST", body }),
       invalidatesTags: [
-        "Order", "Statistic",
+        "Order", "Statistic", "Activity",
         { type: "Dish", id: "LIST" },
         { type: "Store", id: "LIST" },
       ],
@@ -46,11 +46,11 @@ export const ordersApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { status: "completed" },
       }),
-      invalidatesTags: ["Order", "Statistic"],
+      invalidatesTags: ["Order", "Statistic", "Activity"],
     }),
     rejectOrder: build.mutation<OrderResponse, { id: number }>({
       query: ({ id }) => ({ url: `/orders/${id}/status`, method: "PATCH", body: { status: "rejected" } }),
-      invalidatesTags: ["Order", "Statistic"],
+      invalidatesTags: ["Order", "Statistic", "Activity"],
     }),
   }),
 });

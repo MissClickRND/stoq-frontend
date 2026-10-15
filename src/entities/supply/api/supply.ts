@@ -58,7 +58,7 @@ export const suppliesApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Supply", "Store", "Dish", "Statistic"],
+      invalidatesTags: ["Supply", "Store", "Dish", "Statistic", "Activity"],
     }),
 
     updateSupply: build.mutation<
@@ -70,7 +70,7 @@ export const suppliesApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Supply", "Store", "Dish", "Statistic"],
+      invalidatesTags: ["Supply", "Store", "Dish", "Statistic", "Activity"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({

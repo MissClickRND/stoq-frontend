@@ -46,7 +46,7 @@ export const storeApi = baseApi.injectEndpoints({
     }),
     inventoryStoreReport: build.mutation<IInventoryStoreReport, IInventoryStoreRequest & { includeReport: true }>({
       query: body => ({ url: "/inventory", method: "PUT", body }),
-      invalidatesTags: ["Store", "Dish", "Statistic"],
+      invalidatesTags: ["Store", "Dish", "Statistic", "Activity"],
     }),
     inventoryStore: build.mutation<IStoreProduct[], IInventoryStoreRequest>({
       query: (data) => ({
@@ -54,7 +54,7 @@ export const storeApi = baseApi.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Store", "Dish", "Statistic"],
+      invalidatesTags: ["Store", "Dish", "Statistic", "Activity"],
     }),
 
     writeOffStoreBatch: build.mutation<
@@ -69,7 +69,7 @@ export const storeApi = baseApi.injectEndpoints({
         url: `/inventory/${batchId}/write-off`,
         method: "POST",
       }),
-      invalidatesTags: ["Store", "Dish", "Supply", "Statistic"],
+      invalidatesTags: ["Store", "Dish", "Supply", "Statistic", "Activity"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({

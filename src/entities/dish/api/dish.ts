@@ -49,7 +49,7 @@ export const dishApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Statistic", { type: "Dish", id: "LIST" }],
+      invalidatesTags: ["Statistic", "Activity", { type: "Dish", id: "LIST" }],
     }),
 
     deleteDish: build.mutation<void, { id: number }>({
@@ -57,7 +57,7 @@ export const dishApi = baseApi.injectEndpoints({
         url: `/dishes/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (_result, _error, arg) => ["Statistic",
+      invalidatesTags: (_result, _error, arg) => ["Statistic", "Activity",
         { type: "Dish", id: "LIST" },
         { type: "Dish", id: arg.id },
       ],

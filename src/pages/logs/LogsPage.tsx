@@ -8,6 +8,9 @@ import {
   Text,
   Timeline,
   Title,
+  Button,
+  Alert,
+  Loader,
 } from "@mantine/core";
 import {
   IconArrowRight,
@@ -20,7 +23,8 @@ import {
   IconUserEdit,
 } from "@tabler/icons-react";
 import DefaultPageLayout from "@/widgets/default-page-layout";
-import { logGroups, type LogEntry } from "./model/mock-logs";
+import { useGetActivityInfiniteQuery } from '@/entities/activity';
+import { groupActivity, appendActivity, type LogEntry } from './model/activity';
 import classes from "./classes/LogsPage.module.css";
 
 const actions = {
@@ -136,6 +140,9 @@ function LogCard({ entry }: { entry: LogEntry }) {
 }
 
 export function LogsPage() {
+  const query = useGetActivityInfiniteQuery(undefined, { refetchOnMountOrArgChange: true });
+  const entries = (query.data?.pages ?? []).reduce((all, page) => appendActivity(all, page.items), [] as import('@/entities/activity').ActivityEntry[]);
+  const logGroups = groupActivity(entries);
   return (
     <DefaultPageLayout
       title="Логи"
@@ -149,11 +156,20 @@ export function LogsPage() {
           size="lg"
           leftSection={<IconHistory size={14} />}
         >
-          Демо-данные
+          История действий
         </Badge>
       }
     >
       <Box className={classes.feed}>
+        <Group justify="space-between" mb="md">
+          <Text size="sm" c="dimmed">Время — Москва. Новые события сверху.</Text>
+          <Button variant="subtle" onClick={() => query.refetch()} loading={query.isFetching && !query.isFetchingNextPage}>Обновить</Button>
+        </Group>
+        {query.isLoading && <Group justify="center" py="xl"><Loader size="sm" /><Text>Загрузка событий…</Text></Group>}
+        {query.isError && <Alert color="red" mb="md" title="Не удалось загрузить журнал">
+          <Button variant="subtle" onClick={() => query.isFetchNextPageError ? query.fetchNextPage() : query.refetch()}>Повторить</Button>
+        </Alert>}
+        {!query.isLoading && !query.isError && !entries.length && <Text c="dimmed" py="xl">Действий пока нет. Новые события будут появляться здесь.</Text>}
         <Stack gap="xl">
           {logGroups.map((group) => (
             <Box
@@ -202,6 +218,7 @@ export function LogsPage() {
             </Box>
           ))}
         </Stack>
+        {query.hasNextPage && <Group justify="center" mt="xl" mb="md"><Button onClick={() => query.fetchNextPage()} loading={query.isFetchingNextPage} disabled={query.isFetching && !query.isFetchingNextPage}>Загрузить ещё</Button></Group>}
       </Box>
     </DefaultPageLayout>
   );

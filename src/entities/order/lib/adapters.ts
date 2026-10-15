@@ -8,6 +8,7 @@ export interface OrderResponse {
   guests: number;
   status: string;
   totalPrice?: number | null;
+  createdBy?: { id: number | null; name: string | null; role: string | null; source: string } | null;
   items: { dishId: number; quantity: number; name?: string | null; price?: number | null;
     totalPrice?: number | null; imageURL?: string | null }[];
 }
@@ -37,7 +38,7 @@ export function toOrder(source: OrderResponse): Order {
     completed: 'completed', rejected: 'rejected', cancelled: 'cancelled',
   };
   return { id: String(source.id), createdAt: source.date, type: source.type, table: source.table,
-    guests: source.guests, responsible: '—', totalPrice: source.totalPrice ?? null,
+    guests: source.guests, responsible: source.createdBy?.source === 'GUEST' ? 'Гость' : source.createdBy?.name?.trim() || 'Не указан', totalPrice: source.totalPrice ?? null,
     status: statuses[source.status] ?? 'pending',
     items: source.items.map((item) => {
       return { dishId: String(item.dishId), quantity: item.quantity,
