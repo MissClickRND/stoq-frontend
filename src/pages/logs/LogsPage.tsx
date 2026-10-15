@@ -11,6 +11,8 @@ import {
   Button,
   Alert,
   Loader,
+  ActionIcon,
+  ScrollArea,
 } from "@mantine/core";
 import {
   IconArrowRight,
@@ -18,13 +20,14 @@ import {
   IconLink,
   IconPencil,
   IconPlus,
+  IconRefresh,
   IconSettings,
   IconTrash,
   IconUserEdit,
 } from "@tabler/icons-react";
 import DefaultPageLayout from "@/widgets/default-page-layout";
-import { useGetActivityInfiniteQuery } from '@/entities/activity';
-import { groupActivity, appendActivity, type LogEntry } from './model/activity';
+import { useGetActivityInfiniteQuery } from "@/entities/activity";
+import { groupActivity, appendActivity, type LogEntry } from "./model/activity";
 import classes from "./classes/LogsPage.module.css";
 
 const actions = {
@@ -140,8 +143,13 @@ function LogCard({ entry }: { entry: LogEntry }) {
 }
 
 export function LogsPage() {
-  const query = useGetActivityInfiniteQuery(undefined, { refetchOnMountOrArgChange: true });
-  const entries = (query.data?.pages ?? []).reduce((all, page) => appendActivity(all, page.items), [] as import('@/entities/activity').ActivityEntry[]);
+  const query = useGetActivityInfiniteQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const entries = (query.data?.pages ?? []).reduce(
+    (all, page) => appendActivity(all, page.items),
+    [] as import("@/entities/activity").ActivityEntry[],
+  );
   const logGroups = groupActivity(entries);
   return (
     <DefaultPageLayout
@@ -149,27 +157,42 @@ export function LogsPage() {
       subtitle="История действий в системе и журнал изменений"
       disableSearch
       disableStatistics
-      headerRightSection={
-        <Badge
-          color="gray"
-          variant="light"
-          size="lg"
-          leftSection={<IconHistory size={14} />}
-        >
-          История действий
-        </Badge>
-      }
     >
-      <Box className={classes.feed}>
-        <Group justify="space-between" mb="md">
-          <Text size="sm" c="dimmed">Время — Москва. Новые события сверху.</Text>
-          <Button variant="subtle" onClick={() => query.refetch()} loading={query.isFetching && !query.isFetchingNextPage}>Обновить</Button>
+      <ScrollArea className={classes.feed}>
+        <Group justify="end" mb="md">
+          <ActionIcon
+            onClick={() => query.refetch()}
+            loading={query.isFetching && !query.isFetchingNextPage}
+            size="lg"
+          >
+            <IconRefresh />
+          </ActionIcon>
         </Group>
-        {query.isLoading && <Group justify="center" py="xl"><Loader size="sm" /><Text>Загрузка событий…</Text></Group>}
-        {query.isError && <Alert color="red" mb="md" title="Не удалось загрузить журнал">
-          <Button variant="subtle" onClick={() => query.isFetchNextPageError ? query.fetchNextPage() : query.refetch()}>Повторить</Button>
-        </Alert>}
-        {!query.isLoading && !query.isError && !entries.length && <Text c="dimmed" py="xl">Действий пока нет. Новые события будут появляться здесь.</Text>}
+        {query.isLoading && (
+          <Group justify="center" py="xl">
+            <Loader size="sm" />
+            <Text>Загрузка событий…</Text>
+          </Group>
+        )}
+        {query.isError && (
+          <Alert color="red" mb="md" title="Не удалось загрузить журнал">
+            <Button
+              variant="subtle"
+              onClick={() =>
+                query.isFetchNextPageError
+                  ? query.fetchNextPage()
+                  : query.refetch()
+              }
+            >
+              Повторить
+            </Button>
+          </Alert>
+        )}
+        {!query.isLoading && !query.isError && !entries.length && (
+          <Text c="dimmed" py="xl">
+            Действий пока нет. Новые события будут появляться здесь.
+          </Text>
+        )}
         <Stack gap="xl">
           {logGroups.map((group) => (
             <Box
@@ -218,8 +241,18 @@ export function LogsPage() {
             </Box>
           ))}
         </Stack>
-        {query.hasNextPage && <Group justify="center" mt="xl" mb="md"><Button onClick={() => query.fetchNextPage()} loading={query.isFetchingNextPage} disabled={query.isFetching && !query.isFetchingNextPage}>Загрузить ещё</Button></Group>}
-      </Box>
+        {query.hasNextPage && (
+          <Group justify="center" mt="xl" mb="md">
+            <Button
+              onClick={() => query.fetchNextPage()}
+              loading={query.isFetchingNextPage}
+              disabled={query.isFetching && !query.isFetchingNextPage}
+            >
+              Загрузить ещё
+            </Button>
+          </Group>
+        )}
+      </ScrollArea>
     </DefaultPageLayout>
   );
 }

@@ -6,6 +6,7 @@ export function RegisterPage() {
     <AuthContent
       title={registrationCopy.title}
       description={registrationCopy.description}
+      layout="wide"
     >
       <RegistrationForm />
     </AuthContent>

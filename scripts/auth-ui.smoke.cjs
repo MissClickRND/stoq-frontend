@@ -56,10 +56,10 @@ const origin = process.env.AUTH_UI_URL || "http://127.0.0.1:5182";
     await anon.page.waitForURL("**/login");
     assert.equal(anon.requests.filter(r => r.path === "/inventory").length, 0);
     await anon.page.getByRole("textbox", { name: "Почта", exact: true }).fill("waiter@example.com");
-    await anon.page.getByLabel("Пароль", { exact: false }).fill("wrong");
+    await anon.page.getByRole("textbox", { name: "Пароль", exact: true }).fill("wrong");
     await anon.page.getByRole("button", { name: "Войти", exact: true }).click();
     await anon.page.getByRole("alert").filter({ hasText: "Неверный email" }).waitFor();
-    await anon.page.getByLabel("Пароль", { exact: false }).fill("1234");
+    await anon.page.getByRole("textbox", { name: "Пароль", exact: true }).fill("1234");
     await anon.page.getByRole("button", { name: "Войти", exact: true }).click();
     await anon.page.waitForURL("**/store");
     await anon.page.getByRole("heading", { name: "Склад", exact: true }).waitFor();
@@ -95,9 +95,11 @@ const origin = process.env.AUTH_UI_URL || "http://127.0.0.1:5182";
     }
     const employee = await fixture();
     await employee.page.goto(origin + "/register/employee?restaurantId=7");
+    const employeeCard = await employee.page.locator("[data-auth-card]").boundingBox();
+    assert.ok(employeeCard.width >= 1200, "Employee registration uses the wide auth layout on desktop");
     await employee.page.getByRole("textbox", { name: "Имя и фамилия" }).fill("Новый Сотрудник");
     await employee.page.getByRole("textbox", { name: "Почта" }).fill("new@example.com");
-    await employee.page.getByLabel("Пароль", { exact: false }).fill("1234");
+    await employee.page.getByRole("textbox", { name: "Пароль", exact: true }).fill("1234");
     await employee.page.getByRole("button", { name: "Отправить запрос", exact: true }).click();
     await employee.page.getByRole("heading", { name: "Ваша заявка получена" }).waitFor();
     assert.deepEqual(employee.requests.find(r => r.path === "/auth/register-user").body,
@@ -105,11 +107,13 @@ const origin = process.env.AUTH_UI_URL || "http://127.0.0.1:5182";
 
     const restaurant = await fixture();
     await restaurant.page.goto(origin + "/register/restaurant");
+    const restaurantCard = await restaurant.page.locator("[data-auth-card]").boundingBox();
+    assert.ok(restaurantCard.width >= 1200, "Restaurant registration uses the wide auth layout on desktop");
     await restaurant.page.getByLabel("Имя и фамилия администратора").fill("Админ Ресторана");
     await restaurant.page.getByLabel("Название заведения").fill("Кафе");
     await restaurant.page.getByLabel("Адрес ресторана").fill("Москва");
     await restaurant.page.getByRole("textbox", { name: "Почта" }).fill("owner@example.com");
-    await restaurant.page.getByLabel("Пароль", { exact: false }).fill("1234");
+    await restaurant.page.getByRole("textbox", { name: "Пароль", exact: true }).fill("1234");
     await restaurant.page.getByRole("button", { name: "Создать ресторан", exact: true }).click();
     await restaurant.page.getByRole("heading", { name: "Ресторан создан", exact: true }).waitFor();
 

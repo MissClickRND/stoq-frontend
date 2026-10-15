@@ -30,6 +30,12 @@
   color: var(--mantine-color-secondary-9);
   color-scheme: light;
 }
+.page:has([data-auth-content="wide"]) {
+  padding-inline: 8px;
+}
+.card:has([data-auth-content="wide"]) {
+  width: min(100%, 1200px);
+}
 .logo {
   width: 200px;
   height: 70px;
@@ -37,6 +43,9 @@
   margin: 0 auto;
 }
 @media (max-width: 48em) {
+  .page:has([data-auth-content="wide"]) {
+    padding-inline: 4px;
+  }
   .card {
     padding: 28px 20px;
   }

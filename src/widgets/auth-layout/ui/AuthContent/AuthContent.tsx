@@ -6,15 +6,17 @@ type AuthContentProps = {
   title: string;
   description: string;
   children: ReactNode;
+  layout?: "default" | "wide";
 };
 
 export function AuthContent({
   title,
   description,
   children,
+  layout = "default",
 }: AuthContentProps) {
   return (
-    <Stack gap="xl">
+    <Stack gap="xl" data-auth-content={layout}>
       <Stack gap="xs" ta="center">
         <Title order={1} className={componentClasses.title}>
           {title}
