@@ -1,8 +1,7 @@
-import type { IProduct } from "@/entities/product";
+import type { IStoreProduct } from "@/entities/store";
 
 export type LowStockProduct = {
-  product: IProduct;
+  product: IStoreProduct["product"];
   imageUrl?: string;
   quantity: number;
-  initialQuantity: number;
 };

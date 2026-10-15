@@ -1,9 +1,9 @@
-import { Badge, Group, Paper, Text, Title } from "@mantine/core";
+import { Alert, Badge, Button, Center, Group, Loader, Paper, Text, Title } from "@mantine/core";
 import type { LowStockProduct } from "../../../model/type";
 import { LowStockProductCard } from "../LowStockProductCard/LowStockProductCard";
 import classes from "./LowStockSection.module.css";
 
-export function LowStockSection({ products }: { products: LowStockProduct[] }) {
+export function LowStockSection({ products, loading, error, onRetry }: { products: LowStockProduct[]; loading: boolean; error: boolean; onRetry: () => void }) {
   return (
     <Paper
       component="section"
@@ -17,11 +17,11 @@ export function LowStockSection({ products }: { products: LowStockProduct[] }) {
             Скоро закончатся
           </Title>
           <Text size="sm" c="dimmed">
-            Продукты с низким остатком
+            Общий остаток до 10 единиц, по данным склада
           </Text>
         </div>
         <Badge variant="light" color="orange">
-          {products.length}
+          {loading || error ? "—" : products.length}
         </Badge>
       </Group>
 
@@ -31,7 +31,7 @@ export function LowStockSection({ products }: { products: LowStockProduct[] }) {
         aria-label="Список продуктов с низким остатком"
         tabIndex={0}
       >
-        {products.length ? (
+        {error ? <Alert color="red" m="md" title="Не удалось загрузить остатки"><Button variant="subtle" onClick={onRetry}>Повторить</Button></Alert> : loading ? <Center p="xl"><Loader size="sm" aria-label="Загрузка остатков" /></Center> : products.length ? (
           <ul className={classes.list}>
             {products.map((item) => (
               <LowStockProductCard key={item.product.id} item={item} />

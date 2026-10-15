@@ -8,7 +8,7 @@ import classes from "./LowStockProductCard.module.css";
 const numberFormat = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
 
 export function LowStockProductCard({ item }: { item: LowStockProduct }) {
-  const { product, quantity, initialQuantity, imageUrl } = item;
+  const { product, quantity, imageUrl } = item;
   const [failedSource, setFailedSource] = useState<string>();
   const unit = product.unit.shortName;
 
@@ -35,7 +35,7 @@ export function LowStockProductCard({ item }: { item: LowStockProduct }) {
       </div>
       <div className={classes.stock}>
         <Text className={classes.quantity}>{numberFormat.format(quantity)} {unit}</Text>
-        <Text className={classes.initialQuantity}>из {numberFormat.format(initialQuantity)} {unit}</Text>
+        <Text className={classes.initialQuantity}>Всего на складе</Text>
       </div>
     </li>
   );
