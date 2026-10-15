@@ -57,7 +57,7 @@ export function RegistrationForm() {
       visibilityToggleButtonProps={{ "aria-label": "Показать или скрыть пароль", color: "secondary.9" }} size="lg" label={copy.password} placeholder="Не менее 4 символов" autoComplete="new-password" value={values.password}
       onChange={event => update("password", event.currentTarget.value)} error={errors.password} required />
     <Select classNames={{ input: classes.input, section: classes.section }} size="lg" label={copy.restaurant}
-      placeholder={restaurants.isLoading ? "Загрузка заведений…" : "Выберите заведение"} description={copy.restaurantDescription}
+      placeholder={restaurants.isLoading ? "Загрузка заведений…" : "Выберите заведение"}
       searchable data={restaurantOptions} nothingFoundMessage="Заведения не найдены" allowDeselect={false}
       disabled={restaurants.isFetching || restaurants.isError || isLoading}
       value={values.restaurantId || null} onChange={value => update("restaurantId", value ?? "")}

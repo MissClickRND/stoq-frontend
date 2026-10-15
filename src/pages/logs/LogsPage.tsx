@@ -16,7 +16,6 @@ import {
 } from "@mantine/core";
 import {
   IconArrowRight,
-  IconHistory,
   IconLink,
   IconPencil,
   IconPlus,
