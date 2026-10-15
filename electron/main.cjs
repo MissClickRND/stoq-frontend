@@ -14,24 +14,14 @@ const {
   APP_URL,
   DEV_URL,
   isTrustedUrl,
+  isNetworkRequest,
+  isGuestRequest,
   resolveAppFile,
   contentSecurityPolicy,
 } = require("./protocol.cjs");
 
 app.setName("STOQ");
 app.setAppUserModelId("app.stoq.desktop");
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: "stoq",
-    privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true,
-      corsEnabled: true,
-    },
-  },
-]);
-
 const development = !app.isPackaged && process.argv.includes("--dev");
 let mainWindow;
 
@@ -40,7 +30,14 @@ async function registerAppProtocol() {
   const policy = contentSecurityPolicy(
     await readFile(path.join(root, "index.html"), "utf8"),
   );
-  protocol.handle("stoq", async (request) => {
+  protocol.handle("https", async (request) => {
+    if (!isTrustedUrl(request.url) || isNetworkRequest(request.url))
+      return net.fetch(request, {
+        bypassCustomProtocolHandlers: true,
+        // Electron's protocol Request does not preserve renderer credentials=omit.
+        // Keep the application's public guest endpoints anonymous when forwarding.
+        credentials: isGuestRequest(request) ? "omit" : request.credentials,
+      });
     if (!["GET", "HEAD"].includes(request.method))
       return new Response(null, { status: 405 });
     const file = await resolveAppFile(

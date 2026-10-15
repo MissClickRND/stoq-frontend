@@ -2,7 +2,7 @@ const { stat } = require("node:fs/promises");
 const path = require("node:path");
 const { createHash } = require("node:crypto");
 
-const APP_URL = "stoq://app/";
+const APP_URL = "https://lyaguh.site/";
 const DEV_URL = "http://127.0.0.1:5174";
 
 function isTrustedUrl(value, development = false) {
@@ -18,6 +18,20 @@ function isTrustedUrl(value, development = false) {
   } catch {
     return false;
   }
+}
+
+// Keep packaged pages on the API's site so Chromium can use SameSite cookies.
+// Only UI files are intercepted; API and Socket.IO retain native networking.
+function isNetworkRequest(value) {
+  const { pathname } = new URL(value);
+  return /^\/(api|socket\.io)(\/|$)/.test(pathname);
+}
+
+function isGuestRequest(request) {
+  const { pathname } = new URL(request.url);
+  return ["/api/menu", "/api/restaurants", "/api/test/restaurants"].includes(pathname)
+    || (pathname === "/api/orders" && request.method === "POST"
+      && request.headers.has("X-Restaurant-Id"));
 }
 
 async function resolveAppFile(value, root, navigation = false) {
@@ -67,6 +81,8 @@ module.exports = {
   APP_URL,
   DEV_URL,
   isTrustedUrl,
+  isNetworkRequest,
+  isGuestRequest,
   resolveAppFile,
   contentSecurityPolicy,
 };

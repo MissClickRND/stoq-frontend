@@ -18,7 +18,7 @@
     "test:analytics": "node --experimental-strip-types --test src/widgets/dependency-graph/model/*.test.mjs",
     "test": "node --experimental-strip-types --test scripts/*.test.mjs src/entities/*/lib/*.test.mjs src/widgets/dependency-graph/model/*.test.mjs",
     "desktop:dev": "node scripts/desktop-icons.cjs && concurrently --kill-others --success command-ELECTRON --names VITE,ELECTRON \"vite --host 127.0.0.1 --port 5174 --strictPort\" \"wait-on --timeout 60000 http-get://127.0.0.1:5174 && node electron/dev.cjs\"",
-    "desktop:build": "node scripts/desktop-icons.cjs && npm run build && electron-builder --win nsis --x64 --publish never"
+    "desktop:build": "node scripts/desktop-icons.cjs && vite build --mode desktop && electron-builder --win nsis --x64 --publish never"
   },
   "dependencies": {
     "@gfazioli/mantine-qr-code": "^2.0.13",

@@ -2,7 +2,13 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createDevApiProxy, rewriteDevAuthCookie } from './dev-api-proxy.ts';
 import { getApiBaseUrl, getSocketUrl } from '../src/shared/api/connection.ts';
-import { resolveConfig } from 'vite';
+import { loadEnv, resolveConfig } from 'vite';
+
+test('desktop builds use the production API and WebSocket origins', () => {
+  const env = loadEnv('desktop', process.cwd(), '');
+  assert.equal(getApiBaseUrl(env), 'https://lyaguh.site/api');
+  assert.equal(getSocketUrl('/inventory', 'stoq://app', env), 'wss://lyaguh.site/inventory');
+});
 
 test('production builds accept a relative API URL without starting the development proxy', async () => {
   const previous = process.env.API_PROXY_TARGET;
