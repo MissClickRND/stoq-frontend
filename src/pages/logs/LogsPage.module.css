@@ -1,0 +1,144 @@
+.feed {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs) var(--mantine-spacing-lg) 0;
+  scrollbar-gutter: stable;
+}
+
+.timeline {
+  margin-left: 77px;
+}
+
+.item {
+  padding-left: 32px;
+}
+
+.item + .item {
+  margin-top: var(--mantine-spacing-sm);
+}
+
+.item::before {
+  bottom: calc(-1 * var(--mantine-spacing-sm));
+}
+
+.time {
+  position: absolute;
+  top: 8px;
+  left: -78px;
+  font-variant-numeric: tabular-nums;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr) auto;
+  gap: var(--mantine-spacing-lg);
+}
+
+.author,
+.content {
+  min-width: 0;
+}
+
+.content {
+  overflow-wrap: anywhere;
+}
+
+.timestamp {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.change {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-md);
+  width: 100%;
+  max-width: 440px;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-md);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+}
+
+.value {
+  flex: 1;
+  min-width: 0;
+}
+
+.arrow {
+  flex-shrink: 0;
+  color: var(--mantine-color-dimmed);
+}
+
+.object {
+  border-left: 2px solid var(--mantine-color-default-border);
+  padding-left: var(--mantine-spacing-sm);
+}
+
+@media (max-width: 80em) {
+  .card {
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: var(--mantine-spacing-sm) var(--mantine-spacing-lg);
+  }
+
+  .timestamp {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 64em) {
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .timestamp {
+    grid-column: 1;
+  }
+}
+
+@media (min-width: 48.01em) and (max-height: 700px) {
+  .feed {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 48em) {
+  .feed {
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .timeline {
+    margin-left: 17px;
+  }
+
+  .item {
+    padding-left: 26px;
+  }
+
+  .time {
+    position: static;
+    display: block;
+    margin-bottom: var(--mantine-spacing-xs);
+  }
+
+  .card {
+    padding: var(--mantine-spacing-sm);
+  }
+
+  .change {
+    gap: var(--mantine-spacing-xs);
+  }
+}
+
+@media (max-width: 30em) {
+  .change {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+}
