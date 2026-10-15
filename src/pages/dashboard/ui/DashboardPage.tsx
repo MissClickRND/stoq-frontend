@@ -9,6 +9,7 @@ import DefaultPageLayout from "@/widgets/default-page-layout";
 import { mockLowStockProducts } from "../model/low-stock-mock";
 import { DashboardChart } from "./components/DashboardChart/DashboardChart";
 import { LowStockSection } from "./components/LowStockSection/LowStockSection";
+import { ExpiringStockSection } from "./components/ExpiringStockSection/ExpiringStockSection";
 import classes from "./DashboardPage.module.css";
 
 export default function DashboardPage() {
@@ -28,7 +29,10 @@ export default function DashboardPage() {
     >
       <div className={classes.dashboard}>
         <DashboardChart />
-        <LowStockSection products={mockLowStockProducts} />
+        <div className={classes.stockSections}>
+          <LowStockSection products={mockLowStockProducts} />
+          <ExpiringStockSection />
+        </div>
       </div>
     </DefaultPageLayout>
   );

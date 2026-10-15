@@ -2,8 +2,10 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { normalizeArticle } from "@/shared/lib/format";
 import { createElement, useState } from "react";
 import {
+  ActionIcon,
   Alert,
   Avatar,
+  Badge,
   Button,
   Center,
   Group,
@@ -18,6 +20,8 @@ import {
   IconPlus,
   IconReceipt,
   IconTruckDelivery,
+  IconPencil,
+  IconCheck,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import DefaultPageLayout from "@/widgets/default-page-layout";
@@ -29,7 +33,11 @@ import {
   formatMoney,
   useGetSuppliesQuery,
 } from "@/entities/supply";
-import { supplyColumns } from "../model/config";
+import {
+  supplyColumns,
+  supplyStatusColors,
+  supplyStatusTranslate,
+} from "../model/config";
 
 import { TableSummary } from "@/shared/ui/table-summary";
 
@@ -174,15 +182,41 @@ export function SupplyPage() {
                   </Group>
                 </Table.Td>
                 <Table.Td>
-                  <Button
-                    component={Link}
-                    to={`/supply/${encodeURIComponent(supply.id)}`}
-                    variant="default"
-                    size="lg"
-                    rightSection={<IconChevronRight size={20} />}
-                  >
-                    Подробнее
-                  </Button>
+                  <Badge size="lg" color={supplyStatusColors[supply.status]}>
+                    {supplyStatusTranslate[supply.status]}
+                  </Badge>
+                </Table.Td>
+                <Table.Td>
+                  <Group gap="xs" wrap="nowrap">
+                    <ActionIcon
+                      component={Link}
+                      to={`/supply/${supply.id}/edit`}
+                      variant="default"
+                      size="50"
+                      aria-label={`Редактировать поставку ${supply.supplyNumber}`}
+                    >
+                      <IconPencil size={20} />
+                    </ActionIcon>
+
+                    <Button
+                      component={Link}
+                      to={`/supply/${encodeURIComponent(supply.id)}`}
+                      variant="default"
+                      size="lg"
+                      rightSection={<IconChevronRight size={20} />}
+                    >
+                      Подробнее
+                    </Button>
+                    {supply.status === "IN_TRANSIT" && (
+                      <ActionIcon
+                        component={Link}
+                        to={`/supply/${supply.id}/edit?accept=1`}
+                        size="50"
+                      >
+                        <IconCheck />
+                      </ActionIcon>
+                    )}
+                  </Group>
                 </Table.Td>
               </Table.Tr>
             )}

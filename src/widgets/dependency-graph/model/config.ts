@@ -7,7 +7,7 @@ export const statusPresentation = {
   low_stock: {
     color: "#f5a524",
     label: "Заканчивается",
-    dishLabel: "Ингредиент заканчивается",
+    dishLabel: "Скоро закончится",
   },
   unavailable: {
     color: "#f05262",

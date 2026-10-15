@@ -3,7 +3,11 @@ export function removeProduct(_id: string): void {
 }
 
 import { baseApi } from "@/shared/api";
-import type { IInventoryStoreRequest, IStoreProduct } from "../model/type";
+import type {
+  IExpiringStoreProduct,
+  IInventoryStoreRequest,
+  IStoreProduct,
+} from "../model/type";
 
 export const storeApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -24,6 +28,17 @@ export const storeApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, arg) => [{ type: "Store", id: arg.id }],
     }),
 
+    getExpiringStore: build.query<
+      IExpiringStoreProduct[],
+      { daysThreshold: number }
+    >({
+      query: ({ daysThreshold }) => ({
+        url: "/inventory/expiring",
+        params: { daysThreshold },
+      }),
+      providesTags: [{ type: "Store", id: "LIST" }],
+    }),
+
     inventoryStore: build.mutation<IStoreProduct[], IInventoryStoreRequest>({
       query: (data) => ({
         url: "/inventory",
@@ -31,6 +46,21 @@ export const storeApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: ["Store", "Dish"],
+    }),
+
+    writeOffStoreBatch: build.mutation<
+      {
+        batchId: number;
+        availableQuantity: number;
+        writtenOffQuantity: number;
+      },
+      { batchId: number }
+    >({
+      query: ({ batchId }) => ({
+        url: `/inventory/${batchId}/write-off`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Store", "Dish", "Supply"],
     }),
 
     // deleteDish: build.mutation<void, { id: number }>({
@@ -49,5 +79,7 @@ export const storeApi = baseApi.injectEndpoints({
 export const {
   useGetStoreProductByIdQuery,
   useGetStoreQuery,
+  useGetExpiringStoreQuery,
   useInventoryStoreMutation,
+  useWriteOffStoreBatchMutation,
 } = storeApi;

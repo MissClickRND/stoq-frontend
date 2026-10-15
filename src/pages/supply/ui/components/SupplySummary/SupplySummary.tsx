@@ -9,12 +9,14 @@ export function SupplySummary({
   total,
   error,
   onClearError,
+  submitLabel = "Создать поставку",
 }: {
   count: number;
   saving?: boolean;
   total: number;
   error: string | null;
   onClearError: () => void;
+  submitLabel?: string;
 }) {
   return (
     <Paper withBorder p="lg" className={componentClasses.summary}>
@@ -71,7 +73,7 @@ export function SupplySummary({
           fullWidth
           leftSection={<IconCheck size={20} />}
         >
-          Создать поставку
+          {submitLabel}
         </Button>
       </Stack>
     </Paper>

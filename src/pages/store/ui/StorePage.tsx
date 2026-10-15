@@ -26,7 +26,7 @@ export default function StorePage() {
     all.currentData?.filter((product) => product.status === "DEPLETED").length ?? 0,
     all.currentData?.filter((product) => {
       const days = getShelfLifeDays(product.expiresAt);
-      return product.status === "ACTIVE" && days !== null && days >= 0 && days <= soonExpiredDays;
+      return (product.status === "ACTIVE" || product.status === "RUNNINGOUT") && days !== null && days >= 0 && days <= soonExpiredDays;
     }).length ?? 0,
     all.currentData?.filter((product) => product.status === "EXPIRED").length ?? 0,
   ];

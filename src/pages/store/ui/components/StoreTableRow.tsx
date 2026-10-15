@@ -9,21 +9,19 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { IconExternalLink, IconTrash } from "@tabler/icons-react";
-import { type IStoreProduct, formatPrice } from "@/entities/store";
+import { type IStoreProduct, formatPrice, getStoreQuantity } from "@/entities/store";
 
 import { StoreProductStatus } from "./StoreProductStatus";
 import { StoreShelfLife } from "./StoreShelfLife";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type StoreTableRowProps = {
   product: IStoreProduct;
-  onDetails: (product: IStoreProduct) => void;
   onWriteOff: (product: IStoreProduct) => void;
 };
 
 export function StoreTableRow({
   product,
-  onDetails,
   onWriteOff,
 }: StoreTableRowProps) {
   const navigate = useNavigate();
@@ -50,12 +48,12 @@ export function StoreTableRow({
           {(product.product?.name ?? "Продукт #" + product.productId)}
         </Text>
         <Text size="sm" c="dimmed">
-          Арт. {normalizeArticle(product.id)}
+          Арт. {normalizeArticle(product.productId)}
         </Text>
       </Table.Td>
       <Table.Td>
         <Text size="lg" fw={700}>
-          {product.Quantity}
+          {getStoreQuantity(product).toLocaleString("ru-RU", { maximumFractionDigits: 3 })}
         </Text>
       </Table.Td>
       <Table.Td>
@@ -79,7 +77,9 @@ export function StoreTableRow({
           <Button
             size="lg"
             variant="default"
-            onClick={() => onDetails(product)}
+            component={Link}
+            to={`/store/${product.id}`}
+            state={{ batch: product }}
           >
             Подробнее
           </Button>
@@ -88,6 +88,7 @@ export function StoreTableRow({
               size={50}
               variant="light"
               color="red"
+              disabled={getStoreQuantity(product) <= 0}
               aria-label={`Списать ${(product.product?.name ?? "Продукт #" + product.productId)}, артикул ${normalizeArticle(product.productId)}, поставка ${normalizeArticle(product.supplyId)}`}
               onClick={() => onWriteOff(product)}
             >

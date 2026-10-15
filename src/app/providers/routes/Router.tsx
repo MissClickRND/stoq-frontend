@@ -13,6 +13,7 @@ import {
   SupplyPage,
   CreateSupplyPage,
   SupplyDetailsPage,
+  EditSupplyPage,
 } from "@/pages/supply";
 import { DishesPage, DishDetailsPage } from "@/pages/dishes";
 import {
@@ -20,6 +21,7 @@ import {
   InventoryCheckPage,
   InventoryConfirmationPage,
   InventoryReportPage,
+  StoreProductRoute,
 } from "@/pages/store";
 import { MenuHintsPage } from "@/pages/menu-hints";
 import { OrdersPage, CreateOrderPage } from "@/pages/orders";
@@ -67,6 +69,7 @@ const router = createBrowserRouter([
         children: [
           { index: true, element: <SupplyPage /> },
           { path: "new", element: <CreateSupplyPage /> },
+          { path: ":supplyId/edit", element: <EditSupplyPage /> },
           { path: ":supplyId", element: <SupplyDetailsPage /> },
         ],
       },
@@ -81,6 +84,7 @@ const router = createBrowserRouter([
         path: "/store",
         children: [
           { index: true, element: <ProductsPage /> },
+          { path: ":batchId", element: <StoreProductRoute /> },
           {
             path: "inventory",
             children: [

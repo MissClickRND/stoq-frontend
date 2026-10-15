@@ -113,3 +113,17 @@ test("failed supply creation rejects and retry can succeed with the same draft",
   fail = false;
   assert.equal((await store.dispatch(suppliesApi.endpoints.createSupply.initiate(payload)).unwrap()).id, 48);
 });
+
+test('supply edits use PUT with the chosen status and refresh details', async t => {
+  assert.ok(suppliesApi.endpoints.updateSupply);
+  const calls = [];
+  t.mock.method(globalThis, 'fetch', async request => {
+    calls.push({ method: request.method, url: new URL(request.url).pathname, body: request.method === 'PUT' ? await request.json() : null });
+    return new Response(JSON.stringify({ ...supply, status: 'RECEIVED' }), { headers: { 'Content-Type': 'application/json' } });
+  });
+  const store = createStore();
+  t.after(() => store.dispatch(suppliesApi.util.resetApiState()));
+  const data = { supplyNumber: 'S1', status: 'RECEIVED', supplier: 'ABC', items: [] };
+  await store.dispatch(suppliesApi.endpoints.updateSupply.initiate({ id: 48, data })).unwrap();
+  assert.deepEqual(calls[0], { method: 'PUT', url: '/supplies/48', body: data });
+});

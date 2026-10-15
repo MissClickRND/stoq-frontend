@@ -3,6 +3,7 @@ import {
   formatShelfLifeDate,
   formatShelfLifeDays,
   getShelfLifeDays,
+  storeStatuses,
   type IStoreStatus,
 } from "@/entities/store";
 
@@ -11,10 +12,9 @@ export function StoreShelfLife({ shelfLife, status }: {
   status: IStoreStatus;
 }) {
   const days = getShelfLifeDays(shelfLife);
-  const color = { ACTIVE: "green", DEPLETED: "orange", EXPIRED: "red" };
   return (
     <Stack gap={2}>
-      <Text size="lg" fw={600} c={color[status]} lh={1.3}>
+      <Text size="lg" fw={600} c={storeStatuses[status]?.color ?? "gray"} lh={1.3}>
         {days === null ? "Срок не определён" : formatShelfLifeDays(days)}
       </Text>
       <Text size="sm" c="dimmed" lh={1.3}>

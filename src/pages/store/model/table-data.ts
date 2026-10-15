@@ -9,14 +9,6 @@ export const tableColumns = [
   "Действия",
 ];
 
-export const productStatuses: Record<string, { label: string; color: string }> =
-  {
-    ACTIVE: { label: "В норме", color: "green" },
-    DEPLETED: { label: "Закончился", color: "yellow" },
-    QUARANTINED: { label: "На карантине", color: "orange" },
-    EXPIRED: { label: "Просрочен", color: "red" },
-  };
-
 export const writeOffText = {
   title: "Списание продукта",
   confirm: "Списать продукт",

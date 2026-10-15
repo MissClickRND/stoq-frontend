@@ -12,3 +12,10 @@ test('supply sends supplier and totalPrice, calculates unit price from line tota
   assert.equal(supplyTotal({ totalPrice: 300, items: [] }), 300);
   assert.throws(() => toCreateSupplyRequest({ supplyNumber: 'S1', supplier: ' ', receivedAt: '2026-10-13', items: [] }));
 });
+
+test('supply status is sent explicitly when selected and unknown statuses are rejected', () => {
+  const draft = { supplyNumber: 'S1', supplier: 'ABC', receivedAt: '2026-10-15', status: 'IN_TRANSIT',
+    items: [{ id: 'draft', product: { id: 7, unitId: 1 }, unitId: 1, quantity: 3, price: 300, pricingMode: 'total', expiresAt: '2030-01-01' }] };
+  assert.equal(toCreateSupplyRequest(draft).status, 'IN_TRANSIT');
+  assert.throws(() => toCreateSupplyRequest({ ...draft, status: 'UNKNOWN' }));
+});

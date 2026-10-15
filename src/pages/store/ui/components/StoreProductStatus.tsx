@@ -1,8 +1,8 @@
 import { Badge } from "@mantine/core";
-import { productStatuses } from "../../model/table-data";
+import { storeStatuses, type IStoreStatus } from "@/entities/store";
 
 export function StoreProductStatus({ status }: { status: string }) {
-  const item = productStatuses[status];
+  const item = storeStatuses[status as IStoreStatus];
   return (
     <Badge
       size="lg"

@@ -20,6 +20,7 @@ export type ISupply = {
   receivedAt: string;
   acceptedBy?: string;
   items: ISupplyItem[];
+  status: ISupplyStatus;
 };
 
 export type SupplyItemDraft = {
@@ -50,6 +51,12 @@ export type ICreateSupplyRequest = Pick<
   ISupply,
   "supplyNumber" | "receivedAt"
 > & {
+  status?: ISupplyStatus;
   supplier: string;
-  items: { productId: number; quantity: number; totalPrice: number; expiresAt: Date }[];
+  items: {
+    productId: number;
+    quantity: number;
+    totalPrice: number;
+    expiresAt: Date;
+  }[];
 };

@@ -1,6 +1,10 @@
 import { getSupplyReportData, supplyReportColumns } from "../lib/report.ts";
 import { supplyTotal } from "../lib/calculations.ts";
-import type { ICreateSupplyRequest, ISupply, ScannedSupplyUpd } from "../model/type.ts";
+import type {
+  ICreateSupplyRequest,
+  ISupply,
+  ScannedSupplyUpd,
+} from "../model/type.ts";
 import { normalizeArticle } from "@/shared/lib";
 import { baseApi } from "@/shared/api/baseApi.ts";
 
@@ -27,7 +31,7 @@ export const suppliesApi = baseApi.injectEndpoints({
         body.append("file", file);
         return { url: "/ai/supply", method: "POST", body, timeout: 210_000 };
       },
-      invalidatesTags: (result) => result ? ["Product", "Unit"] : [],
+      invalidatesTags: (result) => (result ? ["Product", "Unit"] : []),
     }),
     getSupplies: build.query<ISupply[], { search: string }>({
       query: ({ search }) => ({
@@ -57,6 +61,18 @@ export const suppliesApi = baseApi.injectEndpoints({
       invalidatesTags: ["Supply", "Store", "Dish"],
     }),
 
+    updateSupply: build.mutation<
+      ISupply,
+      { id: number; data: ICreateSupplyRequest }
+    >({
+      query: ({ id, data }) => ({
+        url: `/supplies/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Supply", "Store", "Dish"],
+    }),
+
     // deleteDish: build.mutation<void, { id: number }>({
     //   query: ({ id }) => ({
     //     url: `/dishes/${id}`,
@@ -73,6 +89,7 @@ export const suppliesApi = baseApi.injectEndpoints({
 export const {
   useScanSupplyUpdMutation,
   useCreateSupplyMutation,
+  useUpdateSupplyMutation,
   useGetSuppliesQuery,
   useGetSupplyByIdQuery,
 } = suppliesApi;

@@ -44,7 +44,9 @@ export function DishOverview({ dish }: { dish: Dish }) {
           <Text size="sm" c="dimmed" mt={6}>
             {dish.description}
           </Text>
-          <Text size="sm" c="dimmed">Категория: {dish.category || "—"}</Text>
+          <Text size="sm" c="dimmed">
+            Категория: {dish.category || "—"}
+          </Text>
         </Box>
         <DishStatus dish={dish} />
         <SimpleGrid cols={{ base: 2, lg: 4 }} spacing="md">

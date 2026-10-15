@@ -22,7 +22,7 @@ const dependencyGraph = { nodes: [
   { id: 'product:1', type: 'ingredient', data: { name: product.name, quantity: 10, unit: 'кг', status: 'available' } },
   { id: 'dish:1', type: 'dish', data: { name: dish.name, status: 'available' } },
 ], edges: [{ id: 'recipe:1', source: 'product:1', target: 'dish:1', data: { required: 0.5, unit: 'кг', status: 'available' } }] };
-const routes = ['/analytics/dashboard', '/analytics/ingredients', '/store', '/store/inventory',
+const routes = ['/analytics/dashboard', '/analytics/ingredients', '/store', '/store/1', '/store/inventory',
   '/supply', '/supply/new', '/supply/1', '/dishes', '/dishes/1', '/dishes?mode=stop', '/dishes?mode=recommended', '/dishes?mode=graph',
   '/orders', '/orders/new', '/logs', '/admin-panel', '/admin-panel?tab=establishment', '/admin-panel?tab=invitations',
   '/login', '/register/employee', '/register/restaurant', '/order/new/guest/restaurant-1',
@@ -50,6 +50,8 @@ const routes = ['/analytics/dashboard', '/analytics/ingredients', '/store', '/st
       else if (url.pathname === '/orders/1') data = order;
       else if (url.pathname === '/supplies') data = [supply];
       else if (url.pathname === '/supplies/1') data = supply;
+      else if (url.pathname === '/inventory/expiring') data = [];
+      else if (/^\/inventory\/\d+$/.test(url.pathname)) data = inventory.filter(item => item.productId === Number(url.pathname.split('/').pop()));
       else if (url.pathname.startsWith('/inventory')) data = inventory;
       return route.fulfill({ contentType: 'application/json', body: JSON.stringify(data) });
     });

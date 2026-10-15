@@ -1,4 +1,8 @@
-import type { ICreateSupplyRequest, SupplyItemDraft } from "../model/type.ts";
+import type {
+  ICreateSupplyRequest,
+  ISupplyStatus,
+  SupplyItemDraft,
+} from "../model/type.ts";
 import { validateItem, calculateItemPrices } from "./calculations.ts";
 
 export function toCreateSupplyRequest(draft: {
@@ -6,6 +10,7 @@ export function toCreateSupplyRequest(draft: {
   supplier: string;
   receivedAt: string | null;
   items: SupplyItemDraft[];
+  status?: ISupplyStatus;
 }): ICreateSupplyRequest {
   const supplyNumber = draft.supplyNumber.trim();
   const supplier = draft.supplier?.trim();
@@ -13,12 +18,20 @@ export function toCreateSupplyRequest(draft: {
   if (!supplyNumber) throw new Error("Укажите номер поставки");
   if (!draft.receivedAt) throw new Error("Укажите дату поступления");
   const receivedAt = new Date(draft.receivedAt.replace(" ", "T"));
-  if (!Number.isFinite(receivedAt.getTime())) throw new Error("Укажите корректную дату поступления");
-  if (!draft.items.length) throw new Error("Добавьте хотя бы один продукт в поставку");
+  if (!Number.isFinite(receivedAt.getTime()))
+    throw new Error("Укажите корректную дату поступления");
+  if (!draft.items.length)
+    throw new Error("Добавьте хотя бы один продукт в поставку");
+  if (
+    draft.status !== undefined &&
+    !["RECEIVED", "CANCELLED", "IN_TRANSIT"].includes(draft.status)
+  )
+    throw new Error("Выберите статус поставки");
   return {
     supplyNumber,
     supplier,
     receivedAt: receivedAt.toISOString(),
+    ...(draft.status !== undefined ? { status: draft.status } : {}),
     items: draft.items.map((item) => {
       const error = Object.values(validateItem(item, draft.receivedAt))[0];
       if (error) throw new Error(error);

@@ -78,13 +78,11 @@ export function DishDetailsPage() {
       <DishOverview dish={dish} />
 
       <DishDetailsStatistics dish={dish} dishes={dishes} />
-      <DishFinancialSummary dish={dish} />
+      {/* <DishFinancialSummary dish={dish} /> */}
       <SimpleGrid cols={{ base: 1, xl: 2 }} spacing="md">
         <DishIngredients dish={dish} />
-        <Stack gap="md">
-          <DishSales dish={dish} />
-          <DishStock dish={dish} />
-        </Stack>
+
+        <DishStock dish={dish} />
       </SimpleGrid>
       <DishFormModal
         opened={editing}

@@ -31,11 +31,11 @@ export function StopListRow({ dish }: { dish: IStopListDish }) {
           {formatMoney(dish.salePrice)}
         </Text>
       </Table.Td>
-      <Table.Td>
+      {/* <Table.Td>
         <Text size="lg" fw={700}>
           {dish.maxPortions}
         </Text>
-      </Table.Td>
+      </Table.Td> */}
       <Table.Td>
         <Stack gap="xs">
           {dish.reasons.length ? (

@@ -1,6 +1,7 @@
-import { Paper, Stack, TextInput } from "@mantine/core";
+import { Paper, Select, Stack, TextInput } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { IconCalendarTime, IconTruckDelivery } from "@tabler/icons-react";
+import type { ISupplyStatus } from "@/entities/supply";
 
 export function SupplyDeliveryFields({
   receivedAt,
@@ -10,10 +11,14 @@ export function SupplyDeliveryFields({
   onDateChange,
   onSupplyNumberChange,
   onSupplierChange,
+  status,
+  onStatusChange,
 }: {
   receivedAt: string | null;
   supplyNumber: string;
   supplier: string;
+  status: ISupplyStatus;
+  onStatusChange: (status: ISupplyStatus) => void;
   onSupplierChange: (value: string) => void;
   submitted: boolean;
   onDateChange: (date: string | null) => void;
@@ -65,6 +70,22 @@ export function SupplyDeliveryFields({
             minutesInputLabel: "Минуты",
           }}
           submitButtonProps={{ "aria-label": "Подтвердить дату поступления" }}
+        />
+        <Select
+          label="Статус"
+          placeholder="Выберите статус поставки"
+          allowDeselect={false}
+          withAsterisk
+          value={status}
+          onChange={(value) => {
+            if (value) onStatusChange(value as ISupplyStatus);
+          }}
+          size="lg"
+          data={[
+            { value: "RECEIVED", label: "Принята" },
+            { value: "CANCELLED", label: "Отменена" },
+            { value: "IN_TRANSIT", label: "В пути" },
+          ]}
         />
       </Stack>
     </Paper>

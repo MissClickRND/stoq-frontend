@@ -7,7 +7,13 @@ import { type Dish, dishCanBeOrdered, DishPhoto } from "@/entities/dish";
 import { formatOrderMoney } from "@/entities/order";
 import { useGuestOrder } from "@/features/guest-order";
 
-export function GuestDishCard({ dish }: { dish: Dish }) {
+export function GuestDishCard({
+  dish,
+  recommended = false,
+}: {
+  dish: Dish;
+  recommended?: boolean;
+}) {
   const { basePath, items, addDish } = useGuestOrder();
   const unavailable = !dishCanBeOrdered(dish);
   const quantity = items.find((item) => item.dishId === dish.id)?.quantity;
@@ -25,6 +31,11 @@ export function GuestDishCard({ dish }: { dish: Dish }) {
         <DishPhoto src={dish.imageUrl} name={dish.name} />
       </Link>
       <div className={componentClasses.cardBody}>
+        {recommended && (
+          <Badge variant="light" color="primary" tt="none">
+            Советуем
+          </Badge>
+        )}
         <Text size="lg" fw={700} className={componentClasses.cardName}>
           {dish.name}
         </Text>

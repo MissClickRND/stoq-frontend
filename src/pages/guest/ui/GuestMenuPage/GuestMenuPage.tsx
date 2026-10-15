@@ -95,7 +95,13 @@ export function GuestMenuPage() {
       ) : visible.length ? (
         <SimpleGrid cols={{ base: 1, xs: 2, lg: 3 }} spacing="lg">
           {visible.map((dish) => (
-            <GuestDishCard key={dish.id} dish={dish} />
+            <GuestDishCard
+              key={dish.id}
+              dish={dish}
+              recommended={recommendations.dishes.some(
+                (item) => String(item.dishId) === dish.id,
+              )}
+            />
           ))}
         </SimpleGrid>
       ) : (

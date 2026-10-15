@@ -10,6 +10,7 @@ import DefaultPageLayout from "@/widgets/default-page-layout";
 import { PageBreadcrumbs } from "@/shared/ui/page-breadcrumbs";
 import {
   useCreateSupplyMutation,
+  useUpdateSupplyMutation,
   useScanSupplyUpdMutation,
   toUpdSupplyDrafts,
   suppliesApi,
@@ -18,6 +19,8 @@ import {
   calculateItemPrices,
   type SupplyItemDraft,
   type Product,
+  type ISupply,
+  type ISupplyStatus,
 } from "@/entities/supply";
 
 import { CreateProductModal } from "@/widgets/create-product-modal";
@@ -27,8 +30,19 @@ import { SupplySummary } from "../components/SupplySummary/SupplySummary";
 import { SupplyProductsSection } from "../components/SupplyProductsSection/SupplyProductsSection";
 import { ScanUpdModal } from "../components/ScanUpdModal";
 
-export function CreateSupplyPage() {
-  const [createSupply, { isLoading: saving }] = useCreateSupplyMutation();
+export function CreateSupplyPage({
+  initialSupply,
+  accepting = false,
+}: {
+  initialSupply?: ISupply;
+  accepting?: boolean;
+}) {
+  const [createSupply, { isLoading: creating }] = useCreateSupplyMutation();
+  const [updateSupply, { isLoading: updating }] = useUpdateSupplyMutation();
+  const saving = creating || updating;
+  const [status, setStatus] = useState<ISupplyStatus>(
+    accepting ? "RECEIVED" : (initialSupply?.status ?? "RECEIVED"),
+  );
   const [scanSupplyUpd, { isLoading: scanning }] = useScanSupplyUpdMutation();
   const [scanOpened, setScanOpened] = useState(false);
   const navigate = useNavigate();
@@ -40,11 +54,27 @@ export function CreateSupplyPage() {
     refetch: refetchUnits,
   } = useGetUnitsQuery();
   const [receivedAt, setReceivedAt] = useState<string | null>(() =>
-    dayjs().format("YYYY-MM-DD HH:mm:ss"),
+    dayjs(accepting ? undefined : initialSupply?.receivedAt).format("YYYY-MM-DD HH:mm:ss"),
   );
-  const [supplyNumber, setSupplyNumber] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [items, setItems] = useState<SupplyItemDraft[]>([]);
+  const [supplyNumber, setSupplyNumber] = useState(
+    initialSupply?.supplyNumber ?? "",
+  );
+  const [supplier, setSupplier] = useState(initialSupply?.supplier ?? "");
+  const [items, setItems] = useState<SupplyItemDraft[]>(
+    () =>
+      initialSupply?.items.map((item) => ({
+        id: String(item.id),
+        product: {
+          ...item.product,
+          unitId: item.product.unitId ?? item.product.unit?.id,
+        },
+        quantity: item.quantity,
+        unitId: item.product.unitId ?? item.product.unit?.id,
+        expiresAt: dayjs(item.expiresAt).format("YYYY-MM-DD HH:mm:ss"),
+        price: item.totalPrice ?? 0,
+        pricingMode: "total",
+      })) ?? [],
+  );
   const [unitFor, setUnitFor] = useState<string | null>(null);
   const [productName, setProductName] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -119,12 +149,15 @@ export function CreateSupplyPage() {
         supplier,
         receivedAt,
         items,
+        status,
       });
-      const supply = await createSupply(request).unwrap();
+      const supply = initialSupply
+        ? await updateSupply({ id: initialSupply.id, data: request }).unwrap()
+        : await createSupply(request).unwrap();
       dispatch(
         suppliesApi.util.invalidateTags([{ type: "Store", id: "LIST" }]),
       );
-      showSuccess("Поставка создана.");
+      showSuccess(initialSupply ? "Поставка сохранена." : "Поставка создана.");
       navigate("/supply/" + supply.id);
     } catch (error) {
       showError(
@@ -132,7 +165,7 @@ export function CreateSupplyPage() {
           ? error.message
           : apiErrorMessage(
               error,
-              "Не удалось создать поставку. Повторите попытку.",
+              initialSupply ? "Не удалось сохранить поставку. Повторите попытку." : "Не удалось создать поставку. Повторите попытку.",
             ),
       );
     }
@@ -141,7 +174,13 @@ export function CreateSupplyPage() {
   return (
     <>
       <DefaultPageLayout
-        title="Создание поставки"
+        title={
+          initialSupply
+            ? accepting
+              ? "Приёмка поставки"
+              : "Редактирование поставки"
+            : "Создание поставки"
+        }
         subtitle="Добавьте продукты, укажите количество и сроки годности"
         disableSearch
         disableStatistics
@@ -149,18 +188,27 @@ export function CreateSupplyPage() {
           <PageBreadcrumbs
             parentLabel="Поставки"
             parentPath="/supply"
-            currentLabel="Создание поставки"
+            currentLabel={
+              initialSupply
+                ? `Поставка ${initialSupply.supplyNumber}`
+                : "Создание поставки"
+            }
           />
         }
       >
         <form onSubmit={submit} className={componentClasses.form} noValidate>
-          <fieldset disabled={saving || scanning} style={{ display: "contents" }}>
+          <fieldset
+            disabled={saving || scanning}
+            style={{ display: "contents" }}
+          >
             <div className={componentClasses.topSections}>
               <SupplyDeliveryFields
                 receivedAt={receivedAt}
                 supplyNumber={supplyNumber}
                 supplier={supplier}
                 onSupplierChange={setSupplier}
+                status={status}
+                onStatusChange={setStatus}
                 submitted={submitted}
                 onDateChange={setReceivedAt}
                 onSupplyNumberChange={setSupplyNumber}
@@ -171,6 +219,13 @@ export function CreateSupplyPage() {
                 total={total}
                 error={formError}
                 onClearError={() => setFormError(null)}
+                submitLabel={
+                  initialSupply
+                    ? accepting
+                      ? "Принять поставку"
+                      : "Сохранить изменения"
+                    : "Создать поставку"
+                }
               />
             </div>
             {unitsError && (
@@ -214,7 +269,9 @@ export function CreateSupplyPage() {
           setSubmitted(false);
           setFormError(null);
           setScanOpened(false);
-          showSuccess("УПД распознан. Проверьте данные, укажите номер поставки и сроки годности.");
+          showSuccess(
+            "УПД распознан. Проверьте данные, укажите номер поставки и сроки годности.",
+          );
         }}
       />
       <CreateProductModal
